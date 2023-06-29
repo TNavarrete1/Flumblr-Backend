@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.ProfileVoteRequest;
-import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.ProfileVote;
 import com.revature.Flumblr.repositories.ProfileVoteRepository;
 
@@ -21,7 +20,7 @@ public class ProfileVoteService {
     public void vote(ProfileVoteRequest req) {
         User user = userService.findById(req.getUserId());
         Profile profile = profileService.findById(req.getProfileId());
-        ProfileVote vote = findByUserAndComment(user, profile);
+        ProfileVote vote = findByUserAndProfile(user, profile);
         if (vote == null) {
             vote = new ProfileVote(user, profile, req.isVote());
         } else {
