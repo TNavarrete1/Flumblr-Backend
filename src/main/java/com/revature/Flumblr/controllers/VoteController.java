@@ -29,7 +29,8 @@ public class VoteController {
     private final ProfileVoteService profileVoteService;
 
     @PostMapping("/post")
-    public ResponseEntity<?> votePost(@RequestBody PostVoteRequest req, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> votePost(@RequestBody PostVoteRequest req,
+            @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
 
         postVoteService.vote(req);
