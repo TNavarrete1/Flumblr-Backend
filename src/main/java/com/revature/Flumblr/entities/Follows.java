@@ -17,8 +17,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "following")
-public class Following {
+@Table(name = "follows")
+public class Follows {
     @Id
     private String id;
 
@@ -27,12 +27,12 @@ public class Following {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "following")
-    private User following;
+    @JoinColumn(name = "followed")
+    private User followed;
 
-    public Following(User following, User user) {
+    public Follows(User followed, User user) {
         this.id = UUID.randomUUID().toString();
-        this.following = following;
+        this.followed = followed;
         this.user = user;
     }
 

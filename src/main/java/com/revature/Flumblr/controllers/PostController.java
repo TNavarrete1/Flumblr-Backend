@@ -35,11 +35,16 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostResponse>> getFeed(@PathVariable String userId, HttpServletRequest req) {
-        // only users can create new tag
+    public ResponseEntity<List<PostResponse>> getUserPosts(@PathVariable String userId, HttpServletRequest req) {
         String requesterId = tokenService.extractUserId(req.getHeader("auth-token")); 
         logger.trace("getting posts from " + userId + " requested by " + requesterId);
-        // if library is not unique, throw exception
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId));
+    }
+
+    @GetMapping("/id/{postId}")
+    public ResponseEntity<PostResponse> getPost(@PathVariable String postId, HttpServletRequest req) {
+        String requesterId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        logger.trace("getting post " + postId + " requested by " + requesterId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
     }
 }

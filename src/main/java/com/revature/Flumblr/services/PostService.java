@@ -1,7 +1,9 @@
 package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.repositories.PostRepository;
+import com.revature.Flumblr.utils.custom_exceptions.PostNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 //import java.util.Optional;
 
@@ -23,5 +25,11 @@ public class PostService {
             resPosts.add(new PostResponse(userPost));
         }
         return resPosts;
+    }
+
+    public PostResponse getPost(String postId) {
+        Optional<Post> userPost = this.postRepo.findById(postId);
+        if(userPost.isEmpty()) throw new PostNotFoundException(postId);
+        return new PostResponse(userPost.get());
     }
 }
