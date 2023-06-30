@@ -15,6 +15,7 @@ import com.revature.Flumblr.dtos.requests.ProfileVoteRequest;
 import com.revature.Flumblr.services.CommentVoteService;
 import com.revature.Flumblr.services.PostVoteService;
 import com.revature.Flumblr.services.ProfileVoteService;
+import com.revature.Flumblr.services.TokenService;
 
 import lombok.AllArgsConstructor;
 
