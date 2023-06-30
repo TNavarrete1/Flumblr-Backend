@@ -31,4 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# ignore log files
+*.log
+
+# ignore properties files with sensitive information
 .properties
