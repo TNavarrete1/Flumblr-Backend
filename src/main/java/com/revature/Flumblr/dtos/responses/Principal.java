@@ -1,5 +1,7 @@
 package com.revature.Flumblr.dtos.responses;
 
+import com.revature.Flumblr.entities.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

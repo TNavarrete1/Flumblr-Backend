@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import com.revature.Flumblr.services.TokenServices;
 import com.revature.Flumblr.services.UserServices;
-import com.revature.DDWar.utils.custom_exceptions.ResourceConflictException;
-import com.revature.DDWar.dtos.requests.NewLoginRequest;
-import com.revature.DDWar.dtos.requests.NewUserRequest;
-import com.revature.DDWar.dtos.responses.Principal;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
+import com.revature.Flumblr.dtos.requests.NewLoginRequest;
+import com.revature.Flumblr.dtos.requests.NewUserRequest;
+import com.revature.Flumblr.dtos.responses.Principal;
 
 
 import lombok.AllArgsConstructor;
@@ -26,8 +26,8 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
-    private final UserService userService;
-    private final TokenService tokenService;
+    private final UserServices userService;
+    private final TokenServices tokenService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 

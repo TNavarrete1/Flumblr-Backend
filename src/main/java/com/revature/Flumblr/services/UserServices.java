@@ -16,14 +16,14 @@ import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserServices {
     
     private final UserRepository userRepo;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
     
-        User newUser = new User(req.getUsername(), hashed, req.getEmail());
+        User newUser = new User(req.getUsername(), hashed, req.getEmail(), req.getRole_id());
         // save and return user
         return userRepo.save(newUser);
     }
