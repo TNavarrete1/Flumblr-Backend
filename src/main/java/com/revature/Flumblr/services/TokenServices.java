@@ -64,6 +64,10 @@ public class TokenServices {
         return claimsResolver.apply(claims);
     }
 
+    public String extractUserId(String token) {
+        return (String) extractAllClaims(token).get("id");
+    }
+
     /**
      * Extracts all claims from the JWT token.
      *

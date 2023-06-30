@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+//import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.revature.Flumblr.services.TokenService;
+import com.revature.Flumblr.services.TokenServices;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 
@@ -23,12 +23,12 @@ import com.revature.Flumblr.dtos.responses.PostResponse;
 @RequestMapping("/posts")
 public class PostController {
     // dependency injection ie. services
-    private final TokenService tokenService;
+    private final TokenServices tokenService;
     private final PostService postService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    public PostController(TokenService tokenService, PostService postService) {
+    public PostController(TokenServices tokenService, PostService postService) {
         this.tokenService = tokenService;
         this.postService = postService;
     }
@@ -39,6 +39,6 @@ public class PostController {
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         logger.trace("getting posts for user " + userId);
         // if library is not unique, throw exception
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(postService.getUserPosts(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId));
     }
 }

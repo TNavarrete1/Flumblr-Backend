@@ -38,16 +38,14 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
-    @JoinColumn(name = "role_id", nullable = false)
+    @Column
     private String role_id;
   
-    public User(String username, String password, String email, String role) {
+    public User(String username, String password, String email, String role_id) {
         this.id = UUID.randomUUID().toString();
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role_id = role;
+        this.role_id = role_id;
     }
 }
