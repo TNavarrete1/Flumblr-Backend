@@ -37,7 +37,7 @@ public class Profile {
     private String bio;
 
     @OneToOne
-    @JoinColumn(name = "profile")
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 
