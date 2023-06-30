@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.ProfileVoteRequest;
+import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.ProfileVote;
+import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileVoteRepository;
 
 import lombok.AllArgsConstructor;

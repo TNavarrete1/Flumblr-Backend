@@ -3,7 +3,9 @@ package com.revature.Flumblr.services;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.PostVoteRequest;
+import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostVote;
+import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.PostVoteRepository;
 
 import lombok.AllArgsConstructor;

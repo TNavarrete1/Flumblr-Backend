@@ -3,7 +3,9 @@ package com.revature.Flumblr.services;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.CommentVoteRequest;
+import com.revature.Flumblr.entities.Comment;
 import com.revature.Flumblr.entities.CommentVote;
+import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.CommentVoteRepository;
 
 import lombok.AllArgsConstructor;
