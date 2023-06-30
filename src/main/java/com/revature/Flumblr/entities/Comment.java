@@ -35,13 +35,13 @@ public class Comment {
     @Id
     private String id;
 
-    @Column(nullable = false)
-    private Date create_time;
+    @Column(nullable = false, name="create_time")
+    private Date createTime;
 
-    @Column(nullable = false)
-    private Date edit_time;
+    @Column(nullable = false, name="edit_time")
+    private Date editTime;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,15 +58,12 @@ public class Comment {
     @JsonManagedReference
     private Set<CommentVote> commentVotes;
 
-    private String username;
-
     public Comment(String comment, Post post, User user) {
         this.comment = comment;
         this.post = post;
         this.user = user;
         this.id = UUID.randomUUID().toString();
-        this.create_time = new Date(System.currentTimeMillis());
-        this.edit_time = new Date(System.currentTimeMillis());
-        this.username = user.getUsername();
+        this.createTime = new Date();
+        this.editTime = new Date();
     }
 }

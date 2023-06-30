@@ -1,9 +1,0 @@
-2023-06-30T15:11:23.863-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
-2023-06-30T15:11:23.866-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_1f467nchairpqxm4hjcubjv09" of relation "profile" does not exist, skipping
-2023-06-30T15:11:23.896-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
-2023-06-30T15:11:23.896-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_t48xdq560gs3gap9g7jg36kgc" of relation "tags" does not exist, skipping
-2023-06-30T15:11:23.928-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
-2023-06-30T15:11:23.928-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_6dotkott2kjsp8vw4d0m25fb7" of relation "users" does not exist, skipping
-2023-06-30T15:11:23.959-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
-2023-06-30T15:11:23.960-04:00  WARN 37628 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_r43af9ap4edm43mmtq01oddj6" of relation "users" does not exist, skipping
-2023-06-30T15:11:24.345-04:00  WARN 37628 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning

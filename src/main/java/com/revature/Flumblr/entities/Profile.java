@@ -31,7 +31,7 @@ public class Profile {
     private String id;
 
     @Column
-    private String profile_img;
+    private String profileImg;
 
     @Column
     private String bio;
@@ -46,10 +46,10 @@ public class Profile {
     @JoinTable(name = "profile_tag_list", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    public Profile(User user, String profile_img, String bio) {
+    public Profile(User user, String profileImg, String bio) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
-        this.profile_img = profile_img;
+        this.profileImg = profileImg;
         this.bio = bio;
     }
 
