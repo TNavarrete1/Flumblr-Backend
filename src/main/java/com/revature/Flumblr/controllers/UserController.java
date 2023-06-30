@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.revature.Flumblr.services.TokenServices;
-import com.revature.Flumblr.services.UserServices;
+import com.revature.Flumblr.services.TokenService;
+import com.revature.Flumblr.services.UserService;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
@@ -26,8 +26,8 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
-    private final UserServices userService;
-    private final TokenServices tokenService;
+    private final UserService userService;
+    private final TokenService tokenService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -74,7 +74,7 @@ public class UserController {
 
 
             // create a jwt token
-            String token = tokenService.generateToken(principal);
+            String token = tokenService.generateJWT(principal);
         
     
             principal.setToken(token);

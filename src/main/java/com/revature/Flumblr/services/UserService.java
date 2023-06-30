@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
-import com.revature.Flumblr.services.RoleService;
 
 import java.util.Optional;
 
@@ -17,7 +16,7 @@ import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
-public class UserServices {
+public class UserService {
     
     private final UserRepository userRepo;
     private final RoleService roleService;

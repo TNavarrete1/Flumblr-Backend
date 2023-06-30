@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.revature.Flumblr.services.TokenServices;
+import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 
@@ -24,26 +24,26 @@ import com.revature.Flumblr.dtos.responses.PostResponse;
 @RequestMapping("/posts")
 public class PostController {
     // dependency injection ie. services
-    private final TokenServices tokenService;
+    private final TokenService tokenService;
     private final PostService postService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    public PostController(TokenServices tokenService, PostService postService) {
+    public PostController(TokenService tokenService, PostService postService) {
         this.tokenService = tokenService;
         this.postService = postService;
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PostResponse>> getUserPosts(@PathVariable String userId, HttpServletRequest req) {
-        String requesterId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        String requesterId = tokenService.extractUserId(req.getHeader("Authorization")); 
         logger.trace("getting posts from " + userId + " requested by " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId));
     }
 
     @GetMapping("/id/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable String postId, HttpServletRequest req) {
-        String requesterId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        String requesterId = tokenService.extractUserId(req.getHeader("Authorization")); 
         logger.trace("getting post " + postId + " requested by " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
     }
