@@ -26,7 +26,7 @@ public class PostResponse {
 
     private String message;
 
-    private String s3bucket;
+    private String s3Url;
 
     private String mediaType;
 
@@ -40,7 +40,7 @@ public class PostResponse {
         this.id = post.getId();
         this.username = post.getUser().getUsername();
         this.message = post.getMessage();
-        this.s3bucket = post.getS3bucket();
+        this.s3Url = post.getS3Url();
         this.mediaType = post.getMediaType();
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();

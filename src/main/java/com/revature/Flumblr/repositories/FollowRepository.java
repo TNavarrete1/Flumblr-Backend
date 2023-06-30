@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 /**
  * The PostRepository interface provides database operations for Post entities.
  */
-import com.revature.Flumblr.entities.Follows;
+import com.revature.Flumblr.entities.Follow;
 
 @Repository
-public interface FollowsRepository extends JpaRepository<Follows, String> {
+public interface FollowRepository extends JpaRepository<Follow, String> {
 }

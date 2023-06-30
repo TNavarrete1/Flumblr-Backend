@@ -1,9 +1,13 @@
 package com.revature.Flumblr.entities;
 
-import java.util.UUID;
 import java.util.Date;
+import java.util.Set;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +15,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -25,16 +31,14 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "posts")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Post {
 
     @Id
     private String id;
 
-    @Column(columnDefinition = "text")
-    private String message;
-
-    @Column
-    private String s3bucket;
+    @Column(name = "s3_url")
+    private String s3Url;
 
     @Column(name = "media_type")
     private String mediaType;
@@ -42,24 +46,44 @@ public class Post {
     @Column(name = "create_time", nullable = false)
     private Date createTime;
 
-    @Column(name = "edit_time")
+    @Column(name = "edit_time", nullable = false)
     private Date editTime;
 
-    @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Column
-    private List<Comment> comments;
+    @Column(columnDefinition = "text")
+    private String message;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
-    Post(String message, String mediaType, String s3bucket) {
-        this.id = UUID.randomUUID().toString();
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<PostVote> postVotes;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<PostView> postViews;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Bookmark> bookmarks;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JoinTable(name = "post_tag_list", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags;
+
+    public Post(String postTitle, String message, User user) {
+        this.s3Url = postTitle;
         this.message = message;
-        this.mediaType = mediaType;
-        this.s3bucket = s3bucket;
+        this.user = user;
         this.createTime = new Date();
         this.editTime = this.createTime;
-        this.comments = new ArrayList<Comment>();
+        this.id = UUID.randomUUID().toString();
     }
 }

@@ -2,7 +2,10 @@ package com.revature.Flumblr.entities;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,23 +20,31 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "follows")
-public class Follows {
+@Table(name = "profile_votes")
+public class ProfileVote {
+
     @Id
     private String id;
 
-    @ManyToOne
+    private boolean vote;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "followed")
-    private User followed;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id")
+    @JsonBackReference
+    private Profile profile;
 
-    public Follows(User followed, User user) {
+    private String username;
+
+    public ProfileVote(User user, Profile profile, boolean vote) {
         this.id = UUID.randomUUID().toString();
-        this.followed = followed;
         this.user = user;
+        this.profile = profile;
+        this.vote = vote;
+        this.username = user.getUsername();
     }
-
 }

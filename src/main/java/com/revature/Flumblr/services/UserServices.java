@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
+import com.revature.Flumblr.services.RoleService;
 
 import java.util.Optional;
 
@@ -19,11 +20,12 @@ import lombok.AllArgsConstructor;
 public class UserServices {
     
     private final UserRepository userRepo;
+    private final RoleService roleService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
     
-        User newUser = new User(req.getUsername(), hashed, req.getEmail(), req.getRole_id());
+        User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
         // save and return user
         return userRepo.save(newUser);
     }
