@@ -1,6 +1,6 @@
 package com.revature.Flumblr.dtos.responses;
 
-package com.revature.Flumblr.entities.User;
+import com.revature.pokemon.entities.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

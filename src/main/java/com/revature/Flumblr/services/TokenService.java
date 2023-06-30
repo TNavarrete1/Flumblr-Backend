@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +18,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 public class TokenService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
-
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
     public String generateJWT(Principal userPrincipal) {
-        logger.info("Generating new JWT token");
-
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userPrincipal.getId());
         claims.put("role", userPrincipal.getRole());
@@ -62,7 +56,6 @@ public class TokenService {
     }
 
     public String extractUserId(String token) {
-        logger.info("Extracting user id");
 
         return (String) extractAllClaims(token).get("id");
     }
