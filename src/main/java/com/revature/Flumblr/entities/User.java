@@ -1,8 +1,11 @@
 package com.revature.Flumblr.entities;
 
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +13,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,32 +26,71 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "users", schema = "flumblr")
+@Table(name = "users")
 public class User {
     @Id
     private String id;
 
-    // set the column username to username
-    @Column(name = "username", nullable = false)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    // by default column password is password
-    @Column(name = "password", nullable = false)
+    @JsonIgnore
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "email", nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
     @JsonBackReference
-    @JoinColumn(name = "role_id", nullable = false)
-    private String role_id;
-  
-    public User(String username, String password, String email, String role) {
-        this.id = UUID.randomUUID().toString();
+    private Role role;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<PostView> postViews;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<PostVote> postVotes;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<CommentVote> commentVotes;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Comment> comments;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Post> posts;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Bookmark> bookmarks;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Profile profile;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Notification> notifications;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Follow> follows;
+
+    @OneToMany(mappedBy = "follow", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Follow> following;
+
+    public User(String username, String password, String email, Role role) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role_id = role;
+        this.role = role;
+        this.id = UUID.randomUUID().toString();
     }
 }

@@ -42,7 +42,7 @@ public class UserController {
 
         // if username is not unique, throw exception
         if (!userService.isUniqueUsername(req.getUsername())) {
-            throw new ResourceConflictException("Username is not unique");
+            throw new ResourceConflictException("The username you selected has already been taken");
         }
 
         // if password is not valid, throw exception
@@ -53,7 +53,7 @@ public class UserController {
 
         // if password and confirm password do not match, throw exception
         if (!userService.isSamePassword(req.getPassword(), req.getConfirmPassword())) {
-            throw new ResourceConflictException("Passwords do not match");
+            throw new ResourceConflictException("Your password and confirm password do not match.");
         }
         // register user
         userService.registerUser(req);
@@ -72,13 +72,9 @@ public class UserController {
 
               logger.info("Successfully logged in");
 
-
             // create a jwt token
             String token = tokenService.generateToken(principal);
-        
-    
             principal.setToken(token);
-    
             // return status ok and return principal object
             return ResponseEntity.status(HttpStatus.OK).body(principal);
     }

@@ -41,11 +41,19 @@ public class TokenServices {
                 .compact();
     }
 
+    // //  Validates the provided JWT token against the user principal.
+    // public boolean validateToken(String token, Principal userPrincipal) {
+    //     String tokenUsername = extractUsername(token);
+    //     return tokenUsername.equals(userPrincipal.getUsername());
+    // }
+
+
     //  Validates the provided JWT token against the user principal.
-    public boolean validateToken(String token, Principal userPrincipal) {
+    public boolean validateToken(String token, String user_id) {
         String tokenUsername = extractUsername(token);
-        return tokenUsername.equals(userPrincipal.getUsername());
+        return tokenUsername.equals(user_id);
     }
+
 
     //  /** Extracts the username from the JWT token.
     public String extractUsername(String token) {

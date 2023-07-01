@@ -10,20 +10,25 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.revature.Flumblr.repositories.RoleRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.UserNotFoundException;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
+import com.revature.Flumblr.entities.Role;
 @Service
 @AllArgsConstructor
 public class UserServices {
     
     private final UserRepository userRepo;
+    private final RoleRepository roleRepo;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
+
+        Role role = roleRepo.getReferenceById("96de8a55-f37b-40c9-8fec-418bfaccdd5d");
     
-        User newUser = new User(req.getUsername(), hashed, req.getEmail(), req.getRole_id());
+        User newUser = new User(req.getUsername(), hashed, req.getEmail(), role);
         // save and return user
         return userRepo.save(newUser);
     }
@@ -39,7 +44,6 @@ public class UserServices {
             throw new UserNotFoundException("Invalid password");
         }
     }
-
     throw new UserNotFoundException("Invalid username");
 }
 
