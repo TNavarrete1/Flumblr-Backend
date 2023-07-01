@@ -8,12 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 //import org.springframework.web.bind.annotation.PathVariable;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.PostService;
@@ -34,16 +33,26 @@ public class PostController {
         this.postService = postService;
     }
 
+    @GetMapping("/feed/{page}")
+    public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
+    @PathVariable int page) {
+        String userId = tokenService.extractUserId(token);
+        logger.trace("generating feed for " + userId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getFeed(userId, page - 1));
+    }
+
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostResponse>> getUserPosts(@PathVariable String userId, HttpServletRequest req) {
-        String requesterId = tokenService.extractUserId(req.getHeader("Authorization")); 
+    public ResponseEntity<List<PostResponse>> getUserPosts(@PathVariable String userId,
+    @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token); 
         logger.trace("getting posts from " + userId + " requested by " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId));
     }
 
     @GetMapping("/id/{postId}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable String postId, HttpServletRequest req) {
-        String requesterId = tokenService.extractUserId(req.getHeader("Authorization")); 
+    public ResponseEntity<PostResponse> getPost(@PathVariable String postId,
+    @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token); 
         logger.trace("getting post " + postId + " requested by " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
     }

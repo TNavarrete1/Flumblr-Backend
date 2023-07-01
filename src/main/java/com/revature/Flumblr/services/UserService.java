@@ -29,21 +29,26 @@ public class UserService {
         return userRepo.save(newUser);
     }
 
-   public Principal login(NewLoginRequest req) {
-    Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
-
-    if (userOpt.isPresent()) {
-        User foundUser = userOpt.get();
-        if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
-            return new Principal(foundUser);
-        } else {
-            throw new UserNotFoundException("Invalid password");
-        }
+    public User getUserById(String userId) {
+        Optional<User> userOpt = userRepo.findById(userId);
+        if(userOpt.isEmpty()) throw new UserNotFoundException("couldn't find user for id " + userId);
+        return userOpt.get();
     }
 
-    throw new UserNotFoundException("Invalid username");
-}
+   public Principal login(NewLoginRequest req) {
+        Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
 
+        if (userOpt.isPresent()) {
+            User foundUser = userOpt.get();
+            if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
+                return new Principal(foundUser);
+            } else {
+                throw new UserNotFoundException("Invalid password");
+            }
+        }
+
+        throw new UserNotFoundException("Invalid username");
+    }
 
     public boolean isValidUsername(String username) {
         return username.matches("^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$");
