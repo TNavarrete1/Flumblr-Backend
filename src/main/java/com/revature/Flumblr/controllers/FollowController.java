@@ -41,7 +41,7 @@ public class FollowController {
     @PathVariable String followName) {
         String userId = tokenService.extractUserId(token);
         logger.trace(userId + " following " + followName);
-        followService.newFollow(userId, followName);
+        followService.create(userId, followName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -51,7 +51,7 @@ public class FollowController {
     @PathVariable String followName) {
         String userId = tokenService.extractUserId(token);
         logger.trace(userId + " unfollowing " + followName);
-        followService.deleteFollow(userId, followName);
+        followService.delete(userId, followName);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -59,6 +59,6 @@ public class FollowController {
     public ResponseEntity<List<String>> getFollows(@RequestHeader("Authorization") String token) {
         String userId = tokenService.extractUserId(token); 
         logger.trace("getting follows for " + userId);
-        return ResponseEntity.status(HttpStatus.OK).body(followService.getAllForUser(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(followService.findAllByUserId(userId));
     }
 }

@@ -25,9 +25,9 @@ public class FollowService {
     }
 
     // returns usernames
-    public List<String> getAllForUser(String userId) {
+    public List<String> findAllByUserId(String userId) {
         List<String> follows = new ArrayList<String>();
-        User user = userService.getUserById(userId);
+        User user = userService.findById(userId);
         for(Follow follow : user.getFollows()) {
             follows.add(follow.getFollow().getUsername());
         }
@@ -36,18 +36,18 @@ public class FollowService {
     
     // followName is the username of the person followed
     @Transactional
-    public void deleteFollow(String userId, String followName) {
+    public void delete(String userId, String followName) {
         if(!doesFollow(userId, followName)) throw new ResourceConflictException("can't unfollow: user " + userId +
             " doesn't follow " + followName);
         followRepo.deleteByUserIdAndFollowUsername(userId, followName);
     }
 
     // followName is the username of the person followed
-    public void newFollow(String userId, String followName) {
+    public void create(String userId, String followName) {
         if(doesFollow(userId, followName)) throw new ResourceConflictException("can't follow: user " + userId +
             " already follows " + followName);
-        User follower = userService.getUserById(userId);
-        User followed = userService.getUserByUsername(followName);
+        User follower = userService.findById(userId);
+        User followed = userService.findByUsername(followName);
         Follow follow = new Follow(follower, followed);
         followRepo.save(follow);
     }
