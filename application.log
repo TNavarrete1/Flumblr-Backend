@@ -1,8 +1,71 @@
-2023-06-30T09:48:09.606-04:00  INFO 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : Starting FlumblrApplication using Java 19.0.1 with PID 24320 (C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes started by nyhea in C:\Users\nyhea\IdeaProjects\Flumblr-Backend)
-2023-06-30T09:48:09.608-04:00 DEBUG 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : Running with Spring Boot v3.1.2-SNAPSHOT, Spring v6.0.10
-2023-06-30T09:48:09.609-04:00  INFO 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : No active profile set, falling back to 1 default profile: "default"
-2023-06-30T09:48:12.114-04:00  INFO 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : Started FlumblrApplication in 3.339 seconds (process running for 4.065)
-2023-06-30T09:52:01.614-04:00  INFO 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : Starting FlumblrApplication using Java 19.0.1 with PID 3064 (C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes started by nyhea in C:\Users\nyhea\IdeaProjects\Flumblr-Backend)
-2023-06-30T09:52:01.616-04:00 DEBUG 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : Running with Spring Boot v3.1.2-SNAPSHOT, Spring v6.0.10
-2023-06-30T09:52:01.617-04:00  INFO 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : No active profile set, falling back to 1 default profile: "default"
-2023-06-30T09:52:03.801-04:00  INFO 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : Started FlumblrApplication in 3.08 seconds (process running for 3.852)
+2023-07-03T18:38:30.314-04:00  INFO 9408 --- [main] c.revature.Flumblr.FlumblrApplication    : Starting FlumblrApplication using Java 19.0.1 with PID 9408 (C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes started by nyhea in C:\Users\nyhea\IdeaProjects\Flumblr-Backend)
+2023-07-03T18:38:30.327-04:00 DEBUG 9408 --- [main] c.revature.Flumblr.FlumblrApplication    : Running with Spring Boot v3.1.2-SNAPSHOT, Spring v6.0.11-SNAPSHOT
+2023-07-03T18:38:30.330-04:00  INFO 9408 --- [main] c.revature.Flumblr.FlumblrApplication    : No active profile set, falling back to 1 default profile: "default"
+2023-07-03T18:38:35.739-04:00  WARN 9408 --- [main] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "
+    alter table if exists ecommerce.users 
+       add column email varchar(255) not null" via JDBC [ERROR: column "email" of relation "users" contains null values]
+
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "
+    alter table if exists ecommerce.users 
+       add column email varchar(255) not null" via JDBC [ERROR: column "email" of relation "users" contains null values]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:92) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:574) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:514) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.migrateTable(AbstractSchemaMigrator.java:333) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:84) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:232) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:117) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:284) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:143) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429) ~[na:na]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:140) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:292) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:431) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1455) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:376) ~[spring-orm-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:352) ~[spring-orm-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1817) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1154) ~[spring-context-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:931) ~[spring-context-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.11-20230703.153357-49.jar:6.0.11-SNAPSHOT]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.2-20230703.193430-26.jar:3.1.2-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:734) ~[spring-boot-3.1.2-20230703.193430-26.jar:3.1.2-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:436) ~[spring-boot-3.1.2-20230703.193430-26.jar:3.1.2-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:312) ~[spring-boot-3.1.2-20230703.193430-26.jar:3.1.2-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) ~[spring-boot-3.1.2-20230703.193430-26.jar:3.1.2-SNAPSHOT]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295) ~[spring-boot-3.1.2-20230703.193430-26.jar:3.1.2-SNAPSHOT]
+	at com.revature.Flumblr.FlumblrApplication.main(FlumblrApplication.java:10) ~[classes/:na]
+Caused by: org.postgresql.util.PSQLException: ERROR: column "email" of relation "users" contains null values
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2401) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:368) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:335) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:321) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:297) ~[postgresql-42.6.0.jar:42.6.0]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:292) ~[postgresql-42.6.0.jar:42.6.0]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.0.1.jar:na]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:78) ~[hibernate-core-6.2.5.Final.jar:6.2.5.Final]
+	... 38 common frames omitted
+
+2023-07-03T18:38:35.749-04:00  WARN 9408 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2023-07-03T18:38:35.749-04:00  WARN 9408 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_c1dkiawnlj6uoe6fnlwd6j83j" of relation "profile" does not exist, skipping
+2023-07-03T18:38:35.754-04:00  WARN 9408 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2023-07-03T18:38:35.754-04:00  WARN 9408 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_t48xdq560gs3gap9g7jg36kgc" of relation "tags" does not exist, skipping
+2023-07-03T18:38:35.784-04:00  WARN 9408 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2023-07-03T18:38:35.784-04:00  WARN 9408 --- [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_6dotkott2kjsp8vw4d0m25fb7" of relation "users" does not exist, skipping
+2023-07-03T18:38:36.564-04:00  WARN 9408 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'profileController' defined in file [C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes\com\revature\Flumblr\controllers\ProfileController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'profileService' defined in file [C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes\com\revature\Flumblr\services\ProfileService.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'profileRepository' defined in com.revature.Flumblr.repositories.ProfileRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract com.revature.Flumblr.entities.Profile com.revature.Flumblr.repositories.ProfileRepository.update(com.revature.Flumblr.entities.Profile); Reason: Failed to create query for method public abstract com.revature.Flumblr.entities.Profile com.revature.Flumblr.repositories.ProfileRepository.update(com.revature.Flumblr.entities.Profile); No property 'update' found for type 'Profile'

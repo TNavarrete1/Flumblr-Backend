@@ -1,5 +1,4 @@
 package com.revature.Flumblr.repositories;
-
 import com.revature.Flumblr.entities.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,5 +1,4 @@
 package com.revature.Flumblr.services;
-
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.User;
@@ -20,7 +19,7 @@ public class ProfileService {
 
     public Profile findById(String profileId) {
         Optional<Profile> profileOpt = profileRepo.findById(profileId);
-        if(profileOpt.isEmpty()) {
+        if (profileOpt.isEmpty()) {
             throw new ProfileNotFoundException("No profile located for specified Id.");
         }
         return profileOpt.get();
@@ -37,6 +36,5 @@ public class ProfileService {
         Profile prof = new Profile(existingUser, req.getProfile_img(), req.getBio());
         return profileRepo.update(prof);
     }
-
 
 }
