@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class CommentService {
 
-    private final CommentRepository commentRepository;
+   private final CommentRepository commentRepository;
    private final UserRepository userRepository;
    private final PostRepository postRepository;
 
