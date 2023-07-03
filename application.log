@@ -1,0 +1,8 @@
+2023-06-30T09:48:09.606-04:00  INFO 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : Starting FlumblrApplication using Java 19.0.1 with PID 24320 (C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes started by nyhea in C:\Users\nyhea\IdeaProjects\Flumblr-Backend)
+2023-06-30T09:48:09.608-04:00 DEBUG 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : Running with Spring Boot v3.1.2-SNAPSHOT, Spring v6.0.10
+2023-06-30T09:48:09.609-04:00  INFO 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : No active profile set, falling back to 1 default profile: "default"
+2023-06-30T09:48:12.114-04:00  INFO 24320 --- [main] c.revature.Flumblr.FlumblrApplication    : Started FlumblrApplication in 3.339 seconds (process running for 4.065)
+2023-06-30T09:52:01.614-04:00  INFO 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : Starting FlumblrApplication using Java 19.0.1 with PID 3064 (C:\Users\nyhea\IdeaProjects\Flumblr-Backend\target\classes started by nyhea in C:\Users\nyhea\IdeaProjects\Flumblr-Backend)
+2023-06-30T09:52:01.616-04:00 DEBUG 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : Running with Spring Boot v3.1.2-SNAPSHOT, Spring v6.0.10
+2023-06-30T09:52:01.617-04:00  INFO 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : No active profile set, falling back to 1 default profile: "default"
+2023-06-30T09:52:03.801-04:00  INFO 3064 --- [main] c.revature.Flumblr.FlumblrApplication    : Started FlumblrApplication in 3.08 seconds (process running for 3.852)
