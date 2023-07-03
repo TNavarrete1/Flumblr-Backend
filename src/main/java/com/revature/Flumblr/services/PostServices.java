@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class PostServices {
-    private final CommentRepository repo;
-   private final UserRepository userRepo;
-   private final PostRepository postRepo;
+    private final CommentRepository commentRepository;
+   private final UserRepository userRepository;
+   private final PostRepository postRepository;
     public void commentOnPost(NewCommentRequest req) {
-        User user = userRepo.getReferenceById(req.getUser_id());
-        Post post = postRepo.getReferenceById(req.getPost_id());
+        User user = userRepository.getReferenceById(req.getUser_id());
+        Post post = postRepository.getReferenceById(req.getPost_id());
         Comment com = new Comment(req.getComment(), post, user);
-        repo.save(com);     
+        commentRepository.save(com);     
     }   
 }
