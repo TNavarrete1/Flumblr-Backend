@@ -25,11 +25,11 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleUserNotFoundException(ResourceNotFoundException e) {
+    public ResponseEntity<Map<String, Object>> handleResourceNotFoundException(ResourceNotFoundException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
     }
 
     @ExceptionHandler(InvalidTokenException.class)
