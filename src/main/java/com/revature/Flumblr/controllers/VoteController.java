@@ -52,7 +52,7 @@ public class VoteController {
             @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
 
-        // profileVoteService.vote(req);
+        profileVoteService.vote(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
