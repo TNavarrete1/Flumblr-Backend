@@ -21,7 +21,10 @@ import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.services.CommentService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
+@AllArgsConstructor
 @CrossOrigin
 @RequestMapping("/posts")
 public class PostController {
@@ -31,12 +34,6 @@ public class PostController {
     private final CommentService commentService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
-
-    public PostController(TokenService tokenService, PostService postService, CommentService commentService) {
-        this.tokenService = tokenService;
-        this.postService = postService;
-        this.commentService = commentService;
-    }
 
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,

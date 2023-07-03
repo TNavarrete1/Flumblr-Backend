@@ -20,8 +20,11 @@ import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.FollowService;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @CrossOrigin
+@AllArgsConstructor
 @RequestMapping("/follows")
 public class FollowController {
     // dependency injection ie. services
@@ -29,11 +32,6 @@ public class FollowController {
     private final TokenService tokenService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
-
-    public FollowController(FollowService followService, TokenService tokenService) {
-        this.followService = followService;
-        this.tokenService = tokenService;
-    }
 
     //username of user followed
     @PostMapping("/{followName}")

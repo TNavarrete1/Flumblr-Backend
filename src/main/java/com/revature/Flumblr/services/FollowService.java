@@ -16,11 +16,11 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class FollowService {
-    private final FollowRepository followRepo;
+    private final FollowRepository followRepository;
     private final UserService userService;
 
     public boolean doesFollow(String userId, String followName) {
-        Optional<Follow> followOpt = followRepo.findByUserIdAndFollowUsername(userId, followName);
+        Optional<Follow> followOpt = followRepository.findByUserIdAndFollowUsername(userId, followName);
         return(!followOpt.isEmpty());
     }
 
@@ -39,7 +39,7 @@ public class FollowService {
     public void delete(String userId, String followName) {
         if(!doesFollow(userId, followName)) throw new ResourceConflictException("can't unfollow: user " + userId +
             " doesn't follow " + followName);
-        followRepo.deleteByUserIdAndFollowUsername(userId, followName);
+        followRepository.deleteByUserIdAndFollowUsername(userId, followName);
     }
 
     // followName is the username of the person followed
@@ -49,6 +49,6 @@ public class FollowService {
         User follower = userService.findById(userId);
         User followed = userService.findByUsername(followName);
         Follow follow = new Follow(follower, followed);
-        followRepo.save(follow);
+        followRepository.save(follow);
     }
 }
