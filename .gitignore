@@ -74,3 +74,4 @@ replay_pid*
 ### spring boot ###
 src/main/resources/application.properties
 *.log
+*.gz
