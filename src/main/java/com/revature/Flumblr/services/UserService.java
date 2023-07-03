@@ -10,19 +10,24 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+// import com.revature.Flumblr.repositories.RoleRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.UserNotFoundException;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
+// import com.revature.Flumblr.entities.Role;
 @Service
 @AllArgsConstructor
 public class UserService {
     
     private final UserRepository userRepo;
+   
     private final RoleService roleService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
+
+        
     
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
         // save and return user

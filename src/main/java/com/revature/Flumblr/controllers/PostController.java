@@ -56,4 +56,13 @@ public class PostController {
         logger.trace("getting post " + postId + " requested by " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
     }
+
+    @PostMapping("/comment")
+    public ResponseEntity<?> commentOnPost (@RequestBody NewCommentRequest req,  
+    @RequestHeader("Authorization") String token) {
+
+        tokenService.validateToken(token, req.getUser_id());
+        postService.commentOnPost(req);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
