@@ -18,7 +18,7 @@ public class CommentVoteService {
     UserService userService;
 
     public void vote(CommentVoteRequest req) {
-        User user = userService.getById(req.getUserId());
+        User user = userService.findById(req.getUserId());
         Comment comment = commentService.findById(req.getCommentId());
         CommentVote vote = findByUserAndComment(user, comment);
         if (vote == null) {

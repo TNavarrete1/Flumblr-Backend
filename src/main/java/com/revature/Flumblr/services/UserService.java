@@ -21,19 +21,15 @@ import lombok.AllArgsConstructor;
 public class UserService {
     
     private final UserRepository userRepo;
-
+   
     private final RoleService roleService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
-        // Role role = roleService.getReferenceById("96de8a55-f37b-40c9-8fec-418bfaccdd5d");
+        
     
-
-        // User newUser = new User(req.getUsername(), hashed, req.getEmail(), role);
-
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
-
         // save and return user
         return userRepo.save(newUser);
     }
@@ -55,12 +51,6 @@ public class UserService {
                 throw new UserNotFoundException("Invalid password");
             }
         }
-// <<<<<<< HEAD:src/main/java/com/revature/Flumblr/services/UserServices.java
-//     }
-//     throw new UserNotFoundException("Invalid username");
-// }
-// =======
-// >>>>>>> Min-Development:src/main/java/com/revature/Flumblr/services/UserService.java
 
         throw new UserNotFoundException("Invalid username");
     }

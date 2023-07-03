@@ -2,9 +2,7 @@ package com.revature.Flumblr.entities;
 
 import java.util.Date;
 import java.util.Set;
-
 import java.util.List;
-
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -21,9 +19,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-
 import jakarta.persistence.OrderBy;
-
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +33,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "posts")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-
 public class Post {
 
     @Id
@@ -56,7 +51,6 @@ public class Post {
     private Date editTime;
 
     @Column(columnDefinition = "text")
-
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,7 +64,6 @@ public class Post {
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-
     @JsonManagedReference
     private Set<PostVote> postVotes;
 
@@ -88,7 +81,6 @@ public class Post {
     private Set<Tag> tags;
 
     public Post(String postTitle, String message, User user) {
-
         this.s3Url = postTitle;
         this.message = message;
         this.user = user;

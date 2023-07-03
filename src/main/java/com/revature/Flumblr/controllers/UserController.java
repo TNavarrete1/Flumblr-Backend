@@ -73,7 +73,6 @@ public class UserController {
               logger.info("Successfully logged in");
 
             // create a jwt token
-
             String token = tokenService.generateJWT(principal);
         
     

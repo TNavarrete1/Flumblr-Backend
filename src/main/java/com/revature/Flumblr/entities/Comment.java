@@ -42,7 +42,6 @@ public class Comment {
     private Date editTime;
 
     @Column(nullable = false, columnDefinition = "text")
-
     private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,7 +57,6 @@ public class Comment {
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<CommentVote> commentVotes;
-
 
     public Comment(String comment, Post post, User user) {
         this.comment = comment;
