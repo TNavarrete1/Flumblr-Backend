@@ -34,7 +34,7 @@ public class UserService {
         return userRepo.save(newUser);
     }
 
-    public User getUserById(String userId) {
+    public User findById(String userId) {
         Optional<User> userOpt = userRepo.findById(userId);
         if(userOpt.isEmpty()) throw new UserNotFoundException("couldn't find user for id " + userId);
         return userOpt.get();
@@ -80,4 +80,5 @@ public class UserService {
             return false;
           }
     }
+
 }
