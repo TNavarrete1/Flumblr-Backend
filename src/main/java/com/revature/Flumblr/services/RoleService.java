@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.entities.Role;
 import com.revature.Flumblr.repositories.RoleRepository;
-import com.revature.Flumblr.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -14,19 +14,19 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class RoleService {
-    private final RoleRepository roleRepo;
+    private final RoleRepository roleRepository;
 
     /**
      * Finds a role by its name.
      *
      * @param name the name of the role to find
      * @return the Role object with the specified name
-     * @throws RoleNotFoundException if the role with the specified name is not
-     *                               found
+     * @throws ResourceNotFoundException if the role with the specified name is not
+     *                                   found
      */
     public Role getByName(String name) {
-        return roleRepo.findByName(name)
-                .orElseThrow(() -> new RoleNotFoundException("Role " + name + " not found"));
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Role " + name + " not found"));
     }
 
     /**
@@ -36,6 +36,6 @@ public class RoleService {
      * @return true if the role name is unique, false otherwise
      */
     public boolean isUniqueRole(String name) {
-        return roleRepo.findByName(name).isEmpty();
+        return roleRepository.findByName(name).isEmpty();
     }
 }

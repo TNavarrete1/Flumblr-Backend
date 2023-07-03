@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class PostVoteService {
-    PostVoteRepository postVoteRepo;
+    PostVoteRepository postVoteRepository;
     PostService postService;
     UserService userService;
 
@@ -35,18 +35,18 @@ public class PostVoteService {
     }
 
     public void save(PostVote vote) {
-        postVoteRepo.save(vote);
+        postVoteRepository.save(vote);
     }
 
     public PostVote findById(String id) {
-        return postVoteRepo.findById(id).orElse(null);
+        return postVoteRepository.findById(id).orElse(null);
     }
 
     public void delete(PostVote vote) {
-        postVoteRepo.delete(vote);
+        postVoteRepository.delete(vote);
     }
 
     public PostVote findByUserAndPost(User user, Post post) {
-        return postVoteRepo.findByUserAndPost(user, post).orElse(null);
+        return postVoteRepository.findByUserAndPost(user, post).orElse(null);
     }
 }
