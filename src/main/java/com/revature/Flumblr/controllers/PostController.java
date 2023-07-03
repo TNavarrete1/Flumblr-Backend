@@ -18,13 +18,13 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/update")
+@RequestMapping("/post")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostController {
     private final PostServices postService;
     private final TokenServices tokenService;
-    @PostMapping("/post/comment")
-    public ResponseEntity<?> likePost (@RequestBody NewCommentRequest req,  
+    @PostMapping("/comment")
+    public ResponseEntity<?> commentOnPost (@RequestBody NewCommentRequest req,  
     @RequestHeader("Authorization") String token) {
 
         tokenService.validateToken(token, req.getUser_id());
