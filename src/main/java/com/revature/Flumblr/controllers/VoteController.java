@@ -34,7 +34,7 @@ public class VoteController {
             @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
 
-        postVoteService.vote(req);
+        // postVoteService.vote(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -43,7 +43,7 @@ public class VoteController {
             @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
 
-        commentVoteService.vote(req);
+        // commentVoteService.vote(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -52,7 +52,7 @@ public class VoteController {
             @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
 
-        profileVoteService.vote(req);
+        // profileVoteService.vote(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

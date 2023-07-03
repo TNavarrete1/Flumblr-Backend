@@ -14,25 +14,25 @@ import lombok.AllArgsConstructor;
 @Service
 public class CommentVoteService {
     CommentVoteRepository commentVoteRepo;
-    CommentService commentService;
+    // CommentService commentService;
     UserService userService;
 
-    public void vote(CommentVoteRequest req) {
-        User user = userService.findById(req.getUserId());
-        Comment comment = commentService.findById(req.getCommentId());
-        CommentVote vote = findByUserAndComment(user, comment);
-        if (vote == null) {
-            vote = new CommentVote(user, comment, req.isVote());
-        } else {
-            if (vote.isVote() == req.isVote()) {
-                delete(vote);
-                return;
-            } else {
-                vote.setVote(req.isVote());
-            }
-        }
-        save(vote);
-    }
+    // public void vote(CommentVoteRequest req) {
+    //     User user = userService.findById(req.getUserId());
+    //     Comment comment = commentService.findById(req.getCommentId());
+    //     CommentVote vote = findByUserAndComment(user, comment);
+    //     if (vote == null) {
+    //         vote = new CommentVote(user, comment, req.isVote());
+    //     } else {
+    //         if (vote.isVote() == req.isVote()) {
+    //             delete(vote);
+    //             return;
+    //         } else {
+    //             vote.setVote(req.isVote());
+    //         }
+    //     }
+    //     save(vote);
+    // }
 
     public void save(CommentVote vote) {
         commentVoteRepo.save(vote);
