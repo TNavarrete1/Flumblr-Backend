@@ -11,7 +11,7 @@ import java.util.Optional;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.revature.Flumblr.repositories.UserRepository;
-import com.revature.Flumblr.utils.custom_exceptions.UserNotFoundException;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
 @Service
@@ -31,11 +31,17 @@ public class UserService {
 
     public User getUserById(String userId) {
         Optional<User> userOpt = userRepo.findById(userId);
-        if(userOpt.isEmpty()) throw new UserNotFoundException("couldn't find user for id " + userId);
+        if(userOpt.isEmpty()) throw new ResourceNotFoundException("couldn't find user for id " + userId);
         return userOpt.get();
     }
 
-   public Principal login(NewLoginRequest req) {
+    public User getUserByUsername(String username) {
+        Optional<User> userOpt = userRepo.findByUsername(username);
+        if(userOpt.isEmpty()) throw new ResourceNotFoundException("couldn't find user for username " + username);
+        return userOpt.get();
+    }
+
+    public Principal login(NewLoginRequest req) {
         Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
 
         if (userOpt.isPresent()) {
@@ -43,11 +49,11 @@ public class UserService {
             if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
                 return new Principal(foundUser);
             } else {
-                throw new UserNotFoundException("Invalid password");
+                throw new ResourceNotFoundException("Invalid password");
             }
         }
 
-        throw new UserNotFoundException("Invalid username");
+        throw new ResourceNotFoundException("Invalid username");
     }
 
     public boolean isValidUsername(String username) {

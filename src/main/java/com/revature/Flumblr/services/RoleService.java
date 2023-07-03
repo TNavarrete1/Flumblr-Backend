@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.entities.Role;
 import com.revature.Flumblr.repositories.RoleRepository;
-import com.revature.Flumblr.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -26,7 +26,7 @@ public class RoleService {
      */
     public Role getByName(String name) {
         return roleRepo.findByName(name)
-                .orElseThrow(() -> new RoleNotFoundException("Role " + name + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role " + name + " not found"));
     }
 
     /**
