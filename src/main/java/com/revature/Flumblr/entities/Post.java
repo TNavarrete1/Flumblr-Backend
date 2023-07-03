@@ -2,6 +2,9 @@ package com.revature.Flumblr.entities;
 
 import java.util.Date;
 import java.util.Set;
+
+import java.util.List;
+
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -18,6 +21,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+
+import jakarta.persistence.OrderBy;
+
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,16 +43,20 @@ public class Post {
     @Id
     private String id;
 
-    @Column
-    private String s3_url;
+    @Column(name = "s3_url")
+    private String s3Url;
 
-    @Column(nullable = false)
-    private Date create_time;
+    @Column(name = "media_type")
+    private String mediaType;
 
-    @Column(nullable = false)
-    private Date edit_time;
+    @Column(name = "create_time", nullable = false)
+    private Date createTime;
 
-    @Column(nullable = false)
+    @Column(name = "edit_time", nullable = false)
+    private Date editTime;
+
+    @Column(columnDefinition = "text")
+
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,11 +64,13 @@ public class Post {
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("createTime")
     @JsonManagedReference
-    private Set<Comment> comments;
+    private List<Comment> comments;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
     @JsonManagedReference
     private Set<PostVote> postVotes;
 
@@ -76,11 +88,12 @@ public class Post {
     private Set<Tag> tags;
 
     public Post(String postTitle, String message, User user) {
-        this.s3_url = postTitle;
+
+        this.s3Url = postTitle;
         this.message = message;
         this.user = user;
-        this.create_time = new Date(System.currentTimeMillis());
-        this.edit_time = new Date(System.currentTimeMillis());
+        this.createTime = new Date();
+        this.editTime = this.createTime;
         this.id = UUID.randomUUID().toString();
     }
 }

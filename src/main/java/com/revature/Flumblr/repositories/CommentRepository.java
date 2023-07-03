@@ -5,9 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.revature.Flumblr.entities.Comment;
 
-
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, String> {
-
-
 }
+

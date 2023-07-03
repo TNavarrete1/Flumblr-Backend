@@ -10,43 +10,60 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import com.revature.Flumblr.repositories.RoleRepository;
+// import com.revature.Flumblr.repositories.RoleRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.UserNotFoundException;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
-import com.revature.Flumblr.entities.Role;
+// import com.revature.Flumblr.entities.Role;
 @Service
 @AllArgsConstructor
-public class UserServices {
+public class UserService {
     
     private final UserRepository userRepo;
-    private final RoleRepository roleRepo;
+
+    private final RoleService roleService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
-        Role role = roleRepo.getReferenceById("96de8a55-f37b-40c9-8fec-418bfaccdd5d");
+        // Role role = roleService.getReferenceById("96de8a55-f37b-40c9-8fec-418bfaccdd5d");
     
-        User newUser = new User(req.getUsername(), hashed, req.getEmail(), role);
+
+        // User newUser = new User(req.getUsername(), hashed, req.getEmail(), role);
+
+        User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
+
         // save and return user
         return userRepo.save(newUser);
     }
 
-   public Principal login(NewLoginRequest req) {
-    Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
-
-    if (userOpt.isPresent()) {
-        User foundUser = userOpt.get();
-        if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
-            return new Principal(foundUser);
-        } else {
-            throw new UserNotFoundException("Invalid password");
-        }
+    public User getUserById(String userId) {
+        Optional<User> userOpt = userRepo.findById(userId);
+        if(userOpt.isEmpty()) throw new UserNotFoundException("couldn't find user for id " + userId);
+        return userOpt.get();
     }
-    throw new UserNotFoundException("Invalid username");
-}
 
+   public Principal login(NewLoginRequest req) {
+        Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
+
+        if (userOpt.isPresent()) {
+            User foundUser = userOpt.get();
+            if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
+                return new Principal(foundUser);
+            } else {
+                throw new UserNotFoundException("Invalid password");
+            }
+        }
+// <<<<<<< HEAD:src/main/java/com/revature/Flumblr/services/UserServices.java
+//     }
+//     throw new UserNotFoundException("Invalid username");
+// }
+// =======
+// >>>>>>> Min-Development:src/main/java/com/revature/Flumblr/services/UserService.java
+
+        throw new UserNotFoundException("Invalid username");
+    }
 
     public boolean isValidUsername(String username) {
         return username.matches("^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$");
