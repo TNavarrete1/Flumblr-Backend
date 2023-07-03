@@ -16,25 +16,25 @@ import lombok.AllArgsConstructor;
 @Service
 public class ProfileVoteService {
     ProfileVoteRepository profileVoteRepo;
-    // ProfileService profileService;
+    ProfileService profileService;
     UserService userService;
 
-    // public void vote(ProfileVoteRequest req) {
-    //     User user = userService.findById(req.getUserId());
-    //     Profile profile = profileService.findById(req.getProfileId());
-    //     ProfileVote vote = findByUserAndProfile(user, profile);
-    //     if (vote == null) {
-    //         vote = new ProfileVote(user, profile, req.isVote());
-    //     } else {
-    //         if (vote.isVote() == req.isVote()) {
-    //             delete(vote);
-    //             return;
-    //         } else {
-    //             vote.setVote(req.isVote());
-    //         }
-    //     }
-    //     save(vote);
-    // }
+    public void vote(ProfileVoteRequest req) {
+        User user = userService.findById(req.getUserId());
+        Profile profile = profileService.findById(req.getProfileId());
+        ProfileVote vote = findByUserAndProfile(user, profile);
+        if (vote == null) {
+            vote = new ProfileVote(user, profile, req.isVote());
+        } else {
+            if (vote.isVote() == req.isVote()) {
+                delete(vote);
+                return;
+            } else {
+                vote.setVote(req.isVote());
+            }
+        }
+        save(vote);
+    }
 
     public void save(ProfileVote vote) {
         profileVoteRepo.save(vote);
@@ -48,7 +48,7 @@ public class ProfileVoteService {
         profileVoteRepo.delete(vote);
     }
 
-    // public ProfileVote findByUserAndProfile(User user, Profile profile) {
-    //     return profileVoteRepo.findByUserAndProfile(user, profile).orElse(null);
-    // }
+    public ProfileVote findByUserAndProfile(User user, Profile profile) {
+        return profileVoteRepo.findByUserAndProfile(user, profile).orElse(null);
+    }
 }

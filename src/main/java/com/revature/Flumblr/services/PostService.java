@@ -28,9 +28,7 @@ import com.revature.Flumblr.entities.Post;
 public class PostService {
     private final PostRepository postRepo;
     private final UserService userService;
-       private final CommentRepository commentRepository;
-   private final UserRepository userRepository;
-   private final PostRepository postRepository;
+      
 
     public List<PostResponse> getFeed(String userId, int page) {
         User user = userService.getUserById(userId);
@@ -62,10 +60,4 @@ public class PostService {
         return new PostResponse(userPost.get());
     }
 
-        public void commentOnPost(NewCommentRequest req) {
-        User user = userRepository.getReferenceById(req.getUser_id());
-        Post post = postRepository.getReferenceById(req.getPost_id());
-        Comment com = new Comment(req.getComment(), post, user);
-        commentRepository.save(com);     
-    }   
 }

@@ -17,22 +17,22 @@ public class PostVoteService {
     PostService postService;
     UserService userService;
 
-    // public void vote(PostVoteRequest req) {
-    //     User user = userService.getUserById(req.getUserId());
-    //     Post post = postService.findById(req.getPostId());
-    //     PostVote vote = findByUserAndPost(user, post);
-    //     if (vote == null) {
-    //         vote = new PostVote(user, post, req.isVote());
-    //     } else {
-    //         if (vote.isVote() == req.isVote()) {
-    //             delete(vote);
-    //             return;
-    //         } else {
-    //             vote.setVote(req.isVote());
-    //         }
-    //     }
-    //     save(vote);
-    // }
+    public void vote(PostVoteRequest req) {
+        User user = userService.findById(req.getUserId());
+        Post post = postService.findById(req.getPostId());
+        PostVote vote = findByUserAndPost(user, post);
+        if (vote == null) {
+            vote = new PostVote(user, post, req.isVote());
+        } else {
+            if (vote.isVote() == req.isVote()) {
+                delete(vote);
+                return;
+            } else {
+                vote.setVote(req.isVote());
+            }
+        }
+        save(vote);
+    }
 
     public void save(PostVote vote) {
         postVoteRepo.save(vote);
