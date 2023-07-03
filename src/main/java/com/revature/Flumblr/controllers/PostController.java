@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.PostService;
+import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
+import com.revature.Flumblr.services.CommentService;
 
 @RestController
 @CrossOrigin
@@ -25,12 +29,14 @@ public class PostController {
     // dependency injection ie. services
     private final TokenService tokenService;
     private final PostService postService;
+    private  final CommentService commentService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    public PostController(TokenService tokenService, PostService postService) {
+    public PostController(TokenService tokenService, PostService postService, CommentService commentService) {
         this.tokenService = tokenService;
         this.postService = postService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/feed/{page}")
@@ -62,7 +68,7 @@ public class PostController {
     @RequestHeader("Authorization") String token) {
 
         tokenService.validateToken(token, req.getUser_id());
-        postService.commentOnPost(req);
+        commentService.commentOnPost(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
