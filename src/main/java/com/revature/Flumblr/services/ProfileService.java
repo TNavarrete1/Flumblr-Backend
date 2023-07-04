@@ -41,7 +41,7 @@ public class ProfileService {
     }
 
     public Profile getProfileByUser(String id) {
-        return profileRepo.getProfile(id);
+        return profileRepo.getProfileByUser(id);
     }
 
 }
