@@ -1,5 +1,6 @@
 package com.revature.Flumblr.entities;
 
+import java.sql.Types;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,9 +25,11 @@ public class Profile {
     @Id
     private String id;
 
+    @Lob
     @Column
+    @JdbcTypeCode(Types.VARBINARY)
     //DB script should use profileImg=bytea as type in postgres
-    private byte[] profileImg;
+    private byte[] profile_img;
 
     @Column
     private String bio;
@@ -39,10 +44,10 @@ public class Profile {
     @JoinTable(name = "profile_tag_list", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    public Profile(User user, byte[] profileImg, String bio) {
+    public Profile(User user, byte[] profile_img, String bio) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
-        this.profileImg = profileImg;
+        this.profile_img = profile_img;
         this.bio = bio;
     }
 

@@ -1,6 +1,7 @@
 package com.revature.Flumblr.services;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ProfileNotFoundException;
@@ -31,12 +32,20 @@ public class ProfileService {
 //        return profileRepo.save(newProfile);
 //    }
 
-    public Profile setProfileImg(byte[] img, NewProfileRequest req) {
-        return profileRepo.setProfileImg(img, req.getUserId());
+//    public Profile setProfileImg(byte[] img, NewProfileRequest req) {
+//        User existingUser = userRepo.getReferenceById(req.getUserId());
+//        return profileRepo.setProfileImg(img, existingUser);
+//    }
+
+    //this seems to work at least,  not sure why it doesnt like the above
+    public void setProfileImg(byte[] img, NewProfileRequest req) {
+        User existingUser = userRepo.getReferenceById(req.getUserId());
+        profileRepo.setProfileImg(img, existingUser);
     }
 
     public Profile setBio(NewProfileRequest req) {
-        return profileRepo.setBio(req.getBio(), req.getUserId());
+        User existingUser = userRepo.getReferenceById(req.getUserId());
+        return profileRepo.setBio(req.getBio(), existingUser);
     }
 
     public Profile getProfileByUser(String id) {
