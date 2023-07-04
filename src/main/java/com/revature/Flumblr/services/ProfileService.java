@@ -25,16 +25,19 @@ public class ProfileService {
         return profileOpt.get();
     }
 
-    public Profile save(NewProfileRequest req) {
-        User existingUser = userRepo.getReferenceById(req.getUserId());
-        Profile newProfile = new Profile(existingUser, req.getProfile_img(), req.getBio());
-        return profileRepo.save(newProfile);
+    //probably dont need this - we can just allow nulls for profileImg and bio initially
+//    public Profile save(NewProfileRequest req) {
+//        User existingUser = userRepo.getReferenceById(req.getUserId());
+//        Profile newProfile = new Profile(existingUser, req.getProfile_img(), req.getBio());
+//        return profileRepo.save(newProfile);
+//    }
+
+    public Profile setProfileImg(byte[] img, String userId) {
+        return profileRepo.setProfileImg(img, userId);
     }
 
-    public Profile update(NewProfileRequest req) {
-        User existingUser = userRepo.getReferenceById(req.getUserId());
-        Profile prof = new Profile(existingUser, req.getProfile_img(), req.getBio());
-        return profileRepo.update(prof);
+    public Profile setBio(NewProfileRequest req) {
+        return profileRepo.setBio(req.getBio(), req.getUserId());
     }
 
 }
