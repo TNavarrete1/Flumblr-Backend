@@ -13,7 +13,7 @@ public class NewProfileRequest {
 
     private String userId;
     //type of profile_img is subject to change - considering Blob
-    private String profile_img;
+    private byte[] profile_img;
     private String bio;
 
 }

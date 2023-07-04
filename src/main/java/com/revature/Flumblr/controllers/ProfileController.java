@@ -21,6 +21,7 @@ public class ProfileController {
     @PostMapping("/create")
     ResponseEntity<?> postProfile(@RequestBody NewProfileRequest req, @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
+        //probably will need some type of conversion if not done at frontend to make the image a byte[]
         profileService.save(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -30,6 +31,7 @@ public class ProfileController {
     ResponseEntity<?> updateProfile(@RequestBody NewProfileRequest req, @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
         //considerations to be made about how to handle possibly incomplete information
+        //also might need conversion of image to byte[] if not done at frontend
         profileService.update(req);
         return ResponseEntity.status(HttpStatus.OK).body(req);
     }
