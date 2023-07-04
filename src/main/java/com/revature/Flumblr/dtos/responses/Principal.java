@@ -21,7 +21,5 @@ public class Principal {
     public Principal(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.role = user.getRole().getName();
     }
 }
