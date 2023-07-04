@@ -37,7 +37,11 @@ public class TokenService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            throw new InvalidTokenException("Invalid Token");
+        }
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

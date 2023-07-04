@@ -1,5 +1,7 @@
 package com.revature.Flumblr.entities;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -32,4 +34,10 @@ public class Follow {
     @JoinColumn(name = "follow")
     @JsonBackReference
     private User follow;
+
+    public Follow(User user, User follow) {
+        this.id = UUID.randomUUID().toString();
+        this.user = user;
+        this.follow = follow;
+    }
 }

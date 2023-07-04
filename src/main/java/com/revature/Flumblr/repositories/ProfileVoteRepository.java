@@ -9,5 +9,5 @@ import com.revature.Flumblr.entities.ProfileVote;
 import com.revature.Flumblr.entities.User;
 
 public interface ProfileVoteRepository extends JpaRepository<ProfileVote, String> {
-    Optional<ProfileVote> findByUserAndComment(User user, Profile profile);
+    Optional<ProfileVote> findByUserAndProfile(User user, Profile profile);
 }
