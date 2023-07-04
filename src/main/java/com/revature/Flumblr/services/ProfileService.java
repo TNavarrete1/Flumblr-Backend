@@ -32,15 +32,15 @@ public class ProfileService {
 //        return profileRepo.save(newProfile);
 //    }
 
-    public Profile setProfileImg(byte[] img, String userId) {
-        return profileRepo.setProfileImg(img, userId);
+    public Profile setProfileImg(byte[] img, NewProfileRequest req) {
+        return profileRepo.setProfileImg(img, req.getUserId());
     }
 
     public Profile setBio(NewProfileRequest req) {
         return profileRepo.setBio(req.getBio(), req.getUserId());
     }
 
-    public Profile getProfile(String id) {
+    public Profile getProfileByUser(String id) {
         return profileRepo.getProfile(id);
     }
 

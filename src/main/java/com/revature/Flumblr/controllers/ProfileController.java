@@ -35,7 +35,7 @@ public class ProfileController {
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
                                                    @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, id);
-        ProfileResponse res = new ProfileResponse(profileService.getProfile(id).getBio());
+        ProfileResponse res = new ProfileResponse(profileService.getProfileByUser(id).getBio());
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
@@ -46,7 +46,7 @@ public class ProfileController {
                                          @RequestHeader("Authorization") String token) throws IOException {
 
         tokenService.validateToken(token, req.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(profileService.setProfileImg(file.getBytes(), req.getUserId()));
+        return ResponseEntity.status(HttpStatus.OK).body(profileService.setProfileImg(file.getBytes(), req));
     }
 
     //update profile bio
