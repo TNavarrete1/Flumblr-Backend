@@ -46,16 +46,4 @@ public class Profile {
         this.bio = bio;
     }
 
-    //used in profile service to update only profileImg
-    public Profile(User user, byte[] profileImg) {
-        this.user = user;
-        this.profileImg = profileImg;
-    }
-
-    //used in profile service to update only bio
-    public Profile(User user, String bio) {
-        this.user = user;
-        this.bio = bio;
-    }
-
 }

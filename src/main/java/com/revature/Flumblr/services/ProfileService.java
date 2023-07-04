@@ -1,7 +1,6 @@
 package com.revature.Flumblr.services;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.entities.Profile;
-import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ProfileNotFoundException;
