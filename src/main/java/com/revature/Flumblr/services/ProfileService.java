@@ -37,7 +37,6 @@ public class ProfileService {
 //        return profileRepo.setProfileImg(img, existingUser);
 //    }
 
-    //this seems to work at least,  not sure why it doesnt like the above
     public void setProfileImg(byte[] img, NewProfileRequest req) {
         User existingUser = userRepo.getReferenceById(req.getUserId());
         profileRepo.setProfileImg(img, existingUser);

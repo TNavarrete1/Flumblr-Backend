@@ -25,7 +25,7 @@ public class Profile {
     @Id
     private String id;
 
-    @Lob
+    //@Lob
     @Column
     @JdbcTypeCode(Types.VARBINARY)
     //DB script should use profileImg=bytea as type in postgres

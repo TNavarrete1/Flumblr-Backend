@@ -17,11 +17,11 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
 //    Profile setProfileImg(byte[] profile_img, User user);
 
     @Modifying
-    @Query("UPDATE profile p SET p.profile_img = ?1 WHERE p.user_id = ?2")
+    @Query("UPDATE profile p SET p.profile_img = ?1 WHERE p.user = ?2")
     void setProfileImg(byte[] profile_img, User user);
 
     @Modifying
-    @Query("UPDATE profile p SET p.bio = ?1 WHERE p.user_id = ?2")
+    @Query("UPDATE profile p SET p.bio = ?1 WHERE p.user = ?2")
     Profile setBio(String bio, User user);
 
     Profile getProfileByUser(String user_id);
