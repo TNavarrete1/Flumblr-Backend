@@ -18,4 +18,6 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     @Query("UPDATE profile p SET p.bio = ?1 WHERE p.user_id = ?2")
     Profile setBio(String bio, String user_id);
 
+    Profile getProfile(String user_id);
+
 }

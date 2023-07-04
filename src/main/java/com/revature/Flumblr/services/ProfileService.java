@@ -40,4 +40,8 @@ public class ProfileService {
         return profileRepo.setBio(req.getBio(), req.getUserId());
     }
 
+    public Profile getProfile(String id) {
+        return profileRepo.getProfile(id);
+    }
+
 }

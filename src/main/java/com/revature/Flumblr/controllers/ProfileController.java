@@ -1,6 +1,7 @@
 package com.revature.Flumblr.controllers;
 
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
+import com.revature.Flumblr.dtos.responses.ProfileResponse;
 import com.revature.Flumblr.services.ProfileService;
 import com.revature.Flumblr.services.TokenService;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,16 @@ public class ProfileController {
 //        return ResponseEntity.status(HttpStatus.CREATED).build();
 //    }
 
-    //update profile
+    //get profile bio (and image?) by user id -- need to figure out how frontend needs to receive the image
+    @GetMapping("/{id}")
+    ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
+                                                   @RequestHeader("Authorization") String token) {
+        tokenService.validateToken(token, id);
+        ProfileResponse res = new ProfileResponse(profileService.getProfile(id).getBio());
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    //upload profile image
     @PatchMapping("/upload")
     ResponseEntity<?> updateProfileImage(@RequestParam("imgFile") MultipartFile file,
                                          @RequestBody NewProfileRequest req,
@@ -39,6 +49,7 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body(profileService.setProfileImg(file.getBytes(), req.getUserId()));
     }
 
+    //update profile bio
     @PatchMapping("/bio")
     ResponseEntity<?> updateProfileBio(@RequestBody NewProfileRequest req, @RequestHeader("Authorization") String token) {
         tokenService.validateToken(token, req.getUserId());
