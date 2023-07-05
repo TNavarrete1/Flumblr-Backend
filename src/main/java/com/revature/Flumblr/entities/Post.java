@@ -73,16 +73,16 @@ public class Post {
 
     @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
+    private Set<Report> postReports;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Bookmark> bookmarks;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonManagedReference
     @JoinTable(name = "post_tag_list", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
-
-    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Set<Report> reports;
 
     public Post(String postTitle, String message, User user) {
         this.s3Url = postTitle;

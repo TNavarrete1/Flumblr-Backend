@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,16 +23,14 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "reports")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Report {
-
     @Id
     private String id;
 
     @Column(name = "create_time", nullable = false)
     private Date createTime;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     private String reason;
 
     @ManyToOne(fetch = FetchType.LAZY)
