@@ -1,10 +1,12 @@
 package com.revature.Flumblr.entities;
 
 import java.util.Date;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -19,6 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
 @Table(name = "reports")
 public class Report {
     @Id
@@ -41,6 +44,7 @@ public class Report {
     private Post post;
 
     public Report(User user, Post post, String message) {
+        this.id = UUID.randomUUID().toString();
         this.user = user;
         this.post = post;
         this.message = message;
