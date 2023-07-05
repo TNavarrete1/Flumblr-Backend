@@ -34,6 +34,11 @@ public class PostService {
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
     }
 
+    public List<Post> findByTag(List<String> tags, int page) {
+        return postRepository.findAllByTagsNameIn(tags,
+            PageRequest.of(page, 20, Sort.by("createTime").descending()));
+    }
+
     public List<Post> getUserPosts(String userId) {
         return this.postRepository.findByUserIdOrderByCreateTimeDesc(userId);
     }
