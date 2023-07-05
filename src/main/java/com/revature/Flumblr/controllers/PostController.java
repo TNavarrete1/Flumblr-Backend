@@ -70,6 +70,9 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/trending/{trendingStartPoint}")
+    public ResponseEntity<?> getTrending(@PathVariable Date time)
+
     
 
 }
