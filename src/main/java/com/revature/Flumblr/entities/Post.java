@@ -73,6 +73,10 @@ public class Post {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     @JsonManagedReference
+    private Set<Report> postReports;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Bookmark> bookmarks;
 
     @ManyToMany(fetch = FetchType.LAZY)
