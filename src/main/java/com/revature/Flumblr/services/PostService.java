@@ -1,5 +1,6 @@
 package com.revature.Flumblr.services;
 
+import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -11,10 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
+
 
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
@@ -23,6 +26,7 @@ import com.revature.Flumblr.entities.Post;
 @AllArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    public final BookmarksRepository bookmarksRepository;
     private final UserService userService;
 
     public List<PostResponse> getFeed(String userId, int page) {
@@ -62,5 +66,4 @@ public class PostService {
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         return userPost.get();
     }
-
 }
