@@ -27,6 +27,8 @@ public class Notification {
 
     private String message;
 
+    private boolean viewed;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -36,5 +38,6 @@ public class Notification {
         this.id = UUID.randomUUID().toString();
         this.message = message;
         this.user = user;
+        this.viewed = false;
     }
 }
