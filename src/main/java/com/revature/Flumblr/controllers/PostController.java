@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,4 +80,23 @@ public class PostController {
         commentService.commentOnPost(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("/id/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable String postId, @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token); 
+        logger.trace("Deleting post " + postId + " requested by " + requesterId);
+    
+        String postOwnerId = postService.getPostOwner(postId);
+    
+        if (!postOwnerId.equals(requesterId)) {
+            logger.warn("User " + requesterId + " attempted to delete post " + postId + " that they do not own");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this post.");
+        }
+
+        postService.deletePost(postId);
+    
+        return ResponseEntity.status(HttpStatus.OK).body("Post was successfully deleted.");
+    }
+
+
 }
