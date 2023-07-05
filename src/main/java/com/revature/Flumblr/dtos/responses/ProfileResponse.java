@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 public class ProfileResponse {
 
+    private String profile_img;
     private String bio;
 
 }
