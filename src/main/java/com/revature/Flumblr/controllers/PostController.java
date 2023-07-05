@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
+import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
@@ -38,6 +39,7 @@ public class PostController {
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
             @PathVariable int page) {
+        if(page <= 0) throw new BadRequestException("page must be > 0");
         String userId = tokenService.extractUserId(token);
         logger.trace("generating feed for " + userId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getFeed(userId, page - 1));

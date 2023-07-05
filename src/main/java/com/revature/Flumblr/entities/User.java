@@ -87,6 +87,10 @@ public class User {
     @JsonManagedReference
     private Set<Follow> following;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Report> reports;
+
     public User(String username, String password, String email, Role role) {
         this.username = username;
         this.password = password;

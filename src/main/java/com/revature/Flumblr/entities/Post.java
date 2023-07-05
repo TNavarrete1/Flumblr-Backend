@@ -67,11 +67,11 @@ public class Post {
     @JsonManagedReference
     private Set<PostVote> postVotes;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<PostView> postViews;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Bookmark> bookmarks;
 
@@ -79,6 +79,10 @@ public class Post {
     @JsonManagedReference
     @JoinTable(name = "post_tag_list", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Report> reports;
 
     public Post(String postTitle, String message, User user) {
         this.s3Url = postTitle;
