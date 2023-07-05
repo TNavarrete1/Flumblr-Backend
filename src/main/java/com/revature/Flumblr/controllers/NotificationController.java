@@ -48,7 +48,7 @@ public class NotificationController {
     }
 
     @PutMapping("/{notificationId}")
-    public ResponseEntity<?> commentOnPost(@RequestBody NotificationRequest req,
+    public ResponseEntity<?> readNotification(@RequestBody NotificationRequest req,
             @RequestHeader("Authorization") String token) {
 
         tokenService.validateToken(token, req.getUserId());
@@ -58,7 +58,7 @@ public class NotificationController {
     }
 
     @DeleteMapping("/{notificationId}")
-    public ResponseEntity<?> deleteFollow(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> deleteNotification(@RequestHeader("Authorization") String token,
             @PathVariable String notificationId) {
         tokenService.extractUserId(token);
         notificationService.deleteNotification(notificationId);
