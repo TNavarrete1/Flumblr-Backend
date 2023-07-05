@@ -46,4 +46,8 @@ public class Profile {
         this.bio = bio;
     }
 
+    public Profile(String id) {
+        this.id = id;
+    }
+
 }

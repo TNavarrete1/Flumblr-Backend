@@ -17,12 +17,14 @@ public class ProfileService {
     UserRepository userRepo;
     ProfileRepository profileRepo;
 
-    public Profile findById(String profileId) {
-        Optional<Profile> profileOpt = profileRepo.findById(profileId);
-        if (profileOpt.isEmpty()) {
-            throw new ProfileNotFoundException("No profile located for specified Id.");
-        }
-        return profileOpt.get();
+//    public Profile findById(String profileId) {
+//        Profile aProfile = new Profile(profileId);
+//        return profileRepo.findByProfileId(aProfile);
+//    }
+
+    public Profile getProfileByUser(String id) {
+        User existingUser = userRepo.getReferenceById(id);
+        return profileRepo.getProfileByUser(existingUser);
     }
 
     public void setProfileImg(String img, NewProfileRequest req) {
@@ -35,8 +37,8 @@ public class ProfileService {
         return profileRepo.setBio(req.getBio(), existingUser);
     }
 
-    public Profile getProfileByUser(String id) {
-        return profileRepo.getProfileByUser(id);
+    public Profile getProfileByUser(User user) {
+        return profileRepo.getProfileByUser(user);
     }
 
 }

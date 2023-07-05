@@ -13,5 +13,6 @@ public class ProfileResponse {
 
     private String profile_img;
     private String bio;
+    //possibly include profile vote total
 
 }
