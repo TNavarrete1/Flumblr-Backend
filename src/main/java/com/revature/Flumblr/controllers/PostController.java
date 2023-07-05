@@ -16,12 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.services.CommentService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
+@AllArgsConstructor
 @CrossOrigin
 @RequestMapping("/posts")
 public class PostController {
@@ -32,11 +38,14 @@ public class PostController {
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    public PostController(TokenService tokenService, PostService postService, CommentService commentService) {
-        this.tokenService = tokenService;
-        this.postService = postService;
-        this.commentService = commentService;
-    }
+    // @PostMapping("/create")
+    // public ResponseEntity<?>createPost(@RequestBody NewPostRequest req, @RequestHeader("Authorization") String token){
+
+
+    
+
+    
+    // }
 
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,

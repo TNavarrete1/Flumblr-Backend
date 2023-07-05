@@ -9,7 +9,6 @@ import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileVoteRepository;
 
 import lombok.AllArgsConstructor;
-
 @AllArgsConstructor
 @Service
 public class ProfileVoteService {
@@ -18,8 +17,12 @@ public class ProfileVoteService {
     UserService userService;
 
     public void vote(ProfileVoteRequest req) {
-        User user = userService.findById(req.getUserId());
-        Profile profile = profileService.findById(req.getProfileId());
+
+        // Patrick will handle profileService
+
+        User user = null;
+        Profile profile = null;
+
         ProfileVote vote = findByUserAndProfile(user, profile);
         if (vote == null) {
             vote = new ProfileVote(user, profile, req.isVote());
