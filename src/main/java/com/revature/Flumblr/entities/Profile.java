@@ -1,6 +1,5 @@
 package com.revature.Flumblr.entities;
 
-import java.sql.Types;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
 
 
 @AllArgsConstructor
