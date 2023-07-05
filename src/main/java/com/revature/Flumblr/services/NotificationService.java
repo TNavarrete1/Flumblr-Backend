@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NotificationRequest;
 import com.revature.Flumblr.entities.Notification;
+import com.revature.Flumblr.entities.NotificationType;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.NotificationRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
@@ -19,8 +20,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserService userService;
 
-    public void createNotification(String message, String link, User user) {
-        Notification notification = new Notification(message, user, link);
+    public void createNotification(String message, String link, User user, NotificationType notificationType) {
+        Notification notification = new Notification(message, user, link, notificationType);
         notificationRepository.save(notification);
     }
 
