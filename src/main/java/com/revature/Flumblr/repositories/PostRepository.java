@@ -13,4 +13,5 @@ import com.revature.Flumblr.entities.User;
 public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findByUserIdOrderByCreateTimeDesc(String userId);
     List<Post> findAllByUserIn(List<User> following, Pageable pageable);
+    List<Post> findAllByTagsNameIn(List<String> tags, Pageable pageable);
 }
