@@ -1,6 +1,7 @@
 package com.revature.Flumblr.controllers;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -54,7 +55,12 @@ public class ReportController {
         if(!roleName.equals("ADMIN")) {
             throw new UnauthorizedException("Must be Admin to see reports");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(reportService.findAll(page - 1));
+        List<Report> reports = reportService.findAll(page - 1);
+        List<ReportResponse> responses = new ArrayList<ReportResponse>();
+        for(Report report : reports) {
+            responses.add(new ReportResponse(report));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @GetMapping("/user/{userId}")
@@ -67,7 +73,12 @@ public class ReportController {
             logger.debug("unauthorized report query by user " + tokenId);
             throw new UnauthorizedException("Must be Admin to see reports");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(reportService.findAllByUserId(userId));
+        List<Report> reports = reportService.findAllByUserId(userId);
+        List<ReportResponse> responses = new ArrayList<ReportResponse>();
+        for(Report report : reports) {
+            responses.add(new ReportResponse(report));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @DeleteMapping("{reportId}")

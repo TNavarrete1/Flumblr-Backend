@@ -4,7 +4,6 @@ import com.revature.Flumblr.repositories.ReportRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +14,6 @@ import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
 
-import com.revature.Flumblr.dtos.responses.ReportResponse;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.Report;
 
@@ -37,14 +35,9 @@ public class ReportService {
         this.reportRepository.delete(report);
     }
 
-    public List<ReportResponse> findAll(int page) {
-        List<Report> reports = reportRepository.findAllBy(
+    public List<Report> findAll(int page) {
+        return reportRepository.findAllBy(
             PageRequest.of(page, 20, Sort.by("createTime").ascending()));
-        List<ReportResponse> responses = new ArrayList<ReportResponse>();
-        for(Report report : reports) {
-            responses.add(new ReportResponse(report));
-        }
-        return responses;
     }
 
     public Report findById(String postId) {
@@ -54,12 +47,7 @@ public class ReportService {
         return report.get();
     }
 
-    public List<ReportResponse> findAllByUserId(String userId) {
-        List<Report> reports = reportRepository.findAllByUserId(userId);
-        List<ReportResponse> responses = new ArrayList<ReportResponse>();
-        for(Report report : reports) {
-            responses.add(new ReportResponse(report));
-        }
-        return responses;
+    public List<Report> findAllByUserId(String userId) {
+        return reportRepository.findAllByUserId(userId);
     }
 }

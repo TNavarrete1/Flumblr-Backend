@@ -5,9 +5,6 @@ import org.springframework.stereotype.Repository;
 
 // import java.util.List;
 
-/**
- * The PostRepository interface provides database operations for Post entities.
- */
 import com.revature.Flumblr.entities.Comment;
 
 @Repository
