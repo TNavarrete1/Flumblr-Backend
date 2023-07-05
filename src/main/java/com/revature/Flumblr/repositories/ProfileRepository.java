@@ -12,13 +12,9 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
 
     Optional<Profile> findById(String profileId);
 
-//    @Modifying
-//    @Query("UPDATE profile p SET p.profile_img = ?1 WHERE p.user_id = ?2")
-//    Profile setProfileImg(byte[] profile_img, User user);
-
     @Modifying
     @Query("UPDATE profile p SET p.profile_img = ?1 WHERE p.user = ?2")
-    void setProfileImg(byte[] profile_img, User user);
+    void setProfileImg(String profile_img, User user);
 
     @Modifying
     @Query("UPDATE profile p SET p.bio = ?1 WHERE p.user = ?2")

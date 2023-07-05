@@ -25,11 +25,8 @@ public class Profile {
     @Id
     private String id;
 
-    //@Lob
     @Column
-    @JdbcTypeCode(Types.VARBINARY)
-    //DB script should use profileImg=bytea as type in postgres
-    private byte[] profile_img;
+    private String profile_img;
 
     @Column
     private String bio;
@@ -44,7 +41,7 @@ public class Profile {
     @JoinTable(name = "profile_tag_list", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    public Profile(User user, byte[] profile_img, String bio) {
+    public Profile(User user, String profile_img, String bio) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.profile_img = profile_img;
