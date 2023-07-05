@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
 
-import jakarta.servlet.http.HttpServletRequest;
+// import jakarta.servlet.http.HttpServletRequest;
 
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
+import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.services.CommentService;
 
@@ -39,14 +40,19 @@ public class PostController {
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    // @PostMapping("/create")
-    // public ResponseEntity<?>createPost(@RequestBody NewPostRequest req, @RequestHeader("Authorization") String token){
+    @PostMapping("/create")
+    public ResponseEntity<?>createPost(@RequestBody NewPostRequest req, @RequestHeader("Authorization") String token){
+        
+        String userId = tokenService.extractUserId(token);
+        logger.trace("creating post from " + userId);
+
+        
 
 
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     
-
-    
-    // }
+    }
 
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,

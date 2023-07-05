@@ -36,7 +36,11 @@ public class ProfileService {
     }
 
     public Profile getProfileByUser(String id) {
-        return profileRepo.getProfileByUser(id);
+
+         User existingUser = userRepo.getReferenceById(id);
+
+
+        return profileRepo.getProfileByUser(existingUser);
     }
 
 }
