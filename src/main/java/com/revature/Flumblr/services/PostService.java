@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -62,5 +63,17 @@ public class PostService {
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         return userPost.get();
     }
+    public String getPostOwner(String postId) {
+    Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
+    return post.getUser().getId();
+    }
+
+    public void deletePost(String postId) {
+    try {
+        postRepository.deleteById(postId);
+    } catch (EmptyResultDataAccessException e) {
+        throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+    }
+    }   
 
 }

@@ -1,5 +1,7 @@
 package com.revature.Flumblr.services;
 
+import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
@@ -23,13 +25,20 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final RoleService roleService;
+    private final ProfileRepository profileRepository;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
         // save and return user
-        return userRepository.save(newUser);
+        User createdUser = userRepository.save(newUser);
+
+        // create and save unique profile id for each user to be updated on profile page
+        Profile blankProfile = new Profile(createdUser, null, null);
+        profileRepository.save(blankProfile);
+
+        return createdUser;
     }
 
     public User findById(String userId) {
@@ -85,4 +94,4 @@ public class UserService {
             return false;
         }
     }
-}
+

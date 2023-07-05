@@ -1,25 +1,42 @@
 package com.revature.Flumblr.services;
+import com.revature.Flumblr.dtos.requests.NewProfileRequest;
+import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.User;
+import com.revature.Flumblr.repositories.ProfileRepository;
+import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.utils.custom_exceptions.ProfileNotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
-import com.revature.Flumblr.entities.Profile;
-import com.revature.Flumblr.repositories.ProfileRepository;
-import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
-
-import lombok.AllArgsConstructor;
-
-@Service
 @AllArgsConstructor
+@Service
 public class ProfileService {
-    private final ProfileRepository profileRepository;
+
+    UserRepository userRepo;
+    ProfileRepository profileRepo;
 
     public Profile findById(String profileId) {
-        Optional<Profile> profileOpt = profileRepository.findById(profileId);
-        if (profileOpt.isEmpty())
-            throw new ResourceNotFoundException("couldn't find profile for id " + profileId);
+        Optional<Profile> profileOpt = profileRepo.findById(profileId);
+        if (profileOpt.isEmpty()) {
+            throw new ProfileNotFoundException("No profile located for specified Id.");
+        }
         return profileOpt.get();
+    }
+
+    public void setProfileImg(String img, NewProfileRequest req) {
+        User existingUser = userRepo.getReferenceById(req.getUserId());
+        profileRepo.setProfileImg(img, existingUser);
+    }
+
+    public Profile setBio(NewProfileRequest req) {
+        User existingUser = userRepo.getReferenceById(req.getUserId());
+        return profileRepo.setBio(req.getBio(), existingUser);
+    }
+
+    public Profile getProfileByUser(String id) {
+        return profileRepo.getProfileByUser(id);
     }
 
 }
