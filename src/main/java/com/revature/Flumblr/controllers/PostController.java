@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
 
-import jakarta.servlet.http.HttpServletRequest;
+// import jakarta.servlet.http.HttpServletRequest;
 
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
