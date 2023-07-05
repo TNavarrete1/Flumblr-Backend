@@ -36,7 +36,7 @@ public class TokenService {
                 .compact();
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         try {
             return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         } catch (Exception e) {
@@ -60,7 +60,10 @@ public class TokenService {
     }
 
     public String extractUserId(String token) {
-
         return (String) extractAllClaims(token).get("id");
+    }
+
+    public String extractUserRole(String token) {
+        return (String) extractAllClaims(token).get("role");
     }
 }

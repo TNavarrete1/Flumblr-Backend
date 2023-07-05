@@ -7,10 +7,7 @@ import lombok.Setter;
 import java.util.Date;
 
 import com.revature.Flumblr.entities.Comment;
-/**
- * The Principal class represents the authenticated user's principal
- * information.
- */
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

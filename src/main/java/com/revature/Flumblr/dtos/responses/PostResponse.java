@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.Comment;
 
-/**
- * The Principal class represents the authenticated user's principal
- * information.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
