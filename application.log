@@ -1699,3 +1699,4 @@ Caused by: java.lang.IllegalArgumentException: Can't compare test expression of 
 	... 74 common frames omitted
 
 2023-07-05T13:25:00.373-04:00  WARN 6764 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-07-05T13:43:17.778-04:00  WARN 30032 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
