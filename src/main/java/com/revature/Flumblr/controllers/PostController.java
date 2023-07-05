@@ -60,7 +60,6 @@ public class PostController {
         if(tags.size() < 1) throw new BadRequestException("empty tags parameter");
         String userId = tokenService.extractUserId(token);
         logger.trace("getting posts by tag(s) " + tags + " for " + userId);
-        System.out.println("Tags: " + tags);
         List<Post> posts = postService.findByTag(tags, page - 1);
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : posts) {
