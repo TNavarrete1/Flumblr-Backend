@@ -29,15 +29,24 @@ public class Notification {
 
     private boolean viewed;
 
+    private String link;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 
-    public Notification(String message, User user) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_id")
+    @JsonBackReference
+    private NotificationType notificationType;
+
+    public Notification(String message, User user, String link, NotificationType notificationType) {
         this.id = UUID.randomUUID().toString();
         this.message = message;
         this.user = user;
         this.viewed = false;
+        this.link = link;
+        this.notificationType = notificationType;
     }
 }
