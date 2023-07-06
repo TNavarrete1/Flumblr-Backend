@@ -1,6 +1,6 @@
 package com.revature.Flumblr.controllers;
 
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +14,6 @@ import com.revature.Flumblr.dtos.requests.BookmarkRequest;
 import com.revature.Flumblr.dtos.requests.DeleteBookmarkRequest;
 import com.revature.Flumblr.services.BookmarkService;
 import com.revature.Flumblr.services.TokenService;
-import com.revature.Flumblr.services.UserService;
 
 import lombok.AllArgsConstructor;
 

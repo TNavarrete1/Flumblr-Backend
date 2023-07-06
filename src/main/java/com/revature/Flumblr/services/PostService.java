@@ -36,7 +36,6 @@ import com.revature.Flumblr.entities.PostVote;
 @AllArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-    private final BookmarksRepository bookmarksRepository;
     private final UserService userService;
     private final UserRepository userRepository;
     private final PostVoteRepository postVoteRepository;
