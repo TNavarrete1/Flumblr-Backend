@@ -3,6 +3,7 @@ package com.revature.Flumblr.services;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -67,43 +68,42 @@ public class PostService {
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         return userPost.get();
     }
+
     public String getPostOwner(String postId) {
-    Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
-    return post.getUser().getId();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
+        return post.getUser().getId();
     }
 
     public void deletePost(String postId) {
-    try {
-        postRepository.deleteById(postId);
-    } catch (EmptyResultDataAccessException e) {
-        throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+        try {
+            postRepository.deleteById(postId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+        }
     }
-    }
-
-
 
     public void createPost(MultipartHttpServletRequest req, String fileUrl, String userId) {
 
         Optional<User> userOpt = userRepository.findById(userId);
 
         User user = userOpt.get();
-        
-        String message = req.getParameter("message");
-        // if(message == null){
-        //     message = "no caption";
-        // }
-        String mediaType = req.getParameter("mediaType");
-        // if(mediaType == null){
-        //     throw new FileNotUploadedException("Media Type can not be empty!");
-        // }
 
+        String message = req.getParameter("message");
+
+        if (message == null && fileUrl == null) {
+            throw new ResourceConflictException("Message or media required!");
+        }
+
+        String mediaType = req.getParameter("mediaType");
+        if(mediaType == null){
+            throw new FileNotUploadedException("Media Type can not be empty!");
+        }
 
         Post post = new Post(message, mediaType, fileUrl, user);
-        
+
         postRepository.save(post);
 
-
-
-    }   
+    }
 
 }
