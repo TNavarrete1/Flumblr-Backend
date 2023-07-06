@@ -1,6 +1,5 @@
 package com.revature.Flumblr.services;
 
-import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.CommentRepository;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
