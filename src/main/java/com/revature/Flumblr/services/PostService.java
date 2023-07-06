@@ -15,8 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.amazonaws.services.codecommit.model.FileContentRequiredException;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.entities.User;
 
@@ -91,13 +89,13 @@ public class PostService {
         User user = userOpt.get();
         
         String message = req.getParameter("message");
-        if(message == null){
-            message = "no caption";
-        }
+        // if(message == null){
+        //     message = "no caption";
+        // }
         String mediaType = req.getParameter("mediaType");
-        if(mediaType == null){
-            throw new FileNotUploadedException("Media Type can not be empty!");
-        }
+        // if(mediaType == null){
+        //     throw new FileNotUploadedException("Media Type can not be empty!");
+        // }
 
 
         Post post = new Post(message, mediaType, fileUrl, user);
