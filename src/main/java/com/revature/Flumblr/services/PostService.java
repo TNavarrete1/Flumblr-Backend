@@ -23,7 +23,6 @@ import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
 
-
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostVote;
@@ -49,7 +48,7 @@ public class PostService {
 
     public List<Post> findByTag(List<String> tags, int page) {
         return postRepository.findAllByTagsNameIn(tags,
-            PageRequest.of(page, 20, Sort.by("createTime").descending()));
+                PageRequest.of(page, 20, Sort.by("createTime").descending()));
     }
 
     public List<Post> getUserPosts(String userId) {
@@ -71,14 +70,14 @@ public class PostService {
     }
 
     public List<PostResponse> getTrending(Date fromDate) {
-    List<Post> responses = postRepository.findAll();
-    List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        List<Post> responses = postRepository.findAll();
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
 
         for (Post userPost : responses) {
             // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
             Double score = CalculateScore(userPost);
             int checkWhen = fromDate.compareTo(userPost.getCreateTime());
-            
+
             if (checkWhen == -1 || checkWhen == 0) {
                 resPosts.add(new PostResponse(userPost, score));
             }
@@ -87,32 +86,32 @@ public class PostService {
         Collections.sort(resPosts, new Comparator<PostResponse>() {
             @Override
             public int compare(PostResponse post1, PostResponse post2) {
-            double score1 = post1.getScore();
-            double score2 = post2.getScore();
+                double score1 = post1.getScore();
+                double score2 = post2.getScore();
 
-            if (score1 < score2) {
-                return 1; // Return a positive value to indicate post2 should come before post1
-            } else if (score1 > score2) {
-                return -1; // Return a negative value to indicate post1 should come before post2
-            } else {
-                return 0; // Return 0 to indicate the scores are equal
+                if (score1 < score2) {
+                    return 1; // Return a positive value to indicate post2 should come before post1
+                } else if (score1 > score2) {
+                    return -1; // Return a negative value to indicate post1 should come before post2
+                } else {
+                    return 0; // Return 0 to indicate the scores are equal
+                }
             }
-        }});
-        
+        });
+
         List<PostResponse> limitedList = resPosts.subList(0, Math.min(resPosts.size(), 10));
         return limitedList;
     }
 
     private Double CalculateScore(Post post) {
-         List<PostVote> listOfVotes = postVoteRepository.findAllByPost(post);
-         Integer numberofComments = commentRepository.findAllByPost(post).size();
+        List<PostVote> listOfVotes = postVoteRepository.findAllByPost(post);
+        Integer numberofComments = commentRepository.findAllByPost(post).size();
         Double score = 0.0;
         score = (numberofComments * 2) + score;
-        for (PostVote vote: listOfVotes) {
+        for (PostVote vote : listOfVotes) {
             if (vote.isVote()) {
                 score = score + 1.5;
-            }
-            else {
+            } else {
                 score = score - 1;
             }
         }

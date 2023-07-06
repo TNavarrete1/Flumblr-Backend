@@ -47,7 +47,8 @@ public class PostController {
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
             @PathVariable int page) {
-        if(page <= 0) throw new BadRequestException("page must be > 0");
+        if (page <= 0)
+            throw new BadRequestException("page must be > 0");
         String userId = tokenService.extractUserId(token);
         logger.trace("generating feed for " + userId);
         List<Post> posts = postService.getFeed(userId, page - 1);
@@ -61,8 +62,10 @@ public class PostController {
     @GetMapping("/tag/{page}")
     public ResponseEntity<List<PostResponse>> getByTags(@RequestHeader("Authorization") String token,
             @PathVariable int page, @RequestParam List<String> tags) {
-        if(page <= 0) throw new BadRequestException("page must be > 0");
-        if(tags.size() < 1) throw new BadRequestException("empty tags parameter");
+        if (page <= 0)
+            throw new BadRequestException("page must be > 0");
+        if (tags.size() < 1)
+            throw new BadRequestException("empty tags parameter");
         String userId = tokenService.extractUserId(token);
         logger.trace("getting posts by tag(s) " + tags + " for " + userId);
         List<Post> posts = postService.findByTag(tags, page - 1);
@@ -104,16 +107,12 @@ public class PostController {
     }
 
     @GetMapping("/trending/{fromDate}/{userId}")
-    public ResponseEntity<List<PostResponse>> 
-    getTrending (
-        @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-        @PathVariable("userId") String userId,
-        @RequestHeader("Authorization") String token)  
-    {
-         tokenService.validateToken(token, userId);
+    public ResponseEntity<List<PostResponse>> getTrending(
+            @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+            @PathVariable("userId") String userId,
+            @RequestHeader("Authorization") String token) {
+        tokenService.validateToken(token, userId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
     }
-
-    
 
 }

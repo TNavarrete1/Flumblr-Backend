@@ -22,6 +22,7 @@ public class CommentResponse {
     private Date editTime;
 
     private String postId;
+
     CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
         this.comment = comment.getComment();

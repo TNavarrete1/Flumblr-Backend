@@ -37,7 +37,7 @@ public class ReportService {
 
     public List<Report> findAll(int page) {
         return reportRepository.findAllBy(
-            PageRequest.of(page, 20, Sort.by("createTime").ascending()));
+                PageRequest.of(page, 20, Sort.by("createTime").ascending()));
     }
 
     public Report findById(String postId) {

@@ -21,31 +21,33 @@ public class FollowService {
 
     public boolean doesFollow(String userId, String followName) {
         Optional<Follow> followOpt = followRepository.findByUserIdAndFollowUsername(userId, followName);
-        return(!followOpt.isEmpty());
+        return (!followOpt.isEmpty());
     }
 
     // returns usernames
     public List<String> findAllByUserId(String userId) {
         List<String> follows = new ArrayList<String>();
         User user = userService.findById(userId);
-        for(Follow follow : user.getFollows()) {
+        for (Follow follow : user.getFollows()) {
             follows.add(follow.getFollow().getUsername());
         }
         return follows;
     }
-    
+
     // followName is the username of the person followed
     @Transactional
     public void delete(String userId, String followName) {
-        if(!doesFollow(userId, followName)) throw new ResourceConflictException("can't unfollow: user " + userId +
-            " doesn't follow " + followName);
+        if (!doesFollow(userId, followName))
+            throw new ResourceConflictException("can't unfollow: user " + userId +
+                    " doesn't follow " + followName);
         followRepository.deleteByUserIdAndFollowUsername(userId, followName);
     }
 
     // followName is the username of the person followed
     public void create(String userId, String followName) {
-        if(doesFollow(userId, followName)) throw new ResourceConflictException("can't follow: user " + userId +
-            " already follows " + followName);
+        if (doesFollow(userId, followName))
+            throw new ResourceConflictException("can't follow: user " + userId +
+                    " already follows " + followName);
         User follower = userService.findById(userId);
         User followed = userService.findByUsername(followName);
         Follow follow = new Follow(follower, followed);
