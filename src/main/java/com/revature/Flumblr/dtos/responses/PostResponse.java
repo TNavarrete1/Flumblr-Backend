@@ -36,6 +36,8 @@ public class PostResponse {
 
     private Date editTime;
 
+    private Double score;
+
     private List<CommentResponse> comments;
 
     private Set<Tag> tags;
@@ -54,5 +56,20 @@ public class PostResponse {
         for(Comment comment : post.getComments()) {
             this.comments.add(new CommentResponse(comment));
         }
+    }
+
+      public PostResponse(Post post, Double score) {
+        this.id = post.getId();
+        this.username = post.getUser().getUsername();
+        this.message = post.getMessage();
+        this.s3Url = post.getS3Url();
+        this.mediaType = post.getMediaType();
+        this.createTime = post.getCreateTime();
+        this.editTime = post.getEditTime();
+        this.comments = new ArrayList<CommentResponse>();
+        for(Comment comment : post.getComments()) {
+            this.comments.add(new CommentResponse(comment));
+        }
+        this.score = score;
     }
 }
