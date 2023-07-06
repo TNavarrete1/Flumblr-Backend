@@ -30,6 +30,12 @@ class PostServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private PostVoteRepository postVoteRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
+
     private User user;
 
     private Post post;
@@ -38,10 +44,10 @@ class PostServiceTest {
 
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
 
-
     @BeforeEach
     public void setup() {
-        postService = new PostService(postRepository, userService);
+        postService = new PostService(postRepository, userService, postVoteRepository,
+            commentRepository);
         user = new User();
         followed = new User();
         user.setId(userId);
