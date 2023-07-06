@@ -17,13 +17,7 @@ public class NewPostRequest {
 
     private String message;
 
-    private String s3Url;
-
     private String mediaType;
-
-    private String createTime;
-
-    private String editTime;
 
     
 }

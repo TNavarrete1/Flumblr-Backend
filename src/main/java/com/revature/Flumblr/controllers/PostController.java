@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.revature.Flumblr.services.TokenService;
-
-// import jakarta.servlet.http.HttpServletRequest;
-
 import com.revature.Flumblr.services.PostService;
+import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
@@ -37,19 +38,22 @@ public class PostController {
     private final TokenService tokenService;
     private final PostService postService;
     private final CommentService commentService;
+    private final S3StorageService s3StorageService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @PostMapping("/create")
-    public ResponseEntity<?>createPost(@RequestBody NewPostRequest req, @RequestHeader("Authorization") String token){
+    public ResponseEntity<?>createPost(MultipartHttpServletRequest req, @RequestHeader("Authorization") String token){
         
         String userId = tokenService.extractUserId(token);
         logger.trace("creating post from " + userId);
 
+        MultipartFile file = req.getFile("file");
+
+        String fileUrl = s3StorageService.uploadFile(file);
         
-
-
-
+        postService.createPost(req, fileUrl, userId); 
+        
         return ResponseEntity.status(HttpStatus.CREATED).build();
     
     }

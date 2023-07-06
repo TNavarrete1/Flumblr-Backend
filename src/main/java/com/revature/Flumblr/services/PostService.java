@@ -1,6 +1,8 @@
 package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.repositories.PostRepository;
+import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -11,7 +13,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.amazonaws.services.codecommit.model.FileContentRequiredException;
+import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.entities.User;
 
@@ -25,6 +30,7 @@ import com.revature.Flumblr.entities.Post;
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     public List<PostResponse> getFeed(String userId, int page) {
         User user = userService.findById(userId);
@@ -74,6 +80,32 @@ public class PostService {
     } catch (EmptyResultDataAccessException e) {
         throw new ResourceNotFoundException("Post with id " + postId + " was not found");
     }
+    }
+
+
+
+    public void createPost(MultipartHttpServletRequest req, String fileUrl, String userId) {
+
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        User user = userOpt.get();
+        
+        String message = req.getParameter("message");
+        if(message == null){
+            message = "no caption";
+        }
+        String mediaType = req.getParameter("mediaType");
+        if(mediaType == null){
+            throw new FileNotUploadedException("Media Type can not be empty!");
+        }
+
+
+        Post post = new Post(message, mediaType, fileUrl, user);
+        
+        postRepository.save(post);
+
+
+
     }   
 
 }
