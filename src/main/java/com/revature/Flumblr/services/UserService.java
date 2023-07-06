@@ -3,8 +3,6 @@ package com.revature.Flumblr.services;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.repositories.ProfileRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.BookmarkRequest;
@@ -34,8 +32,7 @@ public class UserService {
     private final BookmarksRepository bookmarksRepository;
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
-    @Lazy
-    @Autowired
+
     private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
