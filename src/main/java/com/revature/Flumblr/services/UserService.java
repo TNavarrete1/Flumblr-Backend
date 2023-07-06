@@ -4,6 +4,8 @@ import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
 
+import com.revature.Flumblr.dtos.requests.BookmarkRequest;
+import com.revature.Flumblr.dtos.requests.DeleteBookmarkRequest;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
@@ -12,9 +14,12 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
+import com.revature.Flumblr.entities.Bookmark;
+import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
 
@@ -23,9 +28,10 @@ import lombok.AllArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final BookmarksRepository bookmarksRepository;
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
+    private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
@@ -94,5 +100,17 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+    public Bookmark bookmarkPost(BookmarkRequest request) {
+        User user = findById(request.getUserId());
+        Post post = postService.findById(request.getPostId());
+        return bookmarksRepository.save(new Bookmark(user, post));
+    }
+
+    public void removeBookmark(DeleteBookmarkRequest request) {
+        User user = findById(request.getUserId());
+        Post post = postService.findById(request.getPostId());
+        bookmarksRepository.delete(new Bookmark(request.getBookmarkId(), user, post));
     }
 }
