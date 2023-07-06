@@ -7,6 +7,7 @@ import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 import java.util.ArrayList;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,17 +71,17 @@ public class PostService {
         return userPost.get();
     }
     public String getPostOwner(String postId) {
-    Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
-    return post.getUser().getId();
-    }
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
+        return post.getUser().getId();
+        }
 
     public void deletePost(String postId) {
-    try {
-        postRepository.deleteById(postId);
-    } catch (EmptyResultDataAccessException e) {
-        throw new ResourceNotFoundException("Post with id " + postId + " was not found");
-    }
-    }
+        try {
+            postRepository.deleteById(postId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+        }
+        }
 
 
 
@@ -104,8 +105,28 @@ public class PostService {
         
         postRepository.save(post);
 
-
-
     }   
+    public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
+        Post post = this.findById(postId);
+        String newMessage = req.getParameter("message");
+        String newMediaType = req.getParameter("mediaType");
+
+        if(newMessage != null && !newMessage.isEmpty()) {
+            post.setMessage(newMessage);
+        }
+
+        if(newMediaType != null && !newMediaType.isEmpty()) {
+            post.setMediaType(newMediaType);
+        }
+
+        if(fileUrl != null && !fileUrl.isEmpty()) {
+            post.setS3Url(fileUrl);
+        }
+        post.setEditTime(new Date());
+        postRepository.save(post);
+        PostResponse response = new PostResponse(post);
+        return response;
+    }
+
 
 }
