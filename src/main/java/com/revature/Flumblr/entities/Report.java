@@ -1,9 +1,11 @@
 package com.revature.Flumblr.entities;
 
+import java.util.Date;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -20,16 +22,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "notifications")
-public class Notification {
+@Table(name = "reports")
+public class Report {
     @Id
     private String id;
 
-    private String message;
+    @Column(name = "create_time", nullable = false)
+    private Date createTime;
 
-    private boolean viewed;
-
-    private String link;
+    @Column(columnDefinition = "text", nullable = false)
+    private String reason;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -37,16 +39,15 @@ public class Notification {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notification_id")
+    @JoinColumn(name = "post_id")
     @JsonBackReference
-    private NotificationType notificationType;
+    private Post post;
 
-    public Notification(String message, User user, String link, NotificationType notificationType) {
+    public Report(Post post, User user, String reason) {
         this.id = UUID.randomUUID().toString();
-        this.message = message;
+        this.createTime = new Date();
         this.user = user;
-        this.viewed = false;
-        this.link = link;
-        this.notificationType = notificationType;
+        this.post = post;
+        this.reason = reason;
     }
 }

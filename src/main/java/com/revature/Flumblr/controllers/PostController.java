@@ -2,6 +2,7 @@ package com.revature.Flumblr.controllers;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
+import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.services.PostService;
 
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
+
+import com.revature.Flumblr.entities.Post;
 
 import com.revature.Flumblr.services.CommentService;
 
@@ -42,9 +47,30 @@ public class PostController {
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
             @PathVariable int page) {
+        if(page <= 0) throw new BadRequestException("page must be > 0");
         String userId = tokenService.extractUserId(token);
         logger.trace("generating feed for " + userId);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getFeed(userId, page - 1));
+        List<Post> posts = postService.getFeed(userId, page - 1);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : posts) {
+            resPosts.add(new PostResponse(userPost));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+    }
+
+    @GetMapping("/tag/{page}")
+    public ResponseEntity<List<PostResponse>> getByTags(@RequestHeader("Authorization") String token,
+            @PathVariable int page, @RequestParam List<String> tags) {
+        if(page <= 0) throw new BadRequestException("page must be > 0");
+        if(tags.size() < 1) throw new BadRequestException("empty tags parameter");
+        String userId = tokenService.extractUserId(token);
+        logger.trace("getting posts by tag(s) " + tags + " for " + userId);
+        List<Post> posts = postService.findByTag(tags, page - 1);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : posts) {
+            resPosts.add(new PostResponse(userPost));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
     }
 
     @GetMapping("/user/{userId}")
@@ -52,7 +78,12 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("getting posts from " + userId + " requested by " + requesterId);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId));
+        List<Post> userPosts = postService.getUserPosts(userId);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : userPosts) {
+            resPosts.add(new PostResponse(userPost));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
     }
 
     @GetMapping("/id/{postId}")
@@ -60,7 +91,7 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("getting post " + postId + " requested by " + requesterId);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
+        return ResponseEntity.status(HttpStatus.OK).body(new PostResponse(postService.getPost(postId)));
     }
 
     @PostMapping("/comment")
