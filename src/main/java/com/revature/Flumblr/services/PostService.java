@@ -32,6 +32,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final S3StorageService s3StorageService; 
 
     public List<PostResponse> getFeed(String userId, int page) {
         User user = userService.findById(userId);
@@ -77,8 +78,17 @@ public class PostService {
 
     public void deletePost(String postId) {
         try {
+            Optional<Post> postOptional = postRepository.findById(postId);
+            if(postOptional.isPresent()){
+            Post post = postOptional.get();
+            s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+
             postRepository.deleteById(postId);
-        } catch (EmptyResultDataAccessException e) {
+        } else {
+            throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+        }
+    
+        }catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Post with id " + postId + " was not found");
         }
         }
