@@ -16,8 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.amazonaws.services.codecommit.model.FileContentRequiredException;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.entities.User;
 
@@ -98,7 +96,7 @@ public class PostService {
         }
 
         String mediaType = req.getParameter("mediaType");
-        if (mediaType == null) {
+        if(mediaType == null){
             throw new FileNotUploadedException("Media Type can not be empty!");
         }
 

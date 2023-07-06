@@ -8,7 +8,6 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
