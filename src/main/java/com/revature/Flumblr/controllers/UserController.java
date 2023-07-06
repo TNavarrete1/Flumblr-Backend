@@ -82,23 +82,24 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(principal);
     }
 
-    @PostMapping("/addBookmark")
-    public ResponseEntity<?> bookmarkPost(@RequestBody BookmarkRequest req,
-            @RequestHeader("Authorization") String token) {
+    // @PostMapping("/addBookmark")
+    // public ResponseEntity<?> bookmarkPost(@RequestBody BookmarkRequest req,
+    // @RequestHeader("Authorization") String token) {
 
-        tokenService.validateToken(token, req.getUserId());
-        userService.bookmarkPost(req);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    // tokenService.validateToken(token, req.getUserId());
+    // userService.bookmarkPost(req);
+    // return ResponseEntity.status(HttpStatus.CREATED).build();
 
-    }
+    // }
 
-    @DeleteMapping("/removeBookmark")
-    public ResponseEntity<?> removeBookmark(@RequestBody DeleteBookmarkRequest req,
-            @RequestHeader("Authorization") String token) {
+    // @DeleteMapping("/removeBookmark")
+    // public ResponseEntity<?> removeBookmark(@RequestBody DeleteBookmarkRequest
+    // req,
+    // @RequestHeader("Authorization") String token) {
 
-        tokenService.validateToken(token, req.getUserId());
-        userService.removeBookmark(req);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+    // tokenService.validateToken(token, req.getUserId());
+    // userService.removeBookmark(req);
+    // return ResponseEntity.status(HttpStatus.OK).build();
+    // }
 
 }

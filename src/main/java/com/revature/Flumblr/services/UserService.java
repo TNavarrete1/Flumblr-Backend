@@ -33,7 +33,7 @@ public class UserService {
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
 
-    private final PostService postService;
+    // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
@@ -104,15 +104,16 @@ public class UserService {
         }
     }
 
-    public Bookmark bookmarkPost(BookmarkRequest request) {
-        User user = findById(request.getUserId());
-        Post post = postService.findById(request.getPostId());
-        return bookmarksRepository.save(new Bookmark(user, post));
-    }
+    // public Bookmark bookmarkPost(BookmarkRequest request) {
+    // User user = findById(request.getUserId());
+    // Post post = postService.findById(request.getPostId());
+    // return bookmarksRepository.save(new Bookmark(user, post));
+    // }
 
-    public void removeBookmark(DeleteBookmarkRequest request) {
-        User user = findById(request.getUserId());
-        Post post = postService.findById(request.getPostId());
-        bookmarksRepository.delete(new Bookmark(request.getBookmarkId(), user, post));
-    }
+    // public void removeBookmark(DeleteBookmarkRequest request) {
+    // User user = findById(request.getUserId());
+    // Post post = postService.findById(request.getPostId());
+    // bookmarksRepository.delete(new Bookmark(request.getBookmarkId(), user,
+    // post));
+    // }
 }
