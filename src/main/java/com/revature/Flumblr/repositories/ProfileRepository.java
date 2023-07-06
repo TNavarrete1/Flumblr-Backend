@@ -1,4 +1,5 @@
 package com.revature.Flumblr.repositories;
+
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.User;
 
@@ -23,7 +24,6 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     // @Query("UPDATE profile p SET p.bio = ?1 WHERE p.user = ?2")
     // Profile setBio(String bio, User user);
 
-
     @Modifying
     // @Transactional
     @Query("UPDATE Profile p SET p.profile_img = :profileImg WHERE p.user = :user")
@@ -33,7 +33,6 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     // @Transactional
     @Query("UPDATE Profile p SET p.bio = :bio WHERE p.user = :user")
     Profile setBio(String bio, User user);
-
 
     Profile getProfileByUser(User user_id);
 

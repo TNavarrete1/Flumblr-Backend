@@ -21,10 +21,10 @@ public class CommentVoteService {
         // incomplete code
         // User user = userService.findById(req.getUserId());
         // Comment comment = commentService.findById(req.getCommentId());
-        
+
         User user = null;
         Comment comment = null;
-        
+
         CommentVote vote = findByUserAndComment(user, comment);
         if (vote == null) {
             vote = new CommentVote(user, comment, req.isVote());

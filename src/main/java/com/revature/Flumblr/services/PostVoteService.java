@@ -19,7 +19,7 @@ public class PostVoteService {
 
     public void vote(PostVoteRequest req) {
 
-        //incomplete code
+        // incomplete code
         // User user = userService.findById(req.getUserId());
         // Post post = postService.findById(req.getPostId());
 

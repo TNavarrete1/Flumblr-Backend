@@ -1,4 +1,5 @@
 package com.revature.Flumblr.services;
+
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.User;
@@ -37,8 +38,7 @@ public class ProfileService {
 
     public Profile getProfileByUser(String id) {
 
-         User existingUser = userRepo.getReferenceById(id);
-
+        User existingUser = userRepo.getReferenceById(id);
 
         return profileRepo.getProfileByUser(existingUser);
     }

@@ -9,6 +9,7 @@ import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileVoteRepository;
 
 import lombok.AllArgsConstructor;
+
 @AllArgsConstructor
 @Service
 public class ProfileVoteService {

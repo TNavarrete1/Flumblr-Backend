@@ -96,7 +96,7 @@ public class PostService {
         }
 
         String mediaType = req.getParameter("mediaType");
-        if(mediaType == null){
+        if (mediaType == null) {
             throw new FileNotUploadedException("Media Type can not be empty!");
         }
 

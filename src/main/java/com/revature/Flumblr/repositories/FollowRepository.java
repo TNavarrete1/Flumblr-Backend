@@ -12,5 +12,6 @@ import com.revature.Flumblr.entities.Follow;
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, String> {
     Optional<Follow> findByUserIdAndFollowUsername(String userId, String followName);
+
     void deleteByUserIdAndFollowUsername(String userId, String followName);
 }
