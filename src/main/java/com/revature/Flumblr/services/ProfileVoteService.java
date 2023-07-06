@@ -19,10 +19,8 @@ public class ProfileVoteService {
 
     public void vote(ProfileVoteRequest req) {
 
-        // Patrick will handle profileService
-
-        User user = null;
-        Profile profile = null;
+        User user = userService.findById(req.getUserId());
+        Profile profile = profileService.findById(req.getProfileId());
 
         ProfileVote vote = findByUserAndProfile(user, profile);
         if (vote == null) {

@@ -11,5 +11,5 @@ import com.revature.Flumblr.entities.User;
 public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByUsername(String username);
 
-    User getReferenceById(User id);
+    User getReferenceById(String id);
 }
