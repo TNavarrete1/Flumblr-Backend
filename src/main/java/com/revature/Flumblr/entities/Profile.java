@@ -28,6 +28,9 @@ public class Profile {
     @Column
     private String bio;
 
+    @Column
+    private String theme;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
