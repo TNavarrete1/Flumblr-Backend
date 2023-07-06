@@ -3,6 +3,7 @@ package com.revature.Flumblr.services;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.amazonaws.services.codecommit.model.FileContentRequiredException;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.entities.User;
 
@@ -71,6 +70,7 @@ public class PostService {
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         return userPost.get();
     }
+
     public String getPostOwner(String postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
         return post.getUser().getId();
@@ -93,24 +93,22 @@ public class PostService {
         }
         }
 
-
-    
-
     public void createPost(MultipartHttpServletRequest req, String fileUrl, String userId) {
 
         Optional<User> userOpt = userRepository.findById(userId);
 
         User user = userOpt.get();
-        
+
         String message = req.getParameter("message");
-        if(message == null){
-            message = "no caption";
+
+        if (message == null && fileUrl == null) {
+            throw new ResourceConflictException("Message or media required!");
         }
+
         String mediaType = req.getParameter("mediaType");
         if(mediaType == null){
             throw new FileNotUploadedException("Media Type can not be empty!");
         }
-
 
         Post post = new Post(message, mediaType, fileUrl, user);
         

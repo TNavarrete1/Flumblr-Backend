@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -24,7 +23,6 @@ import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.services.CommentService;
 
@@ -44,19 +42,23 @@ public class PostController {
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @PostMapping("/create")
-    public ResponseEntity<?>createPost(MultipartHttpServletRequest req, @RequestHeader("Authorization") String token){
-        
+    public ResponseEntity<?> createPost(MultipartHttpServletRequest req, @RequestHeader("Authorization") String token) {
+
         String userId = tokenService.extractUserId(token);
         logger.trace("creating post from " + userId);
 
         MultipartFile file = req.getFile("file");
 
-        String fileUrl = s3StorageService.uploadFile(file);
-        
-        postService.createPost(req, fileUrl, userId); 
-        
+        String fileUrl = null;
+
+        if (file != null) {
+            fileUrl = s3StorageService.uploadFile(file);
+        }
+
+        postService.createPost(req, fileUrl, userId);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    
+
     }
 
     @GetMapping("/feed/{page}")
@@ -93,19 +95,20 @@ public class PostController {
     }
 
     @DeleteMapping("/id/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable String postId, @RequestHeader("Authorization") String token) {
-        String requesterId = tokenService.extractUserId(token); 
+    public ResponseEntity<String> deletePost(@PathVariable String postId,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
         logger.trace("Deleting post " + postId + " requested by " + requesterId);
-    
+
         String postOwnerId = postService.getPostOwner(postId);
-    
+
         if (!postOwnerId.equals(requesterId)) {
             logger.warn("User " + requesterId + " attempted to delete post " + postId + " that they do not own");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this post.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this post.");
         }
 
         postService.deletePost(postId);
-    
+
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully deleted.");
     }
     @PutMapping("/id/{postId}")
@@ -129,7 +132,6 @@ public class PostController {
         
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
     }
-
 
 
 }
