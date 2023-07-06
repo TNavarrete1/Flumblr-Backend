@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class FollowService {
     private final FollowRepository followRepository;
+
     private final UserService userService;
 
     public boolean doesFollow(String userId, String followName) {

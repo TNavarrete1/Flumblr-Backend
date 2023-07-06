@@ -47,7 +47,7 @@ public class PostResponse {
         this.username = post.getUser().getUsername();
         this.message = post.getMessage();
         this.s3Url = post.getS3Url();
-        this.profileImg = post.getUser().getProfile().getProfileImg();
+        this.profileImg = post.getUser().getProfile().getProfile_img();
         this.mediaType = post.getMediaType();
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();

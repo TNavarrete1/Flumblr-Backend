@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -37,6 +38,7 @@ import com.revature.Flumblr.entities.PostVote;
 public class PostService {
     private final PostRepository postRepository;
     private final BookmarksRepository bookmarksRepository;
+    @Lazy
     private final UserService userService;
     private final UserRepository userRepository;
     private final PostVoteRepository postVoteRepository;
