@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -147,6 +148,28 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully deleted.");
     }
+    @PutMapping("/id/{postId}")
+    public ResponseEntity<?> updatePost(@PathVariable String postId, MultipartHttpServletRequest req, 
+    @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("Updating post " + postId + " requested by " + requesterId);
+        
+        String postOwnerId = postService.getPostOwner(postId);
+        
+        if (!postOwnerId.equals(requesterId)) {
+            logger.warn("User " + requesterId + " attempted to update post " + postId + " that they do not own");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to update this post.");
+        }
+
+        
+        MultipartFile file = req.getFile("file");
+        String fileUrl = s3StorageService.uploadFile(file);
+        
+        postService.updatePost(postId, req, fileUrl); 
+        
+        return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
+    }
+
 
     @GetMapping("/trending/{fromDate}/{userId}")
     public ResponseEntity<List<PostResponse>> getTrending(

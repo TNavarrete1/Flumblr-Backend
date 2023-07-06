@@ -10,10 +10,10 @@ import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +39,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostVoteRepository postVoteRepository;
     private final CommentRepository commentRepository;
+    private final S3StorageService s3StorageService;
 
     public List<Post> getFeed(String userId, int page) {
         User user = userService.findById(userId);
@@ -81,7 +82,16 @@ public class PostService {
 
     public void deletePost(String postId) {
         try {
-            postRepository.deleteById(postId);
+            Optional<Post> postOptional = postRepository.findById(postId);
+            if (postOptional.isPresent()) {
+                Post post = postOptional.get();
+                s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+
+                postRepository.deleteById(postId);
+            } else {
+                throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+            }
+
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Post with id " + postId + " was not found");
         }
@@ -108,6 +118,32 @@ public class PostService {
 
         postRepository.save(post);
 
+    }
+
+    public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
+        Post post = this.findById(postId);
+        String newMessage = req.getParameter("message");
+        String newMediaType = req.getParameter("mediaType");
+        String existingFileUrl = post.getS3Url();
+
+        if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
+            s3StorageService.deleteFileFromS3Bucket(existingFileUrl);
+        }
+        if (newMessage != null && !newMessage.isEmpty()) {
+            post.setMessage(newMessage);
+        }
+
+        if (newMediaType != null && !newMediaType.isEmpty()) {
+            post.setMediaType(newMediaType);
+        }
+
+        if (fileUrl != null && !fileUrl.isEmpty()) {
+            post.setS3Url(fileUrl);
+        }
+        post.setEditTime(new Date());
+        postRepository.save(post);
+        PostResponse response = new PostResponse(post);
+        return response;
     }
 
     public List<PostResponse> getTrending(Date fromDate) {
