@@ -3,10 +3,8 @@ package com.revature.Flumblr.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.UserService;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
-import com.revature.Flumblr.dtos.requests.BookmarkRequest;
-import com.revature.Flumblr.dtos.requests.DeleteBookmarkRequest;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
@@ -81,25 +77,5 @@ public class UserController {
         // return status ok and return principal object
         return ResponseEntity.status(HttpStatus.OK).body(principal);
     }
-
-    // @PostMapping("/addBookmark")
-    // public ResponseEntity<?> bookmarkPost(@RequestBody BookmarkRequest req,
-    // @RequestHeader("Authorization") String token) {
-
-    // tokenService.validateToken(token, req.getUserId());
-    // userService.bookmarkPost(req);
-    // return ResponseEntity.status(HttpStatus.CREATED).build();
-
-    // }
-
-    // @DeleteMapping("/removeBookmark")
-    // public ResponseEntity<?> removeBookmark(@RequestBody DeleteBookmarkRequest
-    // req,
-    // @RequestHeader("Authorization") String token) {
-
-    // tokenService.validateToken(token, req.getUserId());
-    // userService.removeBookmark(req);
-    // return ResponseEntity.status(HttpStatus.OK).build();
-    // }
 
 }
