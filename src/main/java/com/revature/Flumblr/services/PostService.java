@@ -94,6 +94,7 @@ public class PostService {
         }
 
 
+    
 
     public void createPost(MultipartHttpServletRequest req, String fileUrl, String userId) {
 
@@ -120,7 +121,11 @@ public class PostService {
         Post post = this.findById(postId);
         String newMessage = req.getParameter("message");
         String newMediaType = req.getParameter("mediaType");
-
+        String existingFileUrl = post.getS3Url();
+        
+        if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
+        s3StorageService.deleteFileFromS3Bucket(existingFileUrl);
+    }
         if(newMessage != null && !newMessage.isEmpty()) {
             post.setMessage(newMessage);
         }
