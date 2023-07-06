@@ -43,13 +43,6 @@ public class PostService {
         return this.postRepository.findByUserIdOrderByCreateTimeDesc(userId);
     }
 
-    public Post getPost(String postId) {
-        Optional<Post> userPost = this.postRepository.findById(postId);
-        if (userPost.isEmpty())
-            throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
-        return userPost.get();
-    }
-
     public Post findById(String postId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
         if (userPost.isEmpty())

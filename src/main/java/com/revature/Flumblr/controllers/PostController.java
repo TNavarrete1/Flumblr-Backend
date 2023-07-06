@@ -86,7 +86,7 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("getting post " + postId + " requested by " + requesterId);
-        return ResponseEntity.status(HttpStatus.OK).body(new PostResponse(postService.getPost(postId)));
+        return ResponseEntity.status(HttpStatus.OK).body(new PostResponse(postService.findById(postId)));
     }
 
     @PostMapping("/comment")
