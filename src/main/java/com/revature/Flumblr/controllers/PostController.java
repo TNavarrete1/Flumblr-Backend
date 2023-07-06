@@ -1,9 +1,11 @@
 package com.revature.Flumblr.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,8 +72,16 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/trending/{trendingStartPoint}")
-    public ResponseEntity<?> getTrending(@PathVariable Date time)
+    @GetMapping("/trending/{fromDate}/{userId}")
+    public ResponseEntity<List<PostResponse>> 
+    getTrending (
+        @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+        @PathVariable("userId") String userId,
+        @RequestHeader("Authorization") String token)  
+    {
+         tokenService.validateToken(token, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
+    }
 
     
 
