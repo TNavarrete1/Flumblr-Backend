@@ -131,6 +131,26 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable String commentId,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        String role = tokenService.extractRole(token);
+
+        logger.trace("Deleting comment " + commentId + " requested by " + requesterId);
+
+        String commentOwnerId = commentService.getCommentOwner(commentId);
+
+        if (!commentOwnerId.equals(requesterId) && !role.equals("admin")) {
+            logger.warn("User " + requesterId + " attempted to delete comment " + commentId + " that they do not own");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this comment.");
+        }
+
+        commentService.deleteComment(commentId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Comment was successfully deleted.");
+    }
+
     @DeleteMapping("/id/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable String postId,
             @RequestHeader("Authorization") String token) {
@@ -168,6 +188,21 @@ public class PostController {
         postService.updatePost(postId, req, fileUrl);
 
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deletePostsByUser(@PathVariable String userId,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        String role = tokenService.extractRole(token);
+
+        if (!userId.equals(requesterId) && !role.equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete these posts.");
+        }
+
+        postService.deletePostsByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Posts were successfully deleted.");
     }
 
     @GetMapping("/trending/{fromDate}")
