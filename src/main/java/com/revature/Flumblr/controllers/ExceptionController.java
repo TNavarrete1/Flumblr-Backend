@@ -58,5 +58,4 @@ public class ExceptionController {
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
     }
-
 }

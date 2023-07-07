@@ -22,7 +22,7 @@ public class ReportResponse {
     private String userId;
 
     private String postId;
-    
+
     public ReportResponse(Report report) {
         this.id = report.getId();
         this.createTime = report.getCreateTime();

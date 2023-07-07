@@ -6,15 +6,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,10 +23,15 @@ public class Profile {
     private String id;
 
     @Column
-    private String profileImg;
+    private String profile_img;
 
     @Column
     private String bio;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    @JsonBackReference
+    private Theme theme;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -46,10 +43,10 @@ public class Profile {
     @JoinTable(name = "profile_tag_list", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    public Profile(User user, String profileImg, String bio) {
+    public Profile(User user, String profile_img, String bio) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
-        this.profileImg = profileImg;
+        this.profile_img = profile_img;
         this.bio = bio;
     }
 

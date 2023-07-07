@@ -47,18 +47,18 @@ public class PostResponse {
         this.username = post.getUser().getUsername();
         this.message = post.getMessage();
         this.s3Url = post.getS3Url();
-        this.profileImg = post.getUser().getProfile().getProfileImg();
+        this.profileImg = post.getUser().getProfile().getProfile_img();
         this.mediaType = post.getMediaType();
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();
         this.comments = new ArrayList<CommentResponse>();
         this.tags = post.getTags();
-        for(Comment comment : post.getComments()) {
+        for (Comment comment : post.getComments()) {
             this.comments.add(new CommentResponse(comment));
         }
     }
 
-      public PostResponse(Post post, Double score) {
+    public PostResponse(Post post, Double score) {
         this.id = post.getId();
         this.username = post.getUser().getUsername();
         this.message = post.getMessage();
@@ -67,7 +67,7 @@ public class PostResponse {
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();
         this.comments = new ArrayList<CommentResponse>();
-        for(Comment comment : post.getComments()) {
+        for (Comment comment : post.getComments()) {
             this.comments.add(new CommentResponse(comment));
         }
         this.score = score;

@@ -13,13 +13,16 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class CommentVoteService {
-    CommentVoteRepository commentVoteRepository;
-    CommentService commentService;
-    UserService userService;
+    private final CommentVoteRepository commentVoteRepository;
+    private final CommentService commentService;
+    private final UserService userService;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public void vote(CommentVoteRequest req) {
         User user = userService.findById(req.getUserId());
         Comment comment = commentService.findById(req.getCommentId());
+
         CommentVote vote = findByUserAndComment(user, comment);
         if (vote == null) {
             vote = new CommentVote(user, comment, req.isVote());
@@ -32,6 +35,8 @@ public class CommentVoteService {
             }
         }
         save(vote);
+        notificationService.createNotification("User " + user.getUsername() + " voted on your comment",
+                "comment:" + comment.getId(), comment.getUser(), notificationTypeService.findByName("commentLike"));
     }
 
     public void save(CommentVote vote) {

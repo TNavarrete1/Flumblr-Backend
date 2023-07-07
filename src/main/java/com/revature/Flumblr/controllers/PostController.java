@@ -12,17 +12,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.services.PostService;
-
+import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 
@@ -41,13 +45,35 @@ public class PostController {
     private final TokenService tokenService;
     private final PostService postService;
     private final CommentService commentService;
+    private final S3StorageService s3StorageService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createPost(MultipartHttpServletRequest req, @RequestHeader("Authorization") String token) {
+
+        String userId = tokenService.extractUserId(token);
+        logger.trace("creating post from " + userId);
+
+        MultipartFile file = req.getFile("file");
+
+        String fileUrl = null;
+
+        if (file != null) {
+            fileUrl = s3StorageService.uploadFile(file);
+        }
+
+        postService.createPost(req, fileUrl, userId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+    }
 
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
             @PathVariable int page) {
-        if(page <= 0) throw new BadRequestException("page must be > 0");
+        if (page <= 0)
+            throw new BadRequestException("page must be > 0");
         String userId = tokenService.extractUserId(token);
         logger.trace("generating feed for " + userId);
         List<Post> posts = postService.getFeed(userId, page - 1);
@@ -61,8 +87,10 @@ public class PostController {
     @GetMapping("/tag/{page}")
     public ResponseEntity<List<PostResponse>> getByTags(@RequestHeader("Authorization") String token,
             @PathVariable int page, @RequestParam List<String> tags) {
-        if(page <= 0) throw new BadRequestException("page must be > 0");
-        if(tags.size() < 1) throw new BadRequestException("empty tags parameter");
+        if (page <= 0)
+            throw new BadRequestException("page must be > 0");
+        if (tags.size() < 1)
+            throw new BadRequestException("empty tags parameter");
         String userId = tokenService.extractUserId(token);
         logger.trace("getting posts by tag(s) " + tags + " for " + userId);
         List<Post> posts = postService.findByTag(tags, page - 1);
@@ -103,17 +131,53 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/trending/{fromDate}/{userId}")
-    public ResponseEntity<List<PostResponse>> 
-    getTrending (
-        @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-        @PathVariable("userId") String userId,
-        @RequestHeader("Authorization") String token)  
-    {
-         tokenService.validateToken(token, userId);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
+    @DeleteMapping("/id/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable String postId,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("Deleting post " + postId + " requested by " + requesterId);
+
+        String postOwnerId = postService.getPostOwner(postId);
+
+        if (!postOwnerId.equals(requesterId)) {
+            logger.warn("User " + requesterId + " attempted to delete post " + postId + " that they do not own");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this post.");
+        }
+
+        postService.deletePost(postId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Post was successfully deleted.");
+    }
+    @PutMapping("/id/{postId}")
+    public ResponseEntity<?> updatePost(@PathVariable String postId, MultipartHttpServletRequest req, 
+    @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("Updating post " + postId + " requested by " + requesterId);
+        
+        String postOwnerId = postService.getPostOwner(postId);
+        
+        if (!postOwnerId.equals(requesterId)) {
+            logger.warn("User " + requesterId + " attempted to update post " + postId + " that they do not own");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to update this post.");
+        }
+
+        
+        MultipartFile file = req.getFile("file");
+        String fileUrl = s3StorageService.uploadFile(file);
+        
+        postService.updatePost(postId, req, fileUrl); 
+        
+        return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
     }
 
-    
+
+    @GetMapping("/trending/{fromDate}/{userId}")
+    public ResponseEntity<List<PostResponse>> getTrending(
+            @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+            @PathVariable("userId") String userId,
+            @RequestHeader("Authorization") String token) {
+        tokenService.validateToken(token, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
+    }
 
 }

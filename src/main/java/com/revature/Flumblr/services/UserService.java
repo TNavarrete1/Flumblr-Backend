@@ -1,9 +1,10 @@
 package com.revature.Flumblr.services;
 
+import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.repositories.ProfileRepository;
+
 import org.springframework.stereotype.Service;
 
-import com.revature.Flumblr.dtos.requests.BookmarkRequest;
-import com.revature.Flumblr.dtos.requests.DeleteBookmarkRequest;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
@@ -12,12 +13,9 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
-import com.revature.Flumblr.entities.Bookmark;
-import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
 
@@ -26,16 +24,23 @@ import lombok.AllArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BookmarksRepository bookmarksRepository;
     private final RoleService roleService;
-    private final PostService postService;
+    private final ProfileRepository profileRepository;
+
+    // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
         // save and return user
-        return userRepository.save(newUser);
+        User createdUser = userRepository.save(newUser);
+
+        // create and save unique profile id for each user to be updated on profile page
+        Profile blankProfile = new Profile(createdUser, null, null);
+        profileRepository.save(blankProfile);
+
+        return createdUser;
     }
 
     public User findById(String userId) {
@@ -47,7 +52,8 @@ public class UserService {
 
     public User findByUsername(String username) {
         Optional<User> userOpt = userRepository.findByUsername(username);
-        if(userOpt.isEmpty()) throw new ResourceNotFoundException("couldn't find user for username " + username);
+        if (userOpt.isEmpty())
+            throw new ResourceNotFoundException("couldn't find user for username " + username);
         return userOpt.get();
     }
 
@@ -91,15 +97,4 @@ public class UserService {
             return false;
         }
     }
-
-    public Bookmark bookmarkPost(BookmarkRequest request) {
-        User user = findById(request.getUserId());
-        Post post = postService.findById(request.getPostId());
-        return bookmarksRepository.save(new Bookmark(user, post));
-    }
-    public void removeBookmark(DeleteBookmarkRequest request) {
-        User user = findById(request.getUserId());
-        Post post = postService.findById(request.getPostId());
-        bookmarksRepository.delete(new Bookmark(request.getBookmarkId(), user, post));
-    }  
 }

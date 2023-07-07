@@ -12,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-
 public class NewUserRequest {
     private String username;
     private String password;

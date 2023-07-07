@@ -8,6 +8,10 @@ import java.util.Date;
 
 import com.revature.Flumblr.entities.Comment;
 
+/**
+ * The Principal class represents the authenticated user's principal
+ * information.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -22,6 +26,7 @@ public class CommentResponse {
     private Date editTime;
 
     private String postId;
+
     CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
         this.comment = comment.getComment();
