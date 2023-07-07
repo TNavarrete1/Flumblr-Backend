@@ -37,4 +37,13 @@ public class CommentService {
         }
         return commentOpt.get();
     }
+    public String getCommentOwner(String commentId) {
+        Comment comment = findById(commentId);
+        return comment.getUser().getId();
+    }
+    public void deleteComment(String commentId) {
+        Comment comment = findById(commentId);
+        commentRepository.delete(comment);
+    }
+
 }
