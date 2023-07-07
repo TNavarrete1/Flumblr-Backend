@@ -16,6 +16,8 @@ public class CommentVoteService {
     private final CommentVoteRepository commentVoteRepository;
     private final CommentService commentService;
     private final UserService userService;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public void vote(CommentVoteRequest req) {
         User user = userService.findById(req.getUserId());
@@ -33,6 +35,8 @@ public class CommentVoteService {
             }
         }
         save(vote);
+        notificationService.createNotification("User " + user.getUsername() + " voted on your comment",
+                "comment:" + comment.getId(), user, notificationTypeService.findByName("commentLike"));
     }
 
     public void save(CommentVote vote) {

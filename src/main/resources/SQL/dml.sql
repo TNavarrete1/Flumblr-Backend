@@ -3,7 +3,8 @@ INSERT INTO notification_types (name,id) VALUES
 ('postLike','2'),
 ('follow', '3'),
 ('share', '4'),
-('profileLike', '5')
+('profileLike', '5'),
+('commentLike', '6')
 
 
 INSERT INTO themes (name,id) VALUES

@@ -16,6 +16,8 @@ public class ProfileVoteService {
     private final ProfileVoteRepository profileVoteRepository;
     private final ProfileService profileService;
     private final UserService userService;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public void vote(ProfileVoteRequest req) {
 
@@ -34,6 +36,9 @@ public class ProfileVoteService {
             }
         }
         save(vote);
+        save(vote);
+        notificationService.createNotification("User " + user.getUsername() + " voted on your profile",
+                "profile:" + profile.getId(), user, notificationTypeService.findByName("profileLike"));
     }
 
     public void save(ProfileVote vote) {
