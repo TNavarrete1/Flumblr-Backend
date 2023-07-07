@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.FollowService;
-import com.revature.Flumblr.dtos.responses.PostResponse;
 
 import lombok.AllArgsConstructor;
 
@@ -35,8 +34,8 @@ public class FollowController {
 
     // username of user followed
     @PostMapping("/{followName}")
-    public ResponseEntity<List<PostResponse>> createFollow(@RequestHeader("Authorization") String token,
-            @PathVariable String followName) {
+    public ResponseEntity<?> createFollow(@RequestHeader("Authorization") String token,
+    @PathVariable String followName) {
         String userId = tokenService.extractUserId(token);
         logger.trace(userId + " following " + followName);
         followService.create(userId, followName);
@@ -45,8 +44,8 @@ public class FollowController {
 
     // username of user followed
     @DeleteMapping("/{followName}")
-    public ResponseEntity<List<PostResponse>> deleteFollow(@RequestHeader("Authorization") String token,
-            @PathVariable String followName) {
+    public ResponseEntity<?> deleteFollow(@RequestHeader("Authorization") String token,
+    @PathVariable String followName) {
         String userId = tokenService.extractUserId(token);
         logger.trace(userId + " unfollowing " + followName);
         followService.delete(userId, followName);

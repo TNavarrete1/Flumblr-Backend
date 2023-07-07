@@ -1,18 +1,19 @@
 package com.revature.Flumblr.services;
 
-import com.revature.Flumblr.repositories.CommentRepository;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.utils.custom_classes.SortedPost;
 import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
-import com.revature.Flumblr.repositories.PostVoteRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Date;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -37,8 +38,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final PostVoteRepository postVoteRepository;
-    private final CommentRepository commentRepository;
     private final S3StorageService s3StorageService;
 
     public List<Post> getFeed(String userId, int page) {
@@ -58,13 +57,6 @@ public class PostService {
 
     public List<Post> getUserPosts(String userId) {
         return this.postRepository.findByUserIdOrderByCreateTimeDesc(userId);
-    }
-
-    public Post getPost(String postId) {
-        Optional<Post> userPost = this.postRepository.findById(postId);
-        if (userPost.isEmpty())
-            throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
-        return userPost.get();
     }
 
     public Post findById(String postId) {
@@ -147,52 +139,49 @@ public class PostService {
     }
 
     public List<PostResponse> getTrending(Date fromDate) {
-        List<Post> responses = postRepository.findAll();
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);
 
-        for (Post userPost : responses) {
-            // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
-            Double score = CalculateScore(userPost);
-            int checkWhen = fromDate.compareTo(userPost.getCreateTime());
-
-            if (checkWhen == -1 || checkWhen == 0) {
-                resPosts.add(new PostResponse(userPost, score));
-            }
-        }
-
-        Collections.sort(resPosts, new Comparator<PostResponse>() {
+        PriorityQueue<SortedPost> sortedPosts = new PriorityQueue<SortedPost>(11,
+        new Comparator<SortedPost>() {
             @Override
-            public int compare(PostResponse post1, PostResponse post2) {
-                double score1 = post1.getScore();
-                double score2 = post2.getScore();
-
-                if (score1 < score2) {
-                    return 1; // Return a positive value to indicate post2 should come before post1
-                } else if (score1 > score2) {
-                    return -1; // Return a negative value to indicate post1 should come before post2
-                } else {
-                    return 0; // Return 0 to indicate the scores are equal
-                }
+            public int compare(SortedPost post1, SortedPost post2) {
+                return Double.compare(post1.getScore(), post2.getScore());
             }
         });
 
-        List<PostResponse> limitedList = resPosts.subList(0, Math.min(resPosts.size(), 10));
-        return limitedList;
+        for (Post userPost : responses) {
+            // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
+            SortedPost sortedPost = new SortedPost(userPost);
+            calculateScore(sortedPost);
+            
+            sortedPosts.add(sortedPost);
+            if(sortedPosts.size() > 10) sortedPosts.poll();
+        }
+
+        PostResponse[] resPosts = new PostResponse[sortedPosts.size()];
+        for (int i = sortedPosts.size() - 1; i >= 0; i--) {
+            SortedPost sortedPost = sortedPosts.poll();
+            resPosts[i] = new PostResponse(sortedPost.getContent(), sortedPost.getUpvotes(),
+                sortedPost.getDownvotes());
+        }
+
+        return Arrays.asList(resPosts);
     }
 
-    private Double CalculateScore(Post post) {
-        List<PostVote> listOfVotes = postVoteRepository.findAllByPost(post);
-        Integer numberofComments = commentRepository.findAllByPost(post).size();
-        Double score = 0.0;
-        score = (numberofComments * 2) + score;
-        for (PostVote vote : listOfVotes) {
-            if (vote.isVote()) {
-                score = score + 1.5;
-            } else {
-                score = score - 1;
-            }
+    private void calculateScore(SortedPost sortedPost) {
+        Post post = sortedPost.getContent();
+        Set<PostVote> postVotes = post.getPostVotes();
+        int upVotes = 0;
+        for(PostVote postVote : postVotes) {
+            if(postVote.isVote()) upVotes++;
         }
-        return score;
+        int downVotes = postVotes.size() - upVotes;
+        int numberofComments = post.getComments().size();
+        double score = downVotes + upVotes*1.5;
+        score += (numberofComments * 2);
+        sortedPost.setScore(score);
+        sortedPost.setUpvotes(upVotes);
+        sortedPost.setDownvotes(downVotes);
     }
 
 }
