@@ -38,7 +38,7 @@ public class NotificationService {
 
     public List<Notification> getNotificationByUser(String userId) {
         User user = userService.findById(userId);
-        List<Notification> notifications = notificationRepository.findByUser(user);
+        List<Notification> notifications = notificationRepository.findByUserOrderByCreateTimeDesc(user);
         return notifications;
     }
 
