@@ -63,4 +63,8 @@ public class TokenService {
 
         return (String) extractAllClaims(token).get("id");
     }
+    public String extractRole(String token) {
+        return (String) extractAllClaims(token).get("role");
+    }
+
 }
