@@ -1,6 +1,7 @@
 package com.revature.Flumblr.entities;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 import java.util.UUID;
@@ -93,6 +94,7 @@ public class Post {
         this.user = user;
         this.createTime = new Date();
         this.editTime = this.createTime;
+        this.postVotes = new HashSet<PostVote>();
 
     }
 }

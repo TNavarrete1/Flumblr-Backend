@@ -1,16 +1,15 @@
 package com.revature.Flumblr.services;
 
-import com.revature.Flumblr.repositories.CommentRepository;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
-import com.revature.Flumblr.repositories.PostVoteRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,8 +36,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final PostVoteRepository postVoteRepository;
-    private final CommentRepository commentRepository;
     private final S3StorageService s3StorageService;
 
     public List<Post> getFeed(String userId, int page) {
@@ -139,18 +136,20 @@ public class PostService {
         return response;
     }
 
+    class SortedPost {
+        Post content;
+        double score;
+        long upVotes;
+        long downVotes;
+        SortedPost(Post content) {
+            this.content = content;
+        }
+    }
+
     public List<PostResponse> getTrending(Date fromDate) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
 
-        class SortedPost {
-            Post content;
-            double score;
-            SortedPost(Post content, double score) {
-                this.content = content;
-                this.score = score;
-            }
-        }
 
         PriorityQueue<SortedPost> sortedPosts = new PriorityQueue<SortedPost>(responses.size(),
         new Comparator<SortedPost>() {
@@ -171,31 +170,35 @@ public class PostService {
 
         for (Post userPost : responses) {
             // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
-            double score = calculateScore(userPost);
+            SortedPost sortedPost = new SortedPost(userPost);
+            calculateScore(sortedPost);
             
-            sortedPosts.add(new SortedPost(userPost, score));
+            sortedPosts.add(sortedPost);
         }
 
         while (!sortedPosts.isEmpty() && resPosts.size() <= 10) {
-            resPosts.add(new PostResponse(sortedPosts.remove().content));
+            SortedPost sortedPost = sortedPosts.remove();
+            resPosts.add(new PostResponse(sortedPost.content, sortedPost.upVotes, sortedPost.downVotes));
         }
 
         return resPosts;
     }
 
-    private Double calculateScore(Post post) {
-        List<PostVote> listOfVotes = postVoteRepository.findAllByPost(post);
-        Integer numberofComments = commentRepository.findAllByPost(post).size();
-        Double score = 0.0;
-        score = (numberofComments * 2) + score;
-        for (PostVote vote : listOfVotes) {
-            if (vote.isVote()) {
-                score = score + 1.5;
-            } else {
-                score = score - 1;
-            }
+    private void calculateScore(SortedPost sortedPost) {
+        Post post = sortedPost.content;
+        Set<PostVote> postVotes = post.getPostVotes();
+        long upVotes = 0;
+        for(PostVote postVote : postVotes) {
+            if(postVote.isVote()) upVotes++;
         }
-        return score;
+        long downVotes = postVotes.size() - upVotes;
+        long numberofComments = post.getComments().size();
+        double score = -downVotes;
+        score += upVotes*1.5;
+        score += (numberofComments * 2);
+        sortedPost.score = score;
+        sortedPost.upVotes = upVotes;
+        sortedPost.downVotes = downVotes;
     }
 
 }
