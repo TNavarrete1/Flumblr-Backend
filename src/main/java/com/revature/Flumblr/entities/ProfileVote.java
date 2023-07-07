@@ -38,13 +38,10 @@ public class ProfileVote {
     @JsonBackReference
     private Profile profile;
 
-    private String username;
-
     public ProfileVote(User user, Profile profile, boolean vote) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.profile = profile;
         this.vote = vote;
-        this.username = user.getUsername();
     }
 }
