@@ -76,7 +76,22 @@ public class PostController {
             throw new BadRequestException("page must be > 0");
         String userId = tokenService.extractUserId(token);
         logger.trace("generating feed for " + userId);
-        List<Post> posts = postService.getFeed(userId, page - 1);
+        List<Post> posts = postService.getFeed(page - 1);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : posts) {
+            resPosts.add(new PostResponse(userPost));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+    }
+
+    @GetMapping("/following/{page}")
+    public ResponseEntity<List<PostResponse>> getFollowing(@RequestHeader("Authorization") String token,
+            @PathVariable int page) {
+        if (page <= 0)
+            throw new BadRequestException("page must be > 0");
+        String userId = tokenService.extractUserId(token);
+        logger.trace("generating feed for " + userId);
+        List<Post> posts = postService.getFollowing(userId, page - 1);
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : posts) {
             resPosts.add(new PostResponse(userPost));
