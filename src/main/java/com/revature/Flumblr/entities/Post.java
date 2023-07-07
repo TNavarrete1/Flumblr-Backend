@@ -85,6 +85,7 @@ public class Post {
     private Set<Tag> tags;
 
     public Post(String message, String mediaType, String fileUrl, User user) {
+
         this.id = UUID.randomUUID().toString();
         this.s3Url = fileUrl;
         this.message = message;
@@ -92,5 +93,6 @@ public class Post {
         this.user = user;
         this.createTime = new Date();
         this.editTime = this.createTime;
+
     }
 }

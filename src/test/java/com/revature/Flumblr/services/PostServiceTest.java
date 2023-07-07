@@ -31,10 +31,16 @@ class PostServiceTest {
     private UserService userService;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private PostVoteRepository postVoteRepository;
 
     @Mock
     private CommentRepository commentRepository;
+
+    @Mock
+    private S3StorageService s3StorageService;
 
     private User user;
 
@@ -46,8 +52,8 @@ class PostServiceTest {
 
     @BeforeEach
     public void setup() {
-        postService = new PostService(postRepository, userService, postVoteRepository,
-            commentRepository);
+        postService = new PostService(postRepository, userService, userRepository, postVoteRepository,
+            commentRepository, s3StorageService);
         user = new User();
         followed = new User();
         user.setId(userId);

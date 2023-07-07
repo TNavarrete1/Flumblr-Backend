@@ -29,6 +29,12 @@ class FollowServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private NotificationTypeService notificationTypeService;
+
     private User user;
 
     private User followed;
@@ -39,7 +45,8 @@ class FollowServiceTest {
 
     @BeforeEach
     public void setup() {
-        followService = new FollowService(followRepository, userService);
+        followService = new FollowService(followRepository, userService, notificationService,
+            notificationTypeService);
         user = new User();
         followed = new User();
         unFollowed = new User();

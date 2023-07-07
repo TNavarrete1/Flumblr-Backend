@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

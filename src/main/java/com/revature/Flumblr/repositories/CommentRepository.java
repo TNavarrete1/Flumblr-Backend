@@ -13,5 +13,5 @@ import com.revature.Flumblr.entities.Post;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, String> {
 
-     List <Comment> findAllByPost(Post post);
+     List<Comment> findAllByPost(Post post);
 }

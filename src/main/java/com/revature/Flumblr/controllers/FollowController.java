@@ -32,7 +32,7 @@ public class FollowController {
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    //username of user followed
+    // username of user followed
     @PostMapping("/{followName}")
     public ResponseEntity<?> createFollow(@RequestHeader("Authorization") String token,
     @PathVariable String followName) {
@@ -42,7 +42,7 @@ public class FollowController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    //username of user followed
+    // username of user followed
     @DeleteMapping("/{followName}")
     public ResponseEntity<?> deleteFollow(@RequestHeader("Authorization") String token,
     @PathVariable String followName) {
@@ -54,7 +54,7 @@ public class FollowController {
 
     @GetMapping
     public ResponseEntity<List<String>> getFollows(@RequestHeader("Authorization") String token) {
-        String userId = tokenService.extractUserId(token); 
+        String userId = tokenService.extractUserId(token);
         logger.trace("getting follows for " + userId);
         return ResponseEntity.status(HttpStatus.OK).body(followService.findAllByUserId(userId));
     }

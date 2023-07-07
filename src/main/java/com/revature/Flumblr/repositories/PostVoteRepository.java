@@ -11,7 +11,8 @@ import com.revature.Flumblr.entities.User;
 
 public interface PostVoteRepository extends JpaRepository<PostVote, String> {
     Optional<PostVote> findByUserAndPost(User user, Post post);
-    List <PostVote> findAllByPost(Post post);
+
+    List<PostVote> findAllByPost(Post post);
     // List<PostVote> findAllByPostWhereVoteIsTrue(Post post);
     // List<PostVote> findAllByPostWhereVoteIsFalse(Post post);
 }

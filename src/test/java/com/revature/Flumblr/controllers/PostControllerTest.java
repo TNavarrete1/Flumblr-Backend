@@ -32,6 +32,9 @@ class PostControllerTest {
     @Mock
     private CommentService commentService;
 
+    @Mock
+    private S3StorageService s3StorageService;
+
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
 
     private List<Post> posts;
@@ -40,6 +43,7 @@ class PostControllerTest {
 
     @BeforeEach
     public void setup() {
+        postController = new PostController(tokenService, postService, commentService, s3StorageService);
         user = new User();
         // necessary for PostResponse
         user.setProfile(new Profile(user, null, "I'm a teapot"));
@@ -51,7 +55,6 @@ class PostControllerTest {
         addPost = new Post("anotherPost", null, null, user);
         addPost.setComments(comments);
         posts.add(addPost);
-        postController = new PostController(tokenService, postService, commentService);
         when(tokenService.extractUserId("dummyToken")).thenReturn(userId);
     }
 

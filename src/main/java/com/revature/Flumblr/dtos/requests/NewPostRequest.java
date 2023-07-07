@@ -9,10 +9,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProfileVoteRequest {
+public class NewPostRequest {
+    private String id;
 
-    private String userId;
-    private String profileId;
-    private boolean vote;
+    private String username;
 
+    private String message;
+
+    private String mediaType;
+
+    private String[] tags;
 }

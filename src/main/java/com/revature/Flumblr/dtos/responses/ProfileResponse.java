@@ -1,4 +1,4 @@
-package com.revature.Flumblr.dtos.requests;
+package com.revature.Flumblr.dtos.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,11 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class NewLoginRequest {
-    private String username;
-    private String password;
+@Getter
+public class ProfileResponse {
+
+    private String profile_img;
+    private String bio;
+
 }

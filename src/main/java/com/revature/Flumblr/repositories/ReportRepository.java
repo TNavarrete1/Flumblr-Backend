@@ -11,5 +11,6 @@ import com.revature.Flumblr.entities.Report;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, String> {
     List<Report> findAllBy(Pageable page);
+
     List<Report> findAllByUserId(String userId);
 }
