@@ -40,7 +40,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final S3StorageService s3StorageService;
 
-    public List<Post> getFeed(String userId, int page) {
+    public List<Post> getFollowing(String userId, int page) {
         User user = userService.findById(userId);
         List<User> following = new ArrayList<User>();
         for (Follow follow : user.getFollows()) {
@@ -48,6 +48,10 @@ public class PostService {
         }
         return postRepository.findAllByUserIn(following,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
+    }
+
+    public List<Post> getFeed(int page) {
+        return postRepository.findAllBy(PageRequest.of(page, 20, Sort.by("createTime").descending()));
     }
 
     public List<Post> findByTag(List<String> tags, int page) {

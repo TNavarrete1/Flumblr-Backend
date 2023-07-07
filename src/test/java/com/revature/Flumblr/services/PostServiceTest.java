@@ -55,15 +55,24 @@ class PostServiceTest {
     }
 
     @Test
-    public void getFeedTest() {
+    public void getFollowingTest() {
         when(userService.findById(userId)).thenReturn(user);
         Set<Follow> follows = new HashSet<Follow>();
         follows.add(new Follow(user, followed));
         user.setFollows(follows);
         List<Post> posts = new ArrayList<Post>();
+        posts.add(post);
         when(postRepository.findAllByUserIn(anyList(), isA(Pageable.class))).thenReturn(posts);
-        postService.getFeed(userId, 1);
+        postService.getFollowing(userId, 1);
         verify(postRepository, times(1)).findAllByUserIn(anyList(), isA(Pageable.class));
+    }
+
+    @Test
+    public void getFeedTest() {
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post);
+        postService.getFeed(1);
+        verify(postRepository, times(1)).findAllBy(isA(Pageable.class));
     }
 
     @Test

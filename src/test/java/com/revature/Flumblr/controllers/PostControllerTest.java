@@ -65,15 +65,36 @@ class PostControllerTest {
     }
 
     @Test
+    public void getFollowingTest() {
+        assertThrows(BadRequestException.class, ()->{
+            postController.getFollowing("dummyToken", 0);
+        });
+        when(postService.getFollowing(userId, 0)).thenReturn(posts);
+
+        ResponseEntity<List<PostResponse>> result = postController.getFollowing("dummyToken", 1);
+
+        verify(postService, times(1)).getFollowing(userId, 0);
+        assertEquals(result.getStatusCode(), HttpStatus.OK);
+
+        List<String> resultMessages = new ArrayList<String>();
+        for(PostResponse response : result.getBody()) {
+            resultMessages.add(response.getMessage());
+        }
+        assertTrue(resultMessages.contains("testPost"));
+        assertTrue(resultMessages.contains("anotherPost"));
+        assertEquals(resultMessages.size(), 2);
+    }
+
+    @Test
     public void getFeedTest() {
         assertThrows(BadRequestException.class, ()->{
             postController.getFeed("dummyToken", 0);
         });
-        when(postService.getFeed(userId, 0)).thenReturn(posts);
+        when(postService.getFeed(0)).thenReturn(posts);
 
         ResponseEntity<List<PostResponse>> result = postController.getFeed("dummyToken", 1);
 
-        verify(postService, times(1)).getFeed(userId, 0);
+        verify(postService, times(1)).getFeed(0);
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();

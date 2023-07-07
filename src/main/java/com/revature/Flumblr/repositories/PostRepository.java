@@ -19,4 +19,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findAllByTagsNameIn(List<String> tags, Pageable pageable);
 
     List<Post> findByCreateTimeGreaterThanEqual(Date fromDate);
+
+    List<Post> findAllBy(Pageable pageable);
 }
