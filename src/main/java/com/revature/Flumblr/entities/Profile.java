@@ -28,8 +28,10 @@ public class Profile {
     @Column
     private String bio;
 
-    @Column
-    private String theme;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    @JsonBackReference
+    private Theme theme;
 
     @OneToOne
     @JoinColumn(name = "user_id")
