@@ -36,7 +36,7 @@ public class PostVoteService {
         }
         save(vote);
         notificationService.createNotification("User " + user.getUsername() + " voted on your post",
-                "post:" + post.getId(), user, notificationTypeService.findByName("postLike"));
+                "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postLike"));
     }
 
     public void save(PostVote vote) {

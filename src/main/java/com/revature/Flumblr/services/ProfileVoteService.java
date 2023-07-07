@@ -38,7 +38,7 @@ public class ProfileVoteService {
         save(vote);
         save(vote);
         notificationService.createNotification("User " + user.getUsername() + " voted on your profile",
-                "profile:" + profile.getId(), user, notificationTypeService.findByName("profileLike"));
+                "profile:" + profile.getId(), profile.getUser(), notificationTypeService.findByName("profileLike"));
     }
 
     public void save(ProfileVote vote) {

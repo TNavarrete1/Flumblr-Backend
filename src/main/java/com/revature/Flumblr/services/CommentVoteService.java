@@ -36,7 +36,7 @@ public class CommentVoteService {
         }
         save(vote);
         notificationService.createNotification("User " + user.getUsername() + " voted on your comment",
-                "comment:" + comment.getId(), user, notificationTypeService.findByName("commentLike"));
+                "comment:" + comment.getId(), comment.getUser(), notificationTypeService.findByName("commentLike"));
     }
 
     public void save(CommentVote vote) {

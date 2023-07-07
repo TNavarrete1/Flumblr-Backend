@@ -31,7 +31,7 @@ public class CommentService {
         Comment com = new Comment(req.getComment(), post, user);
         commentRepository.save(com);
         notificationService.createNotification("User " + user.getUsername() + " commented on your post",
-                "post:" + post.getId(), user, notificationTypeService.findByName("postComment"));
+                "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postComment"));
     }
 
     public Comment findById(String commentId) {

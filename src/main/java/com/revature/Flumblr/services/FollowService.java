@@ -56,6 +56,6 @@ public class FollowService {
         Follow follow = new Follow(follower, followed);
         followRepository.save(follow);
         notificationService.createNotification("User " + follower.getUsername() + " followed you",
-                "user:" + follower.getId(), follower, notificationTypeService.findByName("follow"));
+                "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 }
