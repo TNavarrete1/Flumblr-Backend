@@ -8,6 +8,7 @@ import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 import java.util.ArrayList;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -30,6 +31,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final S3StorageService s3StorageService; 
 
     public List<PostResponse> getFeed(String userId, int page) {
         User user = userService.findById(userId);
@@ -70,18 +72,26 @@ public class PostService {
     }
 
     public String getPostOwner(String postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post with id " + postId + " was not found"));
         return post.getUser().getId();
-    }
+        }
 
     public void deletePost(String postId) {
         try {
+            Optional<Post> postOptional = postRepository.findById(postId);
+            if(postOptional.isPresent()){
+            Post post = postOptional.get();
+            s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+
             postRepository.deleteById(postId);
-        } catch (EmptyResultDataAccessException e) {
+        } else {
             throw new ResourceNotFoundException("Post with id " + postId + " was not found");
         }
-    }
+    
+        }catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException("Post with id " + postId + " was not found");
+        }
+        }
 
     public void createPost(MultipartHttpServletRequest req, String fileUrl, String userId) {
 
@@ -101,9 +111,35 @@ public class PostService {
         }
 
         Post post = new Post(message, mediaType, fileUrl, user);
-
+        
         postRepository.save(post);
 
+    }   
+    public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
+        Post post = this.findById(postId);
+        String newMessage = req.getParameter("message");
+        String newMediaType = req.getParameter("mediaType");
+        String existingFileUrl = post.getS3Url();
+        
+        if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
+        s3StorageService.deleteFileFromS3Bucket(existingFileUrl);
     }
+        if(newMessage != null && !newMessage.isEmpty()) {
+            post.setMessage(newMessage);
+        }
+
+        if(newMediaType != null && !newMediaType.isEmpty()) {
+            post.setMediaType(newMediaType);
+        }
+
+        if(fileUrl != null && !fileUrl.isEmpty()) {
+            post.setS3Url(fileUrl);
+        }
+        post.setEditTime(new Date());
+        postRepository.save(post);
+        PostResponse response = new PostResponse(post);
+        return response;
+    }
+
 
 }
