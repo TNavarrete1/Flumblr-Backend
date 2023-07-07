@@ -40,7 +40,7 @@ public class NotificationController {
     @GetMapping("/all/{userId}")
     public ResponseEntity<List<Notification>> getAllNotification(@RequestHeader("Authorization") String token,
             @PathVariable String userId) {
-        tokenService.validateToken(token, userId);
+        tokenService.extractUserId(token);
 
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.getNotificationByUser(userId));
     }

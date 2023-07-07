@@ -126,7 +126,7 @@ public class PostController {
     public ResponseEntity<?> commentOnPost(@RequestBody NewCommentRequest req,
             @RequestHeader("Authorization") String token) {
 
-        tokenService.validateToken(token, req.getUser_id());
+        tokenService.validateToken(token, req.getUserId());
         commentService.commentOnPost(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -148,35 +148,33 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully deleted.");
     }
+
     @PutMapping("/id/{postId}")
-    public ResponseEntity<?> updatePost(@PathVariable String postId, MultipartHttpServletRequest req, 
-    @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> updatePost(@PathVariable String postId, MultipartHttpServletRequest req,
+            @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("Updating post " + postId + " requested by " + requesterId);
-        
+
         String postOwnerId = postService.getPostOwner(postId);
-        
+
         if (!postOwnerId.equals(requesterId)) {
             logger.warn("User " + requesterId + " attempted to update post " + postId + " that they do not own");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to update this post.");
         }
 
-        
         MultipartFile file = req.getFile("file");
         String fileUrl = s3StorageService.uploadFile(file);
-        
-        postService.updatePost(postId, req, fileUrl); 
-        
+
+        postService.updatePost(postId, req, fileUrl);
+
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
     }
 
-
-    @GetMapping("/trending/{fromDate}/{userId}")
+    @GetMapping("/trending/{fromDate}")
     public ResponseEntity<List<PostResponse>> getTrending(
             @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-            @PathVariable("userId") String userId,
             @RequestHeader("Authorization") String token) {
-        tokenService.validateToken(token, userId);
+        tokenService.extractUserId(token);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
     }
 

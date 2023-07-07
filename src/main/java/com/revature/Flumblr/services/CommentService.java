@@ -26,8 +26,8 @@ public class CommentService {
     private final NotificationTypeService notificationTypeService;
 
     public void commentOnPost(NewCommentRequest req) {
-        User user = userRepository.getReferenceById(req.getUser_id());
-        Post post = postRepository.getReferenceById(req.getPost_id());
+        User user = userRepository.getReferenceById(req.getUserId());
+        Post post = postRepository.getReferenceById(req.getPostId());
         Comment com = new Comment(req.getComment(), post, user);
         commentRepository.save(com);
         notificationService.createNotification("User " + user.getUsername() + " commented on your post",
