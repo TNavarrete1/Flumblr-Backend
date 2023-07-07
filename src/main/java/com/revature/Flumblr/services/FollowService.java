@@ -19,6 +19,8 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     private final UserService userService;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public boolean doesFollow(String userId, String followName) {
         Optional<Follow> followOpt = followRepository.findByUserIdAndFollowUsername(userId, followName);
@@ -53,5 +55,7 @@ public class FollowService {
         User followed = userService.findByUsername(followName);
         Follow follow = new Follow(follower, followed);
         followRepository.save(follow);
+        notificationService.createNotification("User " + follower.getUsername() + " followed you",
+                "user:" + follower.getId(), follower, notificationTypeService.findByName("follow"));
     }
 }
