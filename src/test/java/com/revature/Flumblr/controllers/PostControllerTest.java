@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +42,7 @@ class PostControllerTest {
     private List<Post> posts;
     private User user;
     private List<Comment> comments;
+    private Set<PostVote> postVotes;
 
     @BeforeEach
     public void setup() {
@@ -49,11 +52,14 @@ class PostControllerTest {
         user.setProfile(new Profile(user, null, "I'm a teapot"));
         posts = new ArrayList<Post>();
         comments = new ArrayList<Comment>();
+        postVotes = new HashSet<PostVote>();
         Post addPost = new Post("testPost", null, null, user);
         addPost.setComments(comments);
+        addPost.setPostVotes(postVotes);
         posts.add(addPost);
         addPost = new Post("anotherPost", null, null, user);
         addPost.setComments(comments);
+        addPost.setPostVotes(postVotes);
         posts.add(addPost);
         when(tokenService.extractUserId("dummyToken")).thenReturn(userId);
     }
@@ -125,6 +131,7 @@ class PostControllerTest {
     public void getPostTest() {
         Post responsePost = new Post("testPost", null, null, user);
         responsePost.setComments(comments);
+        responsePost.setPostVotes(postVotes);
         final String postId = "c4030998-a0f5-4850-a951-fb9bfc8dcf50";
         responsePost.setId(postId);
         when(postService.findById(postId)).thenReturn(responsePost);

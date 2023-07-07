@@ -33,9 +33,9 @@ public class PostResponse {
 
     private String mediaType;
 
-    private long upVotes;
+    private int upVotes;
 
-    private long downVotes;
+    private int downVotes;
 
     private Date createTime;
 
@@ -45,7 +45,7 @@ public class PostResponse {
 
     private Set<Tag> tags;
 
-    public PostResponse(Post post, long upVotes, long downVotes) {
+    public PostResponse(Post post, int upVotes, int downVotes) {
         this.id = post.getId();
         this.username = post.getUser().getUsername();
         this.message = post.getMessage();
@@ -66,7 +66,7 @@ public class PostResponse {
     // have to get votes
     public PostResponse(Post post) {
         Set<PostVote> postVotes = post.getPostVotes();
-        long upVotes = 0;
+        int upVotes = 0;
         for(PostVote postVote : postVotes) {
             if(postVote.isVote()) upVotes++;
         }
