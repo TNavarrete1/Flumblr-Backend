@@ -13,9 +13,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class ProfileVoteService {
-    ProfileVoteRepository profileVoteRepository;
-    ProfileService profileService;
-    UserService userService;
+    private final ProfileVoteRepository profileVoteRepository;
+    private final ProfileService profileService;
+    private final UserService userService;
 
     public void vote(ProfileVoteRequest req) {
 

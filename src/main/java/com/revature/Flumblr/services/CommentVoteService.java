@@ -13,9 +13,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class CommentVoteService {
-    CommentVoteRepository commentVoteRepository;
-    CommentService commentService;
-    UserService userService;
+    private final CommentVoteRepository commentVoteRepository;
+    private final CommentService commentService;
+    private final UserService userService;
 
     public void vote(CommentVoteRequest req) {
         User user = userService.findById(req.getUserId());
