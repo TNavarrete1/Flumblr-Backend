@@ -133,5 +133,21 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
     }
 
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deletePostsByUser(@PathVariable String userId, @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        String role = tokenService.extractRole(token);
+
+        if (!userId.equals(requesterId) && !role.equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete these posts.");
+        }
+
+        postService.deletePostsByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Posts were successfully deleted.");
+    }
+
+
+
 
 }
