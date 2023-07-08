@@ -1,11 +1,8 @@
 package com.revature.Flumblr.dtos.responses;
 
 import java.util.Date;
-import java.util.UUID;
 
 import com.revature.Flumblr.entities.Notification;
-import com.revature.Flumblr.entities.NotificationType;
-import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
