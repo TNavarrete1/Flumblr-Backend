@@ -24,7 +24,7 @@ public class ThemeService {
     }
 
     public List<Theme> findAll() {
-        List<Theme> themes = themeRepository.findAllOrderByIdAsc();
+        List<Theme> themes = themeRepository.findAllByOrderByIdAsc();
 
         return themes;
     }

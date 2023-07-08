@@ -10,5 +10,5 @@ import com.revature.Flumblr.entities.Theme;
 public interface ThemeRepository extends JpaRepository<Theme, String> {
     Optional<Theme> findByName(String name);
 
-    List<Theme> findAllOrderByIdAsc();
+    List<Theme> findAllByOrderByIdAsc();
 }
