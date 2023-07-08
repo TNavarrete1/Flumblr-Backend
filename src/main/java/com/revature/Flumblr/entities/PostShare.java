@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "post_view")
+@Table(name = "post_share")
 public class PostShare {
     @Id
     private String id;
