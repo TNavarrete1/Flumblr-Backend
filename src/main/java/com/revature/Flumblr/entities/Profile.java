@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,6 +27,11 @@ public class Profile {
 
     @Column
     private String bio;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    @JsonBackReference
+    private Theme theme;
 
     @OneToOne
     @JoinColumn(name = "user_id")

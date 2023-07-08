@@ -13,18 +13,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class PostVoteService {
-    PostVoteRepository postVoteRepository;
-    PostService postService;
-    UserService userService;
+    private final PostVoteRepository postVoteRepository;
+    private final PostService postService;
+    private final UserService userService;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public void vote(PostVoteRequest req) {
-
-        //incomplete code
-        // User user = userService.findById(req.getUserId());
-        // Post post = postService.findById(req.getPostId());
-
-        User user = null;
-        Post post = null;
+        User user = userService.findById(req.getUserId());
+        Post post = postService.findById(req.getPostId());
 
         PostVote vote = findByUserAndPost(user, post);
         if (vote == null) {
@@ -38,6 +35,8 @@ public class PostVoteService {
             }
         }
         save(vote);
+        notificationService.createNotification("User " + user.getUsername() + " voted on your post",
+                "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postLike"));
     }
 
     public void save(PostVote vote) {

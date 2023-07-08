@@ -1,4 +1,5 @@
 package com.revature.Flumblr.services;
+
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.User;
@@ -7,26 +8,24 @@ import com.revature.Flumblr.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 @AllArgsConstructor
 @Service
 public class ProfileService {
 
-    UserRepository userRepo;
-    ProfileRepository profileRepo;
+    UserRepository userRepository;
+    ProfileRepository profileRepository;
 
-    public Profile getProfileByUser(User user) {
-        return profileRepo.getProfileByUser(user);
+    public Profile getProfileByUserId(String id) {
+        User existingUser = userRepository.getReferenceById(id);
+        return profileRepository.getProfileByUser(existingUser);
     }
 
-    public Profile setProfileImg(String img, NewProfileRequest req) {
-        User existingUser = userRepo.getReferenceById(req.getUserId());
-        return profileRepo.setProfileImg(img, existingUser);
+    public Profile setProfileImg(String profileId, String URL) {
+        return profileRepository.setProfileImg(profileId, URL);
     }
 
-    public Profile setBio(NewProfileRequest req) {
-        User existingUser = userRepo.getReferenceById(req.getUserId());
-        return profileRepo.setBio(req.getBio(), existingUser);
+    public Profile setBio(String profileId, String bio) {
+        return profileRepository.setBio(profileId, bio);
     }
 
 }

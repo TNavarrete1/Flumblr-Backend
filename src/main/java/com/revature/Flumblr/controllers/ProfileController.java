@@ -2,13 +2,16 @@ package com.revature.Flumblr.controllers;
 
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.dtos.responses.ProfileResponse;
+import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.services.ProfileService;
+import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.services.TokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.io.IOException;
 
 @RestController
@@ -19,36 +22,48 @@ public class ProfileController {
 
     ProfileService profileService;
     TokenService tokenService;
+    S3StorageService s3StorageService;
 
     @GetMapping("/{id}")
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
                                                    @RequestHeader("Authorization") String token) {
-        tokenService.validateToken(token, id);
 
-        //include image url and bio in response body
-        ProfileResponse res = new ProfileResponse();
+        //handle invalid token
+        tokenService.extractUserId(token);
+        Profile prof = profileService.getProfileByUserId(id);
+        // include profile id, image url, and bio in response body for frontend
+        ProfileResponse res = new ProfileResponse(prof.getId(), prof.getProfile_img(), prof.getBio());
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
-    //upload profile image
-    @PatchMapping("/upload")
-    ResponseEntity<?> updateProfileImage(@RequestParam("imgFile") MultipartFile file,
-                                         @RequestBody NewProfileRequest req,
+    // upload profile image
+    @PatchMapping("/upload/{id}")
+    ResponseEntity<?> updateProfileImage(MultipartHttpServletRequest req,
+                                         @PathVariable String id,
+                                         @RequestBody NewProfileRequest profileId,
                                          @RequestHeader("Authorization") String token) throws IOException {
 
-        tokenService.validateToken(token, req.getUserId());
-        //return ResponseEntity.status(HttpStatus.OK).body(profileService.setProfileImg(file.getBytes(), req));
-
-        //instead of getting bytes we will get url and save image to s3 bucket
-        //profileService.setProfileImg(file.getBytes(), req);
+        //handle invalid token
+        tokenService.validateToken(token, id);
+        MultipartFile file = req.getFile("file");
+        String fileURL = null;
+        if(file != null) {
+            fileURL = s3StorageService.uploadFile(file);
+        }
+        profileService.setProfileImg(profileId.getProfileId(), fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    //update profile bio
-    @PatchMapping("/bio")
-    ResponseEntity<?> updateProfileBio(@RequestBody NewProfileRequest req, @RequestHeader("Authorization") String token) {
-        tokenService.validateToken(token, req.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(profileService.setBio(req));
+    // update profile bio
+    @PatchMapping("/bio/{id}")
+    ResponseEntity<?> updateProfileBio(@RequestBody NewProfileRequest req,
+                                       @PathVariable String id,
+                                       @RequestHeader("Authorization") String token) {
+
+        //handle invalid token
+        tokenService.validateToken(token, id);
+        profileService.setBio(req.getProfileId(), req.getBio());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
