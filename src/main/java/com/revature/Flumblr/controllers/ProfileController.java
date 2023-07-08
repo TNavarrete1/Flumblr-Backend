@@ -51,6 +51,7 @@ public class ProfileController {
         MultipartFile file = req.getFile("file");
         String fileURL = null;
         if(file != null) {
+            //need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
         profileService.setProfileImg(profileId.getProfileId(), fileURL);
@@ -68,5 +69,7 @@ public class ProfileController {
         profileService.setBio(req.getProfileId(), req.getBio());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    //can make theme endpoint here or add a theme controller if we're having a frontend admin create themes
 
 }
