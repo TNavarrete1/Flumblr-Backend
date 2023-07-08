@@ -32,7 +32,7 @@ public class NotificationResponse {
     private String notificationType;
 
     public NotificationResponse(Notification notification) {
-        this.id = UUID.randomUUID().toString();
+        this.id = notification.getId();
         this.message = notification.getMessage();
         this.username = notification.getUser().getUsername();
         this.viewed = notification.isViewed();
