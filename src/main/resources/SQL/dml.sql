@@ -8,6 +8,7 @@ INSERT INTO notification_types (name,id) VALUES
 
 
 INSERT INTO themes (name,id) VALUES
+('default', '0'),
 ('theme-one','1'),
 ('theme-two','2'),
 ('theme-three', '3'),

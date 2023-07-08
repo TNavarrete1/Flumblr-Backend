@@ -49,7 +49,7 @@ class PostControllerTest {
         postController = new PostController(tokenService, postService, commentService, s3StorageService);
         user = new User();
         // necessary for PostResponse
-        user.setProfile(new Profile(user, null, "I'm a teapot"));
+        user.setProfile(new Profile(user, null, "I'm a teapot", null));
         posts = new ArrayList<Post>();
         comments = new ArrayList<Comment>();
         postVotes = new HashSet<PostVote>();
@@ -66,7 +66,7 @@ class PostControllerTest {
 
     @Test
     public void getFollowingTest() {
-        assertThrows(BadRequestException.class, ()->{
+        assertThrows(BadRequestException.class, () -> {
             postController.getFollowing("dummyToken", 0);
         });
         when(postService.getFollowing(userId, 0)).thenReturn(posts);
@@ -77,7 +77,7 @@ class PostControllerTest {
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
-        for(PostResponse response : result.getBody()) {
+        for (PostResponse response : result.getBody()) {
             resultMessages.add(response.getMessage());
         }
         assertTrue(resultMessages.contains("testPost"));
@@ -87,7 +87,7 @@ class PostControllerTest {
 
     @Test
     public void getFeedTest() {
-        assertThrows(BadRequestException.class, ()->{
+        assertThrows(BadRequestException.class, () -> {
             postController.getFeed("dummyToken", 0);
         });
         when(postService.getFeed(0)).thenReturn(posts);
@@ -98,7 +98,7 @@ class PostControllerTest {
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
-        for(PostResponse response : result.getBody()) {
+        for (PostResponse response : result.getBody()) {
             resultMessages.add(response.getMessage());
         }
         assertTrue(resultMessages.contains("testPost"));
@@ -111,7 +111,7 @@ class PostControllerTest {
         List<String> tagStrings = new ArrayList<String>();
         tagStrings.add("sunny");
         tagStrings.add("car");
-        assertThrows(BadRequestException.class, ()->{
+        assertThrows(BadRequestException.class, () -> {
             postController.getByTags("dummyToken", 0, tagStrings);
         });
         when(postService.findByTag(tagStrings, 0)).thenReturn(posts);
@@ -122,7 +122,7 @@ class PostControllerTest {
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
-        for(PostResponse response : result.getBody()) {
+        for (PostResponse response : result.getBody()) {
             resultMessages.add(response.getMessage());
         }
         assertTrue(resultMessages.contains("testPost"));
