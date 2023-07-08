@@ -3,9 +3,11 @@ package com.revature.Flumblr.controllers;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.dtos.responses.ProfileResponse;
 import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.services.ProfileService;
 import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.services.TokenService;
+import com.revature.Flumblr.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class ProfileController {
     ProfileService profileService;
     TokenService tokenService;
     S3StorageService s3StorageService;
+    UserService userService;
 
     @GetMapping("/{id}")
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
@@ -30,8 +33,10 @@ public class ProfileController {
         //handle invalid token
         tokenService.validateToken(token, id);
         Profile prof = profileService.getProfileByUserId(id);
+        // frontend needs username for profile display
+        User username = userService.findById(id);
         // include profile id, image url, bio, and themeName in response body for frontend
-        ProfileResponse res = new ProfileResponse(prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName());
+        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName());
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
