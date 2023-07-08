@@ -38,7 +38,8 @@ public class UserService {
         User createdUser = userRepository.save(newUser);
 
         // create and save unique profile id for each user to be updated on profile page
-        // set profile_img to a default silhouette in s3 bucket - once uploaded add url as a default
+        // set profile_img to a default silhouette in s3 bucket - once uploaded add url
+        // as a default
         Profile blankProfile = new Profile(createdUser, "", "", new Theme("default"));
         profileRepository.save(blankProfile);
 
