@@ -1,8 +1,10 @@
 package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileRepository;
+import com.revature.Flumblr.repositories.ThemeRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ public class ProfileService {
 
     UserRepository userRepository;
     ProfileRepository profileRepository;
+    ThemeRepository themeRepository;
 
     public Profile getProfileByUserId(String id) {
         User existingUser = userRepository.getReferenceById(id);
@@ -31,7 +34,8 @@ public class ProfileService {
     }
 
     public Profile setTheme(String profileId, String themeName) {
-        return profileRepository.setTheme(profileId, themeName);
+        Theme theme = themeRepository.getTheme(themeName);
+        return profileRepository.setTheme(profileId, theme);
     }
 
     public Profile findById(String id) {

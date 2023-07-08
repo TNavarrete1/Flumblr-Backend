@@ -1,6 +1,7 @@
 package com.revature.Flumblr.repositories;
 
 import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,6 +23,6 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
 
     @Modifying
     @Query("UPDATE Profile p SET p.theme = :theme WHERE p.id = :id")
-    Profile setTheme(String id, String theme);
+    Profile setTheme(String id, Theme theme);
 
 }
