@@ -1,11 +1,8 @@
 package com.revature.Flumblr.dtos.responses;
 
 import java.util.Date;
-import java.util.UUID;
 
 import com.revature.Flumblr.entities.Notification;
-import com.revature.Flumblr.entities.NotificationType;
-import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +29,7 @@ public class NotificationResponse {
     private String notificationType;
 
     public NotificationResponse(Notification notification) {
-        this.id = UUID.randomUUID().toString();
+        this.id = notification.getId();
         this.message = notification.getMessage();
         this.username = notification.getUser().getUsername();
         this.viewed = notification.isViewed();
