@@ -43,7 +43,11 @@ public class FollowService {
         if (!doesFollow(userId, followName))
             throw new ResourceConflictException("can't unfollow: user " + userId +
                     " doesn't follow " + followName);
+        User follower = userService.findById(userId);
+        User followed = userService.findByUsername(followName);
         followRepository.deleteByUserIdAndFollowUsername(userId, followName);
+        notificationService.createNotification("User " + follower.getUsername() + " unfollowed you",
+                "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 
     // followName is the username of the person followed
