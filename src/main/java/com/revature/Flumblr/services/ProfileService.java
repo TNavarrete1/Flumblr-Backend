@@ -1,10 +1,10 @@
 package com.revature.Flumblr.services;
-import com.revature.Flumblr.dtos.requests.NewProfileRequest;
+
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileRepository;
 import com.revature.Flumblr.repositories.UserRepository;
-import com.revature.Flumblr.utils.custom_exceptions.ProfileNotFoundException;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,33 +14,32 @@ import java.util.Optional;
 @Service
 public class ProfileService {
 
-    UserRepository userRepo;
-    ProfileRepository profileRepo;
+    UserRepository userRepository;
+    ProfileRepository profileRepository;
 
-    public Profile findById(String profileId) {
-        Optional<Profile> profileOpt = profileRepo.findById(profileId);
-        if (profileOpt.isEmpty()) {
-            throw new ProfileNotFoundException("No profile located for specified Id.");
+    public Profile getProfileByUserId(String id) {
+        User existingUser = userRepository.getReferenceById(id);
+        return profileRepository.getProfileByUser(existingUser);
+    }
+
+    public Profile setProfileImg(String profileId, String URL) {
+        return profileRepository.setProfileImg(profileId, URL);
+    }
+
+    public Profile setBio(String profileId, String bio) {
+        return profileRepository.setBio(profileId, bio);
+    }
+
+    public Profile setTheme(String profileId, String themeName) {
+        return profileRepository.setTheme(profileId, themeName);
+    }
+
+    public Profile findById(String id) {
+        Optional<Profile> opt = profileRepository.findById(id);
+        if(opt.isEmpty()) {
+            throw new ResourceNotFoundException("Unable to find profile ID: " + id);
         }
-        return profileOpt.get();
-    }
-
-    public void setProfileImg(String img, NewProfileRequest req) {
-        User existingUser = userRepo.getReferenceById(req.getUserId());
-        profileRepo.setProfileImg(img, existingUser);
-    }
-
-    public Profile setBio(NewProfileRequest req) {
-        User existingUser = userRepo.getReferenceById(req.getUserId());
-        return profileRepo.setBio(req.getBio(), existingUser);
-    }
-
-    public Profile getProfileByUser(String id) {
-
-         User existingUser = userRepo.getReferenceById(id);
-
-
-        return profileRepo.getProfileByUser(existingUser);
+        return opt.get();
     }
 
 }

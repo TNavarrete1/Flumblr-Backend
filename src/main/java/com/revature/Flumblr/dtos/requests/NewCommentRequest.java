@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 public class NewCommentRequest {
     private String comment;
-    private String post_id;
-    private String user_id;
+    private String postId;
+    private String userId;
 }

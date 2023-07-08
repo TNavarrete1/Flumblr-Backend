@@ -1,6 +1,7 @@
 package com.revature.Flumblr.entities;
 
 import java.util.Date;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -29,8 +30,8 @@ public class Report {
     @Column(name = "create_time", nullable = false)
     private Date createTime;
 
-    @Column(columnDefinition = "text")
-    private String message;
+    @Column(columnDefinition = "text", nullable = false)
+    private String reason;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -42,10 +43,11 @@ public class Report {
     @JsonBackReference
     private Post post;
 
-    public Report(User user, Post post, String message) {
+    public Report(Post post, User user, String reason) {
+        this.id = UUID.randomUUID().toString();
+        this.createTime = new Date();
         this.user = user;
         this.post = post;
-        this.message = message;
-        this.createTime = new Date();
+        this.reason = reason;
     }
 }

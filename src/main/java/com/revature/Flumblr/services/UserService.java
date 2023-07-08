@@ -1,7 +1,9 @@
 package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.repositories.ProfileRepository;
+
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
@@ -23,9 +25,10 @@ import lombok.AllArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
+
+    // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
@@ -35,7 +38,8 @@ public class UserService {
         User createdUser = userRepository.save(newUser);
 
         // create and save unique profile id for each user to be updated on profile page
-        Profile blankProfile = new Profile(createdUser, null, null);
+        // set profile_img to a default silhouette in s3 bucket - once uploaded add url as a default
+        Profile blankProfile = new Profile(createdUser, "", "", new Theme("default"));
         profileRepository.save(blankProfile);
 
         return createdUser;
@@ -50,7 +54,8 @@ public class UserService {
 
     public User findByUsername(String username) {
         Optional<User> userOpt = userRepository.findByUsername(username);
-        if(userOpt.isEmpty()) throw new ResourceNotFoundException("couldn't find user for username " + username);
+        if (userOpt.isEmpty())
+            throw new ResourceNotFoundException("couldn't find user for username " + username);
         return userOpt.get();
     }
 
@@ -95,4 +100,3 @@ public class UserService {
         }
     }
 }
-

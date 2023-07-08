@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -29,6 +28,11 @@ public class Profile {
     @Column
     private String bio;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    @JsonBackReference
+    private Theme theme;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -39,11 +43,12 @@ public class Profile {
     @JoinTable(name = "profile_tag_list", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    public Profile(User user, String profile_img, String bio) {
+    public Profile(User user, String profile_img, String bio, Theme theme) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.profile_img = profile_img;
         this.bio = bio;
+        this.theme = theme;
     }
 
 }
