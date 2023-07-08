@@ -3,6 +3,7 @@ package com.revature.Flumblr.services;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.repositories.ProfileRepository;
+import com.revature.Flumblr.repositories.ThemeRepository;
 
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
+    private final ThemeService themeService;
 
     // private final PostService postService;
 
@@ -40,7 +42,8 @@ public class UserService {
         // create and save unique profile id for each user to be updated on profile page
         // set profile_img to a default silhouette in s3 bucket - once uploaded add url
         // as a default
-        Profile blankProfile = new Profile(createdUser, "", "", new Theme("default"));
+        Theme theme = themeService.findByName("default");
+        Profile blankProfile = new Profile(createdUser, "", "", theme);
         profileRepository.save(blankProfile);
 
         return createdUser;
