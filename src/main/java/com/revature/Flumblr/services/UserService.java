@@ -23,7 +23,6 @@ import lombok.AllArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
 
@@ -94,4 +93,5 @@ public class UserService {
             return false;
         }
     }
+
 }
