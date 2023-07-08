@@ -24,7 +24,7 @@ public class ProfileController {
     @GetMapping("/{id}")
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
             @RequestHeader("Authorization") String token) {
-        tokenService.validateToken(token, id);
+        tokenService.extractUserId(token);
 
         // include image url and bio in response body
         ProfileResponse res = new ProfileResponse();

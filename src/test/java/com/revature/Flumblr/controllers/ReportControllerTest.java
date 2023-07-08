@@ -37,7 +37,6 @@ class ReportControllerTest {
 
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
 
-
     private User user;
 
     private Post post;
@@ -68,7 +67,7 @@ class ReportControllerTest {
 
     @Test
     public void getReportsTest() {
-        when(tokenService.extractUserRole(anyString())).thenAnswer(invocationMock -> {
+        when(tokenService.extractRole(anyString())).thenAnswer(invocationMock -> {
             switch((String) invocationMock.getArguments()[0]) {
                 case "nonAdminDummyToken": return "USER";
                 case "adminToken": return "ADMIN";

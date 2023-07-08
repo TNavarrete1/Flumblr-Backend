@@ -52,7 +52,7 @@ public class ReportController {
             @RequestHeader("Authorization") String token) {
         if (page <= 0)
             throw new BadRequestException("page must be > 0");
-        String roleName = tokenService.extractUserRole(token);
+        String roleName = tokenService.extractRole(token);
         if (!roleName.equals("ADMIN")) {
             throw new UnauthorizedException("Must be Admin to see reports");
         }

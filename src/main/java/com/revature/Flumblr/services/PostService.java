@@ -141,6 +141,15 @@ public class PostService {
         PostResponse response = new PostResponse(post);
         return response;
     }
+    public void deletePostsByUserId(String userId) {
+    
+    List<Post> userPosts = postRepository.findByUserIdOrderByCreateTimeDesc(userId);
+
+    for (Post post : userPosts) {
+        s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+        postRepository.delete(post);
+    }
+}
 
     public List<PostResponse> getTrending(Date fromDate) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);

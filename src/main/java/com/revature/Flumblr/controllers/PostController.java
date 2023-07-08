@@ -141,9 +141,29 @@ public class PostController {
     public ResponseEntity<?> commentOnPost(@RequestBody NewCommentRequest req,
             @RequestHeader("Authorization") String token) {
 
-        tokenService.validateToken(token, req.getUser_id());
+        tokenService.validateToken(token, req.getUserId());
         commentService.commentOnPost(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable String commentId,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        String role = tokenService.extractRole(token);
+
+        logger.trace("Deleting comment " + commentId + " requested by " + requesterId);
+
+        String commentOwnerId = commentService.getCommentOwner(commentId);
+
+        if (!commentOwnerId.equals(requesterId) && !role.equals("admin")) {
+            logger.warn("User " + requesterId + " attempted to delete comment " + commentId + " that they do not own");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this comment.");
+        }
+
+        commentService.deleteComment(commentId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Comment was successfully deleted.");
     }
 
     @DeleteMapping("/id/{postId}")
@@ -163,35 +183,48 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully deleted.");
     }
+
     @PutMapping("/id/{postId}")
-    public ResponseEntity<?> updatePost(@PathVariable String postId, MultipartHttpServletRequest req, 
-    @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> updatePost(@PathVariable String postId, MultipartHttpServletRequest req,
+            @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("Updating post " + postId + " requested by " + requesterId);
-        
+
         String postOwnerId = postService.getPostOwner(postId);
-        
+
         if (!postOwnerId.equals(requesterId)) {
             logger.warn("User " + requesterId + " attempted to update post " + postId + " that they do not own");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to update this post.");
         }
 
-        
         MultipartFile file = req.getFile("file");
         String fileUrl = s3StorageService.uploadFile(file);
-        
-        postService.updatePost(postId, req, fileUrl); 
-        
+
+        postService.updatePost(postId, req, fileUrl);
+
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
     }
 
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deletePostsByUser(@PathVariable String userId,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        String role = tokenService.extractRole(token);
 
-    @GetMapping("/trending/{fromDate}/{userId}")
+        if (!userId.equals(requesterId) && !role.equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete these posts.");
+        }
+
+        postService.deletePostsByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Posts were successfully deleted.");
+    }
+
+    @GetMapping("/trending/{fromDate}")
     public ResponseEntity<List<PostResponse>> getTrending(
             @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-            @PathVariable("userId") String userId,
             @RequestHeader("Authorization") String token) {
-        tokenService.validateToken(token, userId);
+        tokenService.extractUserId(token);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
     }
 
