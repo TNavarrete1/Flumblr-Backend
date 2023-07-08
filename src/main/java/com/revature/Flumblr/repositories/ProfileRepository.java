@@ -20,4 +20,8 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     @Query("UPDATE Profile p SET p.bio = :bio WHERE p.id = :id")
     Profile setBio(String id, String bio);
 
+    @Modifying
+    @Query("UPDATE Profile p SET p.theme = :theme WHERE p.id = :id")
+    Profile setTheme(String id, String theme);
+
 }

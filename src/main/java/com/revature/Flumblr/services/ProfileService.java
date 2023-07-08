@@ -1,12 +1,14 @@
 package com.revature.Flumblr.services;
 
-import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileRepository;
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -26,6 +28,18 @@ public class ProfileService {
 
     public Profile setBio(String profileId, String bio) {
         return profileRepository.setBio(profileId, bio);
+    }
+
+    public Profile setTheme(String profileId, String themeName) {
+        return profileRepository.setTheme(profileId, themeName);
+    }
+
+    public Profile findById(String id) {
+        Optional<Profile> opt = profileRepository.findById(id);
+        if(opt.isEmpty()) {
+            throw new ResourceNotFoundException("Unable to find profile ID: " + id);
+        }
+        return opt.get();
     }
 
 }

@@ -3,10 +3,8 @@ package com.revature.Flumblr.controllers;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.dtos.responses.ProfileResponse;
 import com.revature.Flumblr.entities.Profile;
-import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.services.ProfileService;
 import com.revature.Flumblr.services.S3StorageService;
-import com.revature.Flumblr.services.ThemeService;
 import com.revature.Flumblr.services.TokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +22,6 @@ public class ProfileController {
     ProfileService profileService;
     TokenService tokenService;
     S3StorageService s3StorageService;
-    ThemeService themeService;
 
     @GetMapping("/{id}")
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
@@ -33,9 +30,8 @@ public class ProfileController {
         //handle invalid token
         tokenService.validateToken(token, id);
         Profile prof = profileService.getProfileByUserId(id);
-        Theme profTheme = themeService.getTheme(prof);
         // include profile id, image url, bio, and themeName in response body for frontend
-        ProfileResponse res = new ProfileResponse(prof.getId(), prof.getProfile_img(), prof.getBio(), profTheme.getName());
+        ProfileResponse res = new ProfileResponse(prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName());
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
@@ -70,6 +66,16 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    //can make theme endpoint here or add a theme controller if we're having a frontend admin create themes
+    // update theme
+    @PatchMapping("/theme/{id}")
+    ResponseEntity<?> updateTheme(@PathVariable String id,
+                                  @RequestBody NewProfileRequest req,
+                                  @RequestHeader("Authorization") String token) {
+
+        //handle invalid token
+        tokenService.validateToken(token, id);
+        profileService.setTheme(req.getProfileId(), req.getThemeName());
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 }
