@@ -44,7 +44,7 @@ public class ProfileController {
     @PatchMapping("/upload/{id}")
     ResponseEntity<?> updateProfileImage(MultipartHttpServletRequest req,
                                          @PathVariable String id,
-                                         @RequestParam String profileId,
+                                         @RequestParam("id") String profileId,
                                          @RequestHeader("Authorization") String token) {
 
         //handle invalid token
