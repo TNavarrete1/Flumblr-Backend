@@ -51,6 +51,7 @@ class FollowServiceTest {
         followed = new User();
         unFollowed = new User();
         user.setId(userId);
+        user.setUsername("follower");
         followed.setUsername("followable");
         unFollowed.setUsername("unfollowable");
     }
@@ -105,6 +106,7 @@ class FollowServiceTest {
             "unfollowable")).thenReturn(Optional.empty());
         when(followRepository.findByUserIdAndFollowUsername(userId,
             "followable")).thenReturn(Optional.of(new Follow(user, followed)));
+        when(userService.findById(userId)).thenReturn(user);
         assertThrows(ResourceConflictException.class, ()->{
             followService.delete(userId, "unfollowable");
         });

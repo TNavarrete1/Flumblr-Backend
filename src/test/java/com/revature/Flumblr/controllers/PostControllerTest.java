@@ -35,6 +35,9 @@ class PostControllerTest {
     private CommentService commentService;
 
     @Mock
+    private PostShareService postShareService;
+
+    @Mock
     private S3StorageService s3StorageService;
 
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
@@ -43,23 +46,28 @@ class PostControllerTest {
     private User user;
     private List<Comment> comments;
     private Set<PostVote> postVotes;
+    private Set<PostShare> postShares;
 
     @BeforeEach
     public void setup() {
-        postController = new PostController(tokenService, postService, commentService, s3StorageService);
+        postController = new PostController(tokenService, postService, commentService, postShareService,
+            s3StorageService);
         user = new User();
         // necessary for PostResponse
         user.setProfile(new Profile(user, null, "I'm a teapot", null));
         posts = new ArrayList<Post>();
         comments = new ArrayList<Comment>();
         postVotes = new HashSet<PostVote>();
+        postShares = new HashSet<PostShare>();
         Post addPost = new Post("testPost", null, null, user);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
+        addPost.setPostShares(postShares);
         posts.add(addPost);
         addPost = new Post("anotherPost", null, null, user);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
+        addPost.setPostShares(postShares);
         posts.add(addPost);
         when(tokenService.extractUserId("dummyToken")).thenReturn(userId);
     }
@@ -132,11 +140,11 @@ class PostControllerTest {
 
     @Test
     public void getUserPostsTest() {
-        when(postService.getUserPosts(userId)).thenReturn(posts);
+        when(postService.findUserPostsAndShares(userId)).thenReturn(posts);
 
         ResponseEntity<List<PostResponse>> result = postController.getUserPosts(userId, "dummyToken");
 
-        verify(postService, times(1)).getUserPosts(userId);
+        verify(postService, times(1)).findUserPostsAndShares(userId);
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
@@ -153,6 +161,7 @@ class PostControllerTest {
         Post responsePost = new Post("testPost", null, null, user);
         responsePost.setComments(comments);
         responsePost.setPostVotes(postVotes);
+        responsePost.setPostShares(postShares);
         final String postId = "c4030998-a0f5-4850-a951-fb9bfc8dcf50";
         responsePost.setId(postId);
         when(postService.findById(postId)).thenReturn(responsePost);

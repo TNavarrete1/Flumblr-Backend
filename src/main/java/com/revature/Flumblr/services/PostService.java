@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,13 +24,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
+import com.revature.Flumblr.dtos.responses.UserResponse;
 import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
 
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 
 @Service
@@ -46,7 +48,7 @@ public class PostService {
         for (Follow follow : user.getFollows()) {
             following.add(follow.getFollow());
         }
-        return postRepository.findAllByUserIn(following,
+        return postRepository.findPostsAndSharesForUserIn(following,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
     }
 
@@ -59,8 +61,25 @@ public class PostService {
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
     }
 
-    public List<Post> getUserPosts(String userId) {
-        return this.postRepository.findByUserIdOrderByCreateTimeDesc(userId);
+    public List<Post> findUserPostsAndShares(String userId) {
+        return this.postRepository.findPostsAndSharesByUserId(userId);
+    }
+
+    // return list of users that user follows who also shared the post
+    public List<UserResponse> findUsersForSharesAndRequesterId(Post post, String requesterId) {
+        User requester = userService.findById(requesterId);
+        List<UserResponse> usersShared = new ArrayList<UserResponse>();
+        Set<String> followedId = new HashSet<String>();
+        for(Follow follow : requester.getFollows()) {
+            followedId.add(follow.getFollow().getId());
+        }
+        for(PostShare postShare : post.getPostShares()) {
+            User user = postShare.getUser();
+            if(followedId.contains(user.getId())) {
+                usersShared.add(new UserResponse(user));
+            }
+        }
+        return usersShared;
     }
 
     public Post findById(String postId) {
@@ -141,17 +160,17 @@ public class PostService {
         PostResponse response = new PostResponse(post);
         return response;
     }
+
     public void deletePostsByUserId(String userId) {
-    
-    List<Post> userPosts = postRepository.findByUserIdOrderByCreateTimeDesc(userId);
+        List<Post> userPosts = postRepository.findByUserId(userId);
 
-    for (Post post : userPosts) {
-        s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
-        postRepository.delete(post);
+        for (Post post : userPosts) {
+            s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+            postRepository.delete(post);
+        }
     }
-}
 
-    public List<PostResponse> getTrending(Date fromDate) {
+    public List<PostResponse> getTrending(Date fromDate, String requesterId) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);
 
         PriorityQueue<SortedPost> sortedPosts = new PriorityQueue<SortedPost>(11,
@@ -174,10 +193,11 @@ public class PostService {
         PostResponse[] resPosts = new PostResponse[sortedPosts.size()];
         for (int i = sortedPosts.size() - 1; i >= 0; i--) {
             SortedPost sortedPost = sortedPosts.poll();
-            resPosts[i] = new PostResponse(sortedPost.getContent(), sortedPost.getUpvotes(),
+            PostResponse postResponse = new PostResponse(sortedPost.getContent(), sortedPost.getUpvotes(),
                 sortedPost.getDownvotes());
+            //postResponse.setSharedBy(findUsersForSharesAndRequesterId(sortedPost.getContent(), requesterId));
+            resPosts[i] = postResponse;
         }
-
         return Arrays.asList(resPosts);
     }
 

@@ -42,6 +42,8 @@ class PostServiceTest {
 
     private User followed;
 
+    private Set<PostShare> postShares;
+
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
 
     @BeforeEach
@@ -52,6 +54,8 @@ class PostServiceTest {
         user.setId(userId);
         followed.setUsername("followable");
         post = new Post("testPost", null, null, user);
+        postShares = new HashSet<PostShare>();
+        post.setPostShares(postShares);
     }
 
     @Test
@@ -62,9 +66,9 @@ class PostServiceTest {
         user.setFollows(follows);
         List<Post> posts = new ArrayList<Post>();
         posts.add(post);
-        when(postRepository.findAllByUserIn(anyList(), isA(Pageable.class))).thenReturn(posts);
+        when(postRepository.findPostsAndSharesForUserIn(anyList(), isA(Pageable.class))).thenReturn(posts);
         postService.getFollowing(userId, 1);
-        verify(postRepository, times(1)).findAllByUserIn(anyList(), isA(Pageable.class));
+        verify(postRepository, times(1)).findPostsAndSharesForUserIn(anyList(), isA(Pageable.class));
     }
 
     @Test
@@ -92,9 +96,9 @@ class PostServiceTest {
 
     @Test
     public void getUserPostsTest () {
-        postService.getUserPosts(userId);
+        postService.findUserPostsAndShares(userId);
         verify(postRepository, times(1))
-            .findByUserIdOrderByCreateTimeDesc(userId);
+            .findPostsAndSharesByUserId(userId);
     }
 
     @Test
