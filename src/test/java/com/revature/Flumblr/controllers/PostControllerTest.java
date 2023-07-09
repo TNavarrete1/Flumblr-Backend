@@ -43,6 +43,7 @@ class PostControllerTest {
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
 
     private List<Post> posts;
+    private List<PostResponse> postResponses;
     private User user;
     private List<Comment> comments;
     private Set<PostVote> postVotes;
@@ -56,6 +57,7 @@ class PostControllerTest {
         // necessary for PostResponse
         user.setProfile(new Profile(user, null, "I'm a teapot", null));
         posts = new ArrayList<Post>();
+        postResponses = new ArrayList<PostResponse>();
         comments = new ArrayList<Comment>();
         postVotes = new HashSet<PostVote>();
         postShares = new HashSet<PostShare>();
@@ -64,11 +66,13 @@ class PostControllerTest {
         addPost.setPostVotes(postVotes);
         addPost.setPostShares(postShares);
         posts.add(addPost);
+        postResponses.add(new PostResponse(addPost));
         addPost = new Post("anotherPost", null, null, user);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         addPost.setPostShares(postShares);
         posts.add(addPost);
+        postResponses.add(new PostResponse(addPost));
         when(tokenService.extractUserId("dummyToken")).thenReturn(userId);
     }
 
@@ -77,9 +81,10 @@ class PostControllerTest {
         assertThrows(BadRequestException.class, () -> {
             postController.getFollowing("dummyToken", 0);
         });
-        when(postService.getFollowing(userId, 0)).thenReturn(posts);
+        when(postService.getFollowing(userId, 0)).thenReturn(postResponses);
 
-        ResponseEntity<List<PostResponse>> result = postController.getFollowing("dummyToken", 1);
+        ResponseEntity<List<PostResponse>> result =
+            postController.getFollowing("dummyToken", 1);
 
         verify(postService, times(1)).getFollowing(userId, 0);
         assertEquals(result.getStatusCode(), HttpStatus.OK);
@@ -98,11 +103,12 @@ class PostControllerTest {
         assertThrows(BadRequestException.class, () -> {
             postController.getFeed("dummyToken", 0);
         });
-        when(postService.getFeed(0)).thenReturn(posts);
+        when(postService.getFeed(0, userId)).thenReturn(postResponses);
 
-        ResponseEntity<List<PostResponse>> result = postController.getFeed("dummyToken", 1);
+        ResponseEntity<List<PostResponse>> result =
+        postController.getFeed("dummyToken", 1);
 
-        verify(postService, times(1)).getFeed(0);
+        verify(postService, times(1)).getFeed(0, userId);
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
@@ -122,11 +128,12 @@ class PostControllerTest {
         assertThrows(BadRequestException.class, () -> {
             postController.getByTags("dummyToken", 0, tagStrings);
         });
-        when(postService.findByTag(tagStrings, 0)).thenReturn(posts);
+        when(postService.findByTag(tagStrings, 0, userId)).thenReturn(postResponses);
 
-        ResponseEntity<List<PostResponse>> result = postController.getByTags("dummyToken", 1, tagStrings);
+        ResponseEntity<List<PostResponse>> result =
+        postController.getByTags("dummyToken", 1, tagStrings);
 
-        verify(postService, times(1)).findByTag(tagStrings, 0);
+        verify(postService, times(1)).findByTag(tagStrings, 0, userId);
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
@@ -140,11 +147,12 @@ class PostControllerTest {
 
     @Test
     public void getUserPostsTest() {
-        when(postService.findUserPostsAndShares(userId)).thenReturn(posts);
+        when(postService.getUserPosts(userId, userId)).thenReturn(postResponses);
 
-        ResponseEntity<List<PostResponse>> result = postController.getUserPosts(userId, "dummyToken");
+        ResponseEntity<List<PostResponse>> result =
+            postController.getUserPosts(userId, "dummyToken");
 
-        verify(postService, times(1)).findUserPostsAndShares(userId);
+        verify(postService, times(1)).getUserPosts(userId, userId);
         assertEquals(result.getStatusCode(), HttpStatus.OK);
 
         List<String> resultMessages = new ArrayList<String>();
@@ -164,11 +172,13 @@ class PostControllerTest {
         responsePost.setPostShares(postShares);
         final String postId = "c4030998-a0f5-4850-a951-fb9bfc8dcf50";
         responsePost.setId(postId);
-        when(postService.findById(postId)).thenReturn(responsePost);
+        PostResponse postResponse = new PostResponse(responsePost);
+        when(postService.findByIdResponse(postId, userId)).thenReturn(postResponse);
 
-        ResponseEntity<PostResponse> postResponse = postController.getPost(postId, "dummyToken");
-        verify(postService, times(1)).findById(postId);
-        assertEquals(postResponse.getStatusCode(), HttpStatus.OK);
-        assertEquals(postResponse.getBody().getMessage(), "testPost");
+        ResponseEntity<PostResponse> postResponseEntity = postController.getPost(postId,
+            "dummyToken");
+        verify(postService, times(1)).findByIdResponse(postId, userId);
+        assertEquals(postResponseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(postResponseEntity.getBody().getMessage(), "testPost");
     }
 }

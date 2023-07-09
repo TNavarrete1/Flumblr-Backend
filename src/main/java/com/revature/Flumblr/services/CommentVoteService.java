@@ -35,7 +35,7 @@ public class CommentVoteService {
             }
         }
         save(vote);
-        notificationService.createNotification("User " + user.getUsername() + " voted on your comment",
+        notificationService.createNotification(user.getUsername() + " voted on your comment",
                 "comment:" + comment.getId(), comment.getUser(), notificationTypeService.findByName("commentLike"));
     }
 
