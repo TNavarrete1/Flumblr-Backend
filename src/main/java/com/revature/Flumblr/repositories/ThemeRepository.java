@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ThemeRepository {
 
-    Theme getTheme(String themeName);
+    Theme getTheme(String name);
 
 }
