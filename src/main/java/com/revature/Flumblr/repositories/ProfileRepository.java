@@ -14,7 +14,7 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     Profile getProfileByUser(User user);
 
     @Modifying
-    @Query("UPDATE Profile p SET p.profile_img = :profileImg WHERE p.id = :id")
+    @Query("UPDATE Profile p SET p.profile_url = :profileImg WHERE p.id = :id")
     Profile setProfileImg(String id, String profileImg);
 
     @Modifying
