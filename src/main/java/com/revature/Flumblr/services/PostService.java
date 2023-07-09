@@ -144,7 +144,7 @@ public class PostService {
     }
 
     public List<PostResponse> getUserPosts(String userId, String requesterId) {
-        List<Post> userPosts = this.postRepository.findByUserId(userId);
+        List<Post> userPosts = this.postRepository.findPostsAndSharesByUserId(userId);
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : userPosts) {
             PostResponse response = findByPostResponse(userPost, requesterId);
