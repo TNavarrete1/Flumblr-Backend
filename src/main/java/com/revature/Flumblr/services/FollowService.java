@@ -57,6 +57,8 @@ public class FollowService {
                     " already follows " + followName);
         User follower = userService.findById(userId);
         User followed = userService.findByUsername(followName);
+        if(follower.getId().equals(followed.getId()))
+            throw new ResourceConflictException("self-follow not permitted");
         Follow follow = new Follow(follower, followed);
         followRepository.save(follow);
         notificationService.createNotification(follower.getUsername() + " followed you",

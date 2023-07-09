@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.revature.Flumblr.dtos.responses.CommentResponse;
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
+import com.revature.Flumblr.dtos.responses.UserResponse;
 import com.revature.Flumblr.entities.User;
 
 import lombok.AllArgsConstructor;
@@ -35,6 +35,7 @@ import com.revature.Flumblr.entities.Comment;
 import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 
 @Service
@@ -49,9 +50,12 @@ public class PostService {
 
     public PostResponse findByIdResponse(String postId, String requesterId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
-        if (userPost.isEmpty())
+        if(userPost.isEmpty())
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
-        Post post = userPost.get();
+        return findByPostResponse(userPost.get(), requesterId);
+    }
+
+    public PostResponse findByPostResponse(Post post, String requesterId) {
         User requestUser = userService.findById(requesterId);
         Set<PostVote> postVotes = post.getPostVotes();
         int upVotes = 0;
@@ -69,6 +73,8 @@ public class PostService {
 
         PostResponse response = new PostResponse(post);
         PostVote postVote = postVoteRepository.findByUserAndPost(requestUser, post).orElse(null);
+        response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
+        response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
         response.setUpVotes(upVotes);
         response.setDownVotes(postVotes.size() - upVotes);
@@ -76,17 +82,17 @@ public class PostService {
         return response;
     }
 
-    public List<PostResponse> getFollowing(String userId, int page, String requesterId) {
+    public List<PostResponse> getFollowing(String userId, int page) {
         User user = userService.findById(userId);
         List<User> following = new ArrayList<User>();
         for (Follow follow : user.getFollows()) {
             following.add(follow.getFollow());
         }
-        List<Post> posts = postRepository.findAllByUserIn(following,
+        List<Post> posts = postRepository.findPostsAndSharesForUserIn(following,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : posts) {
-            PostResponse response = findByIdResponse(userPost.getId(), requesterId);
+            PostResponse response = findByPostResponse(userPost, userId);
             resPosts.add(response);
         }
         return resPosts;
@@ -96,7 +102,7 @@ public class PostService {
         List<Post> posts = postRepository.findAllBy(PageRequest.of(page, 20, Sort.by("createTime").descending()));
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : posts) {
-            PostResponse response = findByIdResponse(userPost.getId(), requesterId);
+            PostResponse response = findByPostResponse(userPost, requesterId);
             resPosts.add(response);
         }
         return resPosts;
@@ -107,18 +113,41 @@ public class PostService {
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : posts) {
-            PostResponse response = findByIdResponse(userPost.getId(), requesterId);
+            PostResponse response = findByPostResponse(userPost, requesterId);
             resPosts.add(response);
         }
 
         return resPosts;
     }
 
+    public List<Post> findUserPostsAndShares(String userId) {
+        return this.postRepository.findPostsAndSharesByUserId(userId);
+    }
+
+    // return list of users that user follows who also shared the post
+    public List<UserResponse> findUsersForSharesAndRequesterId(Post post, String requesterId) {
+        User requester = userService.findById(requesterId);
+        List<UserResponse> usersShared = new ArrayList<UserResponse>();
+        Set<String> followedId = new HashSet<String>();
+        for(Follow follow : requester.getFollows()) {
+            followedId.add(follow.getFollow().getId());
+        }
+        // include requester in 'share' info
+        followedId.add(requesterId);
+        for(PostShare postShare : post.getPostShares()) {
+            User user = postShare.getUser();
+            if(followedId.contains(user.getId())) {
+                usersShared.add(new UserResponse(user));
+            }
+        }
+        return usersShared;
+    }
+
     public List<PostResponse> getUserPosts(String userId, String requesterId) {
-        List<Post> userPosts = this.postRepository.findByUserIdOrderByCreateTimeDesc(userId);
+        List<Post> userPosts = this.postRepository.findByUserId(userId);
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : userPosts) {
-            PostResponse response = findByIdResponse(userPost.getId(), requesterId);
+            PostResponse response = findByPostResponse(userPost, requesterId);
             resPosts.add(response);
         }
         return resPosts;
@@ -199,13 +228,13 @@ public class PostService {
         }
         post.setEditTime(new Date());
         postRepository.save(post);
-        PostResponse response = findByIdResponse(post.getId(), post.getUser().getId());
+        PostResponse response = findByPostResponse(post, post.getUser().getId());
         return response;
     }
 
     public void deletePostsByUserId(String userId) {
 
-        List<Post> userPosts = postRepository.findByUserIdOrderByCreateTimeDesc(userId);
+        List<Post> userPosts = postRepository.findByUserId(userId);
 
         for (Post post : userPosts) {
             s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
@@ -226,7 +255,7 @@ public class PostService {
 
         for (Post userPost : responses) {
             // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
-            SortedPost sortedPost = new SortedPost(findByIdResponse(userPost.getId(), requesterId));
+            SortedPost sortedPost = new SortedPost(findByPostResponse(userPost, requesterId));
             calculateScore(sortedPost);
 
             sortedPosts.add(sortedPost);
@@ -239,7 +268,6 @@ public class PostService {
             SortedPost sortedPost = sortedPosts.poll();
             resPosts[i] = sortedPost.getContent();
         }
-
         return Arrays.asList(resPosts);
     }
 
@@ -248,8 +276,10 @@ public class PostService {
         int upVotes = post.getUpVotes();
         int downVotes = post.getDownVotes();
         int numberofComments = post.getComments().size();
+        int numberofShares = post.getShareCount();
         double score = downVotes + upVotes * 1.5;
         score += (numberofComments * 2);
+        score += (numberofShares * 2.5);
         sortedPost.setScore(score);
         sortedPost.setUpvotes(upVotes);
         sortedPost.setDownvotes(downVotes);

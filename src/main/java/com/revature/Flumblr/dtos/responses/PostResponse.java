@@ -6,13 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
-import com.revature.Flumblr.entities.Comment;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,6 +44,10 @@ public class PostResponse {
     private List<CommentResponse> comments;
 
     private Set<Tag> tags;
+
+    private int shareCount;
+
+    private List<UserResponse> sharedBy;
 
     // have to get votes
     public PostResponse(Post post) {

@@ -2,7 +2,6 @@ package com.revature.Flumblr.controllers;
 
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +26,9 @@ import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.services.S3StorageService;
+import com.revature.Flumblr.services.PostShareService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
-import com.revature.Flumblr.entities.Post;
 
 import com.revature.Flumblr.services.CommentService;
 
@@ -45,6 +43,7 @@ public class PostController {
     private final TokenService tokenService;
     private final PostService postService;
     private final CommentService commentService;
+    private final PostShareService postShareService;
     private final S3StorageService s3StorageService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
@@ -69,6 +68,24 @@ public class PostController {
 
     }
 
+    @PostMapping("/share/{postId}")
+    public ResponseEntity<?> sharePost(@RequestHeader("Authorization") String token,
+        @PathVariable String postId) {
+        String userId = tokenService.extractUserId(token);
+
+        postShareService.create(postId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/share/{postId}")
+    public ResponseEntity<?> unSharePost(@RequestHeader("Authorization") String token,
+        @PathVariable String postId) {
+        String userId = tokenService.extractUserId(token);
+
+        postShareService.delete(postId, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
             @PathVariable int page) {
@@ -86,7 +103,7 @@ public class PostController {
             throw new BadRequestException("page must be > 0");
         String requesterId = tokenService.extractUserId(token);
         logger.trace("generating feed for " + requesterId);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getFollowing(requesterId, page - 1, requesterId));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getFollowing(requesterId, page - 1));
     }
 
     @GetMapping("/tag/{page}")
@@ -115,7 +132,6 @@ public class PostController {
     public ResponseEntity<PostResponse> getPost(@PathVariable String postId,
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
-        logger.trace("getting post " + postId + " requested by " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByIdResponse(postId, requesterId));
     }
 

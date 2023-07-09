@@ -23,149 +23,162 @@ import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 
 @ExtendWith(MockitoExtension.class)
 class PostControllerTest {
-    // private PostController postController;
+    private PostController postController;
 
-    // @Mock
-    // private TokenService tokenService;
+    @Mock
+    private TokenService tokenService;
 
-    // @Mock
-    // private PostService postService;
+    @Mock
+    private PostService postService;
 
-    // @Mock
-    // private CommentService commentService;
+    @Mock
+    private CommentService commentService;
 
-    // @Mock
-    // private S3StorageService s3StorageService;
+    @Mock
+    private PostShareService postShareService;
 
-    // private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
+    @Mock
+    private S3StorageService s3StorageService;
 
-    // private List<Post> posts;
-    // private User user;
-    // private List<Comment> comments;
-    // private Set<PostVote> postVotes;
+    private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
 
-    // @BeforeEach
-    // public void setup() {
-    // postController = new PostController(tokenService, postService,
-    // commentService, s3StorageService);
-    // user = new User();
-    // // necessary for PostResponse
-    // user.setProfile(new Profile(user, null, "I'm a teapot", null));
-    // posts = new ArrayList<Post>();
-    // comments = new ArrayList<Comment>();
-    // postVotes = new HashSet<PostVote>();
-    // Post addPost = new Post("testPost", null, null, user);
-    // addPost.setComments(comments);
-    // addPost.setPostVotes(postVotes);
-    // posts.add(addPost);
-    // addPost = new Post("anotherPost", null, null, user);
-    // addPost.setComments(comments);
-    // addPost.setPostVotes(postVotes);
-    // posts.add(addPost);
-    // when(tokenService.extractUserId("dummyToken")).thenReturn(userId);
-    // }
+    private List<Post> posts;
+    private List<PostResponse> postResponses;
+    private User user;
+    private List<Comment> comments;
+    private Set<PostVote> postVotes;
+    private Set<PostShare> postShares;
 
-    // @Test
-    // public void getFollowingTest() {
-    // assertThrows(BadRequestException.class, () -> {
-    // postController.getFollowing("dummyToken", 0);
-    // });
-    // when(postService.getFollowing(userId, 0)).thenReturn(posts);
+    @BeforeEach
+    public void setup() {
+        postController = new PostController(tokenService, postService, commentService, postShareService,
+            s3StorageService);
+        user = new User();
+        // necessary for PostResponse
+        user.setProfile(new Profile(user, null, "I'm a teapot", null));
+        posts = new ArrayList<Post>();
+        postResponses = new ArrayList<PostResponse>();
+        comments = new ArrayList<Comment>();
+        postVotes = new HashSet<PostVote>();
+        postShares = new HashSet<PostShare>();
+        Post addPost = new Post("testPost", null, null, user);
+        addPost.setComments(comments);
+        addPost.setPostVotes(postVotes);
+        addPost.setPostShares(postShares);
+        posts.add(addPost);
+        postResponses.add(new PostResponse(addPost));
+        addPost = new Post("anotherPost", null, null, user);
+        addPost.setComments(comments);
+        addPost.setPostVotes(postVotes);
+        addPost.setPostShares(postShares);
+        posts.add(addPost);
+        postResponses.add(new PostResponse(addPost));
+        when(tokenService.extractUserId("dummyToken")).thenReturn(userId);
+    }
 
-    // ResponseEntity<List<PostResponse>> result =
-    // postController.getFollowing("dummyToken", 1);
+    @Test
+    public void getFollowingTest() {
+        assertThrows(BadRequestException.class, () -> {
+            postController.getFollowing("dummyToken", 0);
+        });
+        when(postService.getFollowing(userId, 0)).thenReturn(postResponses);
 
-    // verify(postService, times(1)).getFollowing(userId, 0);
-    // assertEquals(result.getStatusCode(), HttpStatus.OK);
+        ResponseEntity<List<PostResponse>> result =
+            postController.getFollowing("dummyToken", 1);
 
-    // List<String> resultMessages = new ArrayList<String>();
-    // for (PostResponse response : result.getBody()) {
-    // resultMessages.add(response.getMessage());
-    // }
-    // assertTrue(resultMessages.contains("testPost"));
-    // assertTrue(resultMessages.contains("anotherPost"));
-    // assertEquals(resultMessages.size(), 2);
-    // }
+        verify(postService, times(1)).getFollowing(userId, 0);
+        assertEquals(result.getStatusCode(), HttpStatus.OK);
 
-    // @Test
-    // public void getFeedTest() {
-    // assertThrows(BadRequestException.class, () -> {
-    // postController.getFeed("dummyToken", 0);
-    // });
-    // when(postService.getFeed(0)).thenReturn(posts);
+        List<String> resultMessages = new ArrayList<String>();
+        for (PostResponse response : result.getBody()) {
+            resultMessages.add(response.getMessage());
+        }
+        assertTrue(resultMessages.contains("testPost"));
+        assertTrue(resultMessages.contains("anotherPost"));
+        assertEquals(resultMessages.size(), 2);
+    }
 
-    // ResponseEntity<List<PostResponse>> result =
-    // postController.getFeed("dummyToken", 1);
+    @Test
+    public void getFeedTest() {
+        assertThrows(BadRequestException.class, () -> {
+            postController.getFeed("dummyToken", 0);
+        });
+        when(postService.getFeed(0, userId)).thenReturn(postResponses);
 
-    // verify(postService, times(1)).getFeed(0);
-    // assertEquals(result.getStatusCode(), HttpStatus.OK);
+        ResponseEntity<List<PostResponse>> result =
+        postController.getFeed("dummyToken", 1);
 
-    // List<String> resultMessages = new ArrayList<String>();
-    // for (PostResponse response : result.getBody()) {
-    // resultMessages.add(response.getMessage());
-    // }
-    // assertTrue(resultMessages.contains("testPost"));
-    // assertTrue(resultMessages.contains("anotherPost"));
-    // assertEquals(resultMessages.size(), 2);
-    // }
+        verify(postService, times(1)).getFeed(0, userId);
+        assertEquals(result.getStatusCode(), HttpStatus.OK);
 
-    // @Test
-    // public void getByTagsTest() {
-    // List<String> tagStrings = new ArrayList<String>();
-    // tagStrings.add("sunny");
-    // tagStrings.add("car");
-    // assertThrows(BadRequestException.class, () -> {
-    // postController.getByTags("dummyToken", 0, tagStrings);
-    // });
-    // when(postService.findByTag(tagStrings, 0)).thenReturn(posts);
+        List<String> resultMessages = new ArrayList<String>();
+        for (PostResponse response : result.getBody()) {
+            resultMessages.add(response.getMessage());
+        }
+        assertTrue(resultMessages.contains("testPost"));
+        assertTrue(resultMessages.contains("anotherPost"));
+        assertEquals(resultMessages.size(), 2);
+    }
 
-    // ResponseEntity<List<PostResponse>> result =
-    // postController.getByTags("dummyToken", 1, tagStrings);
+    @Test
+    public void getByTagsTest() {
+        List<String> tagStrings = new ArrayList<String>();
+        tagStrings.add("sunny");
+        tagStrings.add("car");
+        assertThrows(BadRequestException.class, () -> {
+            postController.getByTags("dummyToken", 0, tagStrings);
+        });
+        when(postService.findByTag(tagStrings, 0, userId)).thenReturn(postResponses);
 
-    // verify(postService, times(1)).findByTag(tagStrings, 0);
-    // assertEquals(result.getStatusCode(), HttpStatus.OK);
+        ResponseEntity<List<PostResponse>> result =
+        postController.getByTags("dummyToken", 1, tagStrings);
 
-    // List<String> resultMessages = new ArrayList<String>();
-    // for (PostResponse response : result.getBody()) {
-    // resultMessages.add(response.getMessage());
-    // }
-    // assertTrue(resultMessages.contains("testPost"));
-    // assertTrue(resultMessages.contains("anotherPost"));
-    // assertEquals(resultMessages.size(), 2);
-    // }
+        verify(postService, times(1)).findByTag(tagStrings, 0, userId);
+        assertEquals(result.getStatusCode(), HttpStatus.OK);
 
-    // @Test
-    // public void getUserPostsTest() {
-    // when(postService.getUserPosts(userId)).thenReturn(posts);
+        List<String> resultMessages = new ArrayList<String>();
+        for (PostResponse response : result.getBody()) {
+            resultMessages.add(response.getMessage());
+        }
+        assertTrue(resultMessages.contains("testPost"));
+        assertTrue(resultMessages.contains("anotherPost"));
+        assertEquals(resultMessages.size(), 2);
+    }
 
-    // ResponseEntity<List<PostResponse>> result =
-    // postController.getUserPosts(userId, "dummyToken");
+    @Test
+    public void getUserPostsTest() {
+        when(postService.getUserPosts(userId, userId)).thenReturn(postResponses);
 
-    // verify(postService, times(1)).getUserPosts(userId);
-    // assertEquals(result.getStatusCode(), HttpStatus.OK);
+        ResponseEntity<List<PostResponse>> result =
+            postController.getUserPosts(userId, "dummyToken");
 
-    // List<String> resultMessages = new ArrayList<String>();
-    // for(PostResponse response : result.getBody()) {
-    // resultMessages.add(response.getMessage());
-    // }
-    // assertTrue(resultMessages.contains("testPost"));
-    // assertTrue(resultMessages.contains("anotherPost"));
-    // assertEquals(resultMessages.size(), 2);
-    // }
+        verify(postService, times(1)).getUserPosts(userId, userId);
+        assertEquals(result.getStatusCode(), HttpStatus.OK);
 
-    // @Test
-    // public void getPostTest() {
-    // Post responsePost = new Post("testPost", null, null, user);
-    // responsePost.setComments(comments);
-    // responsePost.setPostVotes(postVotes);
-    // final String postId = "c4030998-a0f5-4850-a951-fb9bfc8dcf50";
-    // responsePost.setId(postId);
-    // when(postService.findById(postId)).thenReturn(responsePost);
+        List<String> resultMessages = new ArrayList<String>();
+        for(PostResponse response : result.getBody()) {
+            resultMessages.add(response.getMessage());
+        }
+        assertTrue(resultMessages.contains("testPost"));
+        assertTrue(resultMessages.contains("anotherPost"));
+        assertEquals(resultMessages.size(), 2);
+    }
 
-    // ResponseEntity<PostResponse> postResponse = postController.getPost(postId,
-    // "dummyToken");
-    // verify(postService, times(1)).findById(postId);
-    // assertEquals(postResponse.getStatusCode(), HttpStatus.OK);
-    // assertEquals(postResponse.getBody().getMessage(), "testPost");
-    // }
+    @Test
+    public void getPostTest() {
+        Post responsePost = new Post("testPost", null, null, user);
+        responsePost.setComments(comments);
+        responsePost.setPostVotes(postVotes);
+        responsePost.setPostShares(postShares);
+        final String postId = "c4030998-a0f5-4850-a951-fb9bfc8dcf50";
+        responsePost.setId(postId);
+        PostResponse postResponse = new PostResponse(responsePost);
+        when(postService.findByIdResponse(postId, userId)).thenReturn(postResponse);
+
+        ResponseEntity<PostResponse> postResponseEntity = postController.getPost(postId,
+            "dummyToken");
+        verify(postService, times(1)).findByIdResponse(postId, userId);
+        assertEquals(postResponseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(postResponseEntity.getBody().getMessage(), "testPost");
+    }
 }
