@@ -74,14 +74,9 @@ public class PostController {
             @PathVariable int page) {
         if (page <= 0)
             throw new BadRequestException("page must be > 0");
-        String userId = tokenService.extractUserId(token);
-        logger.trace("generating feed for " + userId);
-        List<Post> posts = postService.getFeed(page - 1);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("generating feed for " + requesterId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getFeed(page - 1, requesterId));
     }
 
     @GetMapping("/following/{page}")
@@ -89,14 +84,9 @@ public class PostController {
             @PathVariable int page) {
         if (page <= 0)
             throw new BadRequestException("page must be > 0");
-        String userId = tokenService.extractUserId(token);
-        logger.trace("generating feed for " + userId);
-        List<Post> posts = postService.getFollowing(userId, page - 1);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("generating feed for " + requesterId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getFollowing(requesterId, page - 1, requesterId));
     }
 
     @GetMapping("/tag/{page}")
@@ -106,14 +96,10 @@ public class PostController {
             throw new BadRequestException("page must be > 0");
         if (tags.size() < 1)
             throw new BadRequestException("empty tags parameter");
-        String userId = tokenService.extractUserId(token);
-        logger.trace("getting posts by tag(s) " + tags + " for " + userId);
-        List<Post> posts = postService.findByTag(tags, page - 1);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("getting posts by tag(s) " + tags + " for " + requesterId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByTag(tags, page - 1, requesterId));
     }
 
     @GetMapping("/user/{userId}")
@@ -121,12 +107,8 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("getting posts from " + userId + " requested by " + requesterId);
-        List<Post> userPosts = postService.getUserPosts(userId);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : userPosts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId, requesterId));
     }
 
     @GetMapping("/id/{postId}")
@@ -134,7 +116,7 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("getting post " + postId + " requested by " + requesterId);
-        return ResponseEntity.status(HttpStatus.OK).body(new PostResponse(postService.findById(postId)));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByIdResponse(postId, requesterId));
     }
 
     @PostMapping("/comment")
@@ -224,8 +206,8 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getTrending(
             @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
             @RequestHeader("Authorization") String token) {
-        tokenService.extractUserId(token);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
+        String requesterId = tokenService.extractUserId(token);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate, requesterId));
     }
 
 }
