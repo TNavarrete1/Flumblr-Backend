@@ -2,12 +2,13 @@ package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
-import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.amazonaws.services.codecommit.model.FileContentRequiredException;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
+
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.entities.User;
 
@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.Tag;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +32,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final TagService tagService;
 
     public List<PostResponse> getFeed(String userId, int page) {
         User user = userService.findById(userId);
@@ -83,7 +85,6 @@ public class PostService {
     }
 
 
-
     public void createPost(MultipartHttpServletRequest req, String fileUrl, String userId) {
 
         Optional<User> userOpt = userRepository.findById(userId);
@@ -91,16 +92,24 @@ public class PostService {
         User user = userOpt.get();
         
         String message = req.getParameter("message");
-        if(message == null){
-            message = "no caption";
-        }
+        
         String mediaType = req.getParameter("mediaType");
-        if(mediaType == null){
-            throw new FileNotUploadedException("Media Type can not be empty!");
+
+        String[] tagsArray = req.getParameterValues("tags");
+
+        Set<Tag> tagsList = new HashSet<>();
+    
+
+        for(String tagNames: tagsArray){
+
+            System.out.println(tagNames);
+
+            Tag tag = tagService.findByName(tagNames);
+
+            tagsList.add(tag); 
         }
 
-
-        Post post = new Post(message, mediaType, fileUrl, user);
+        Post post = new Post(message, mediaType, fileUrl, user, tagsList);
         
         postRepository.save(post);
 

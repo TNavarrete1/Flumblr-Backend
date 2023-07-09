@@ -8,7 +8,6 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -87,7 +86,7 @@ public class Post {
 
     
 
-    public Post(String message, String mediaType, String fileUrl, User user) {
+    public Post(String message, String mediaType, String fileUrl, User user, Set<Tag> tagsList) {
 
         this.id = UUID.randomUUID().toString();
         this.s3Url = fileUrl;
@@ -96,7 +95,7 @@ public class Post {
         this.user = user;
         this.createTime = new Date();
         this.editTime = this.createTime;
-        
+        this.tags = tagsList;
 
     }
 }

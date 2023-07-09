@@ -19,5 +19,7 @@ public class NewPostRequest {
 
     private String mediaType;
 
+    private String [] tags;
+
     
 }

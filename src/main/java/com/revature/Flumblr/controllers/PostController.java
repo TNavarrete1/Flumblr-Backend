@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -23,7 +22,6 @@ import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
-import com.revature.Flumblr.dtos.requests.NewPostRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.services.CommentService;
 
@@ -50,7 +48,12 @@ public class PostController {
 
         MultipartFile file = req.getFile("file");
 
-        String fileUrl = s3StorageService.uploadFile(file);
+        // String fileUrl = s3StorageService.uploadFile(file);
+        String fileUrl = null;
+
+        if (file != null) {
+            fileUrl = s3StorageService.uploadFile(file);
+        }
         
         postService.createPost(req, fileUrl, userId); 
         
