@@ -36,7 +36,7 @@ public class ProfileVoteService {
             }
         }
         save(vote);
-        notificationService.createNotification("User " + user.getUsername() + " voted on your profile",
+        notificationService.createNotification(user.getUsername() + " voted on your profile",
                 "profile:" + profile.getId(), profile.getUser(), notificationTypeService.findByName("profileLike"));
     }
 

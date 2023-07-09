@@ -46,7 +46,7 @@ public class FollowService {
         User follower = userService.findById(userId);
         User followed = userService.findByUsername(followName);
         followRepository.deleteByUserIdAndFollowUsername(userId, followName);
-        notificationService.createNotification("User " + follower.getUsername() + " unfollowed you",
+        notificationService.createNotification(follower.getUsername() + " unfollowed you",
                 "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 
@@ -59,7 +59,7 @@ public class FollowService {
         User followed = userService.findByUsername(followName);
         Follow follow = new Follow(follower, followed);
         followRepository.save(follow);
-        notificationService.createNotification("User " + follower.getUsername() + " followed you",
+        notificationService.createNotification(follower.getUsername() + " followed you",
                 "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 }
