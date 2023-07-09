@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @RestController
 @CrossOrigin
@@ -42,14 +41,13 @@ public class ProfileController {
 
     // upload profile image
     @PatchMapping("/upload/{id}")
-    ResponseEntity<?> updateProfileImage(MultipartHttpServletRequest req,
+    ResponseEntity<?> updateProfileImage(@RequestPart("file") MultipartFile file,
                                          @PathVariable String id,
                                          @RequestParam("id") String profileId,
                                          @RequestHeader("Authorization") String token) {
 
         //handle invalid token
         tokenService.validateToken(token, id);
-        MultipartFile file = req.getFile("file");
         String fileURL = null;
         if(file != null) {
             //need to get/delete old profile image as new one is uploaded
