@@ -25,17 +25,17 @@ public class ProfileService {
         return profileRepository.getProfileByUser(existingUser);
     }
 
-    public Profile setProfileImg(String profileId, String URL) {
-        return profileRepository.setProfileImg(profileId, URL);
+    public void setProfileImg(String profileId, String URL) {
+        profileRepository.setProfileImg(profileId, URL);
     }
 
-    public Profile setBio(String profileId, String bio) {
-        return profileRepository.setBio(profileId, bio);
+    public void setBio(String profileId, String bio) {
+        profileRepository.setBio(profileId, bio);
     }
 
-    public Profile setTheme(String profileId, String themeName) {
-        Theme theme = themeRepository.getTheme(themeName);
-        return profileRepository.setTheme(profileId, theme);
+    public void setTheme(String profileId, String themeName) {
+        Theme theme = themeRepository.findByName(themeName);
+        profileRepository.setTheme(profileId, theme);
     }
 
     public Profile findById(String id) {
