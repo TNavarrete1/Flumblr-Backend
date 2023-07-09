@@ -83,4 +83,8 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    // endpoint for up to 5 tags/interests to be stored
+    // guessing these will be retrieved and stored when viewing posts to prioritize them
+    // so a post and get mapping for tags? and delete
+
 }
