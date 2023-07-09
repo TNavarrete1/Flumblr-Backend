@@ -44,7 +44,7 @@ public class ProfileController {
     @PatchMapping("/upload/{id}")
     ResponseEntity<?> updateProfileImage(MultipartHttpServletRequest req,
                                          @PathVariable String id,
-                                         @RequestBody NewProfileRequest profileId,
+                                         @RequestParam String profileId,
                                          @RequestHeader("Authorization") String token) {
 
         //handle invalid token
@@ -55,7 +55,7 @@ public class ProfileController {
             //need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
-        profileService.setProfileImg(profileId.getProfileId(), fileURL);
+        profileService.setProfileImg(profileId, fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
