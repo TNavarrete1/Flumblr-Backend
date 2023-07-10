@@ -1,5 +1,10 @@
 package com.revature.Flumblr.services;
 
+import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.Theme;
+import com.revature.Flumblr.repositories.ProfileRepository;
+import com.revature.Flumblr.repositories.ThemeRepository;
+
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
@@ -21,21 +26,40 @@ import lombok.AllArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final RoleService roleService;
+    private final ProfileRepository profileRepository;
+    private final ThemeService themeService;
+
+    // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
         // save and return user
-        return userRepository.save(newUser);
+        User createdUser = userRepository.save(newUser);
+
+        // create and save unique profile id for each user to be updated on profile page
+        // set profile_img to a default silhouette in s3 bucket - once uploaded add url
+        // as a default
+        Theme theme = themeService.findByName("default");
+        Profile blankProfile = new Profile(createdUser, "", "", theme);
+        profileRepository.save(blankProfile);
+
+        return createdUser;
     }
 
     public User findById(String userId) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty())
             throw new ResourceNotFoundException("couldn't find user for id " + userId);
+        return userOpt.get();
+    }
+
+    public User findByUsername(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty())
+            throw new ResourceNotFoundException("couldn't find user for username " + username);
         return userOpt.get();
     }
 

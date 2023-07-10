@@ -6,15 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 
 import com.revature.Flumblr.entities.Post;
-import com.revature.Flumblr.entities.Comment;
+import com.revature.Flumblr.entities.PostVote;
+import com.revature.Flumblr.entities.Tag;
 
-/**
- * The Principal class represents the authenticated user's principal
- * information.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,9 +23,19 @@ public class PostResponse {
 
     private String message;
 
+    // media url
     private String s3Url;
 
+    // url of profile image
+    private String profileImg;
+
     private String mediaType;
+
+    private int upVotes;
+
+    private int downVotes;
+
+    private PostVote userVote;
 
     private Date createTime;
 
@@ -36,17 +43,22 @@ public class PostResponse {
 
     private List<CommentResponse> comments;
 
+    private Set<Tag> tags;
+
+    private int shareCount;
+
+    private List<UserResponse> sharedBy;
+
+    // have to get votes
     public PostResponse(Post post) {
         this.id = post.getId();
         this.username = post.getUser().getUsername();
         this.message = post.getMessage();
         this.s3Url = post.getS3Url();
+        this.profileImg = post.getUser().getProfile().getProfile_img();
         this.mediaType = post.getMediaType();
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();
-        this.comments = new ArrayList<CommentResponse>();
-        for(Comment comment : post.getComments()) {
-            this.comments.add(new CommentResponse(comment));
-        }
+        this.tags = post.getTags();
     }
 }
