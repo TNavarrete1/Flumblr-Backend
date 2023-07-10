@@ -87,33 +87,26 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    // endpoint for up to 5 tags/interests to be stored
-    // guessing these will be retrieved and stored when viewing posts to prioritize them
-    // so a post and get mapping for tags? and delete
-//    @GetMapping("/tags")
-//    ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
-//                                                            @RequestBody NewInterestRequest req) {
-//
-//        //handle invalid token
-//        tokenService.validateToken(token, req.getUser_id());
-//        //depending on where these are being requested from, may be able to receive profileId in request body
-//        Profile profile = profileService.getProfileByUserId(req.getUser_id());
-//        TagInterestResponse res = new TagInterestResponse(profileService.getTagByProfileId(profile.getId()));
-//        return ResponseEntity.status(HttpStatus.OK).body(res);
-//    }
-//
-//    @PostMapping("/tags")
-//    ResponseEntity<?> postProfileInterests(@RequestHeader("Authorization") String token,
-//                                           @RequestBody NewInterestRequest req) {
-//
-//        //handle invalid token
-//        tokenService.validateToken(token, req.getUser_id());
-//        Set<Tag> tags = new HashSet<>();
-//        Tag foundTag = tagService.findByName(req.getTag_name());
-//        tags.add(foundTag);
-//        profileService.setTags(tags);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
+    @GetMapping("/tags")
+    ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
+                                                            @RequestBody NewInterestRequest req) {
+
+        //handle invalid token
+        tokenService.validateToken(token, req.getUser_id());
+        TagInterestResponse res = new TagInterestResponse(profileService.getTagsByProfile(req.getProfile_id()));
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @PostMapping("/tags")
+    ResponseEntity<?> postProfileInterests(@RequestHeader("Authorization") String token,
+                                           @RequestBody NewInterestRequest req) {
+
+        //handle invalid token
+        tokenService.validateToken(token, req.getUser_id());
+        Tag foundTag = tagService.findByName(req.getTag_name());
+        profileService.assignTagToProfile(req.getProfile_id(), foundTag.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     //can now assign tags to a profile
     @PutMapping("/{profileId}/tag/{tagId}")

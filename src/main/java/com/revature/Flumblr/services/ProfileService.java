@@ -66,9 +66,16 @@ public class ProfileService {
         Profile profile = profileRepository.findById(profileId).get();
         Tag tag = tagRepository.findById(tagId).get();
         tagSet = profile.getTags();
+        if(tagSet.size() >= 5) {
+            throw new BadRequestException("A profile cannot store more than five (5) tags at a time.");
+        }
         tagSet.add(tag);
         profile.setTags(tagSet);
         return profileRepository.save(profile);
+   }
+
+   public Set<Tag> getTagsByProfile(String profileId) {
+        return profileRepository.findById(profileId).get().getTags();
    }
 
 }

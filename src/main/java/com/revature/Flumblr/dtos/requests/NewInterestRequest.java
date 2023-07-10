@@ -12,7 +12,7 @@ import lombok.Setter;
 public class NewInterestRequest {
 
     private String user_id;
-    //possibly change to a list of tags?
+    private String profile_id;
     private String tag_name;
 
 }

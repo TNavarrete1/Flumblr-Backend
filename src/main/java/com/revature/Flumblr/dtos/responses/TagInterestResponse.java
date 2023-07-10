@@ -1,6 +1,6 @@
 package com.revature.Flumblr.dtos.responses;
 
-import java.util.List;
+import java.util.Set;
 import com.revature.Flumblr.entities.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +13,6 @@ import lombok.Setter;
 @Setter
 public class TagInterestResponse {
 
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
 }
