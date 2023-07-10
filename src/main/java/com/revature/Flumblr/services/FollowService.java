@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.Optional;
 import jakarta.transaction.Transactional;
 
+
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.repositories.FollowRepository;
+import com.revature.Flumblr.repositories.ProfileRepository;
+
+import com.revature.Flumblr.dtos.responses.PotentialFollowerResponse;
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
@@ -21,7 +25,7 @@ public class FollowService {
     private final UserService userService;
     private final NotificationService notificationService;
     private final NotificationTypeService notificationTypeService;
-
+    private final ProfileRepository profileRepository;
     public boolean doesFollow(String userId, String followName) {
         Optional<Follow> followOpt = followRepository.findByUserIdAndFollowUsername(userId, followName);
         return (!followOpt.isEmpty());
@@ -57,5 +61,15 @@ public class FollowService {
         followRepository.save(follow);
         notificationService.createNotification("User " + follower.getUsername() + " followed you",
                 "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
+    }
+
+    public List<PotentialFollowerResponse> getPotentialListOfFollowers(String[] Tag) {
+        List<PotentialFollowerResponse> collected = new ArrayList<>();
+        for (String singleTag : Tag) {
+            Optional<List<PotentialFollowerResponse>> listofFollowers = Optional.of(
+            new ArrayList<>(profileRepository.getPotentialListOfFollowers(singleTag)));
+            collected.addAll(listofFollowers.get());
+        }
+        return collected;
     }
 }
