@@ -14,9 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @RestController
 @CrossOrigin
 @RequestMapping("/profile")
@@ -35,8 +32,10 @@ public class ProfileController {
         Profile prof = profileService.getProfileByUserId(id);
         // frontend needs username for profile display
         User username = userService.findById(id);
+        // and profile votes
+        int votes = profileService.getTotal(prof.getId());
         // include profile id, image url, bio, and themeName in response body for frontend
-        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName());
+        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName(), votes);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
@@ -105,14 +104,6 @@ public class ProfileController {
         tokenService.validateToken(token, req.getUser_id());
         profileService.assignTagToProfile(req.getProfile_id(), req.getTag_name());
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    //can now assign tags to a profile -- testing endpoint -- will be removed later
-    @PutMapping("/{profileId}/tag/{tagId}")
-    public Profile assignTagToProfile(@PathVariable String profileId,
-                                      @PathVariable String tagId) {
-
-        return profileService.assignTagToProfile(profileId, tagId);
     }
 
     @DeleteMapping("/tags")

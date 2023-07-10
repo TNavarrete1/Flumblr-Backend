@@ -1,19 +1,14 @@
 package com.revature.Flumblr.services;
 
-import com.revature.Flumblr.entities.Profile;
-import com.revature.Flumblr.entities.Tag;
-import com.revature.Flumblr.entities.Theme;
-import com.revature.Flumblr.entities.User;
-import com.revature.Flumblr.repositories.ProfileRepository;
-import com.revature.Flumblr.repositories.TagRepository;
-import com.revature.Flumblr.repositories.ThemeRepository;
-import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.entities.*;
+import com.revature.Flumblr.repositories.*;
 import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +20,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ThemeRepository themeRepository;
     private final TagRepository tagRepository;
+    private final ProfileVoteRepository profileVoteRepository;
 
     public Profile getProfileByUserId(String id) {
         User existingUser = userRepository.getReferenceById(id);
@@ -79,9 +75,18 @@ public class ProfileService {
    }
 
    public void deleteTagsFromProfile(String profileId, Tag tag) {
-        //???
-        profileRepository.findById(profileId).get().getTags().remove(tag);
+        Profile profile = profileRepository.findById(profileId).get();
+        profile.getTags().remove(tag);
+        profileRepository.save(profile);
    }
 
+   public int getTotal(String profileId) {
+        int votes = 0;
+        List<ProfileVote> list = profileVoteRepository.findAllByProfileId(profileRepository.findById(profileId).get());
+        for(ProfileVote vote : list) {
+            if(vote.isVote()) votes++;
+        }
+        return votes;
+   }
 
 }
