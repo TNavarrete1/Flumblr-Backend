@@ -190,7 +190,9 @@ public class PostService {
             Optional<Post> postOptional = postRepository.findById(postId);
             if (postOptional.isPresent()) {
                 Post post = postOptional.get();
-                s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                if (post.getS3Url() != null) {
+                    s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                }
 
                 postRepository.deleteById(postId);
             } else {
@@ -268,7 +270,9 @@ public class PostService {
         List<Post> userPosts = postRepository.findByUserId(userId);
 
         for (Post post : userPosts) {
-            s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+            if (post.getS3Url() != null) {
+                    s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                }
             postRepository.delete(post);
         }
     }
