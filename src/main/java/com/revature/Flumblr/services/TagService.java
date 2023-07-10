@@ -1,5 +1,6 @@
 package com.revature.Flumblr.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class TagService {
             return createTag(name);
         }
         return tag.get();
+    }
+
+    public List<String> getTrending() {
+        return tagRepository.findTrending();
     }
 
     public Tag createTag(String name) {
