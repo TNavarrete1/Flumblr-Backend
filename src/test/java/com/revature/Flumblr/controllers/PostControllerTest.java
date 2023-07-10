@@ -79,6 +79,22 @@ class PostControllerTest {
     }
 
     @Test
+    public void sharePostTest() {
+        String postId = "81b6815f-1e20-4a52-b81d-c663e3ce0380";
+        ResponseEntity<?> response = postController.sharePost("dummyToken", postId);
+        verify(postShareService, times(1)).create(postId, userId);
+        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+    }
+
+    @Test
+    public void unSharePostTest() {
+        String postId = "81b6815f-1e20-4a52-b81d-c663e3ce0380";
+        ResponseEntity<?> response = postController.unSharePost("dummyToken", postId);
+        verify(postShareService, times(1)).delete(postId, userId);
+        assertEquals(response.getStatusCode(), HttpStatus.NO_CONTENT);
+    }
+
+    @Test
     public void getFollowingTest() {
         assertThrows(BadRequestException.class, () -> {
             postController.getFollowing("dummyToken", 0);
