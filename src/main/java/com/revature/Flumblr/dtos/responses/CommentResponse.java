@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.util.Date;
 
 import com.revature.Flumblr.entities.Comment;
+import com.revature.Flumblr.entities.CommentVote;
 
 /**
  * The Principal class represents the authenticated user's principal
@@ -27,7 +28,9 @@ public class CommentResponse {
 
     private String postId;
 
-    CommentResponse(Comment comment) {
+    private CommentVote userVote;
+
+    public CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
         this.comment = comment.getComment();
         this.createTime = comment.getCreateTime();
