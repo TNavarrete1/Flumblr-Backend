@@ -3,7 +3,6 @@ package com.revature.Flumblr.services;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.repositories.ProfileRepository;
-import com.revature.Flumblr.repositories.ThemeRepository;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
