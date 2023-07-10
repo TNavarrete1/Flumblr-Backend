@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,13 +20,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "comment_votes")
-public class CommentVote {
-
+@Table(name = "post_share")
+public class PostShare {
     @Id
     private String id;
-
-    private boolean vote;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -35,14 +31,13 @@ public class CommentVote {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "post_id")
     @JsonBackReference
-    private Comment comment;
+    private Post post;
 
-    public CommentVote(User user, Comment comment, boolean vote) {
+    public PostShare(User user, Post post) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
-        this.comment = comment;
-        this.vote = vote;
+        this.post = post;
     }
 }

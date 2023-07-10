@@ -25,29 +25,31 @@ public class ProfileController {
 
     @GetMapping("/{id}")
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
-                                                   @RequestHeader("Authorization") String token) {
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         Profile prof = profileService.getProfileByUserId(id);
-        // include profile id, image url, bio, and themeName in response body for frontend
-        ProfileResponse res = new ProfileResponse(prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName());
+        // include profile id, image url, bio, and themeName in response body for
+        // frontend
+        ProfileResponse res = new ProfileResponse(prof.getId(), prof.getProfile_img(), prof.getBio(),
+                prof.getTheme().getName());
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     // upload profile image
     @PatchMapping("/upload/{id}")
     ResponseEntity<?> updateProfileImage(MultipartHttpServletRequest req,
-                                         @PathVariable String id,
-                                         @RequestBody NewProfileRequest profileId,
-                                         @RequestHeader("Authorization") String token) {
+            @PathVariable String id,
+            @RequestBody NewProfileRequest profileId,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         MultipartFile file = req.getFile("file");
         String fileURL = null;
-        if(file != null) {
-            //need to get/delete old profile image as new one is uploaded
+        if (file != null) {
+            // need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
         profileService.setProfileImg(profileId.getProfileId(), fileURL);
@@ -57,10 +59,10 @@ public class ProfileController {
     // update profile bio
     @PatchMapping("/bio/{id}")
     ResponseEntity<?> updateProfileBio(@RequestBody NewProfileRequest req,
-                                       @PathVariable String id,
-                                       @RequestHeader("Authorization") String token) {
+            @PathVariable String id,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         profileService.setBio(req.getProfileId(), req.getBio());
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -69,10 +71,10 @@ public class ProfileController {
     // update theme
     @PatchMapping("/theme/{id}")
     ResponseEntity<?> updateTheme(@PathVariable String id,
-                                  @RequestBody NewProfileRequest req,
-                                  @RequestHeader("Authorization") String token) {
+            @RequestBody NewProfileRequest req,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         profileService.setTheme(req.getProfileId(), req.getThemeName());
         return ResponseEntity.status(HttpStatus.OK).build();

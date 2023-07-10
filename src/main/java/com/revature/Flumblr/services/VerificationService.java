@@ -12,11 +12,18 @@ import org.springframework.web.client.RestTemplate;
 import com.revature.Flumblr.dtos.responses.ExternalAPIResponse;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class VerificationService {
 
     private JavaMailSender javaMailSender;
+    
+     @Autowired
+    public VerificationService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     @Value("${KickboxKEY}")
     private String apiKey;
@@ -25,10 +32,7 @@ public class VerificationService {
     @Value("${KickboxURL}")
     private String baseURL;
 
-    @Autowired
-    public VerificationService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
+    
 
     @Async
     public void sendEmail(SimpleMailMessage email) {

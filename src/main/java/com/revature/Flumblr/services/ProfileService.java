@@ -36,7 +36,7 @@ public class ProfileService {
 
     public Profile findById(String id) {
         Optional<Profile> opt = profileRepository.findById(id);
-        if(opt.isEmpty()) {
+        if (opt.isEmpty()) {
             throw new ResourceNotFoundException("Unable to find profile ID: " + id);
         }
         return opt.get();
