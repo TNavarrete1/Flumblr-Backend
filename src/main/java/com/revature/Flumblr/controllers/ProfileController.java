@@ -26,11 +26,8 @@ public class ProfileController {
     UserService userService;
 
     @GetMapping("/{id}")
-    ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id,
-                                                   @RequestHeader("Authorization") String token) {
+    ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id) {
 
-        //handle invalid token
-        tokenService.validateToken(token, id);
         Profile prof = profileService.getProfileByUserId(id);
         // frontend needs username for profile display
         User username = userService.findById(id);
