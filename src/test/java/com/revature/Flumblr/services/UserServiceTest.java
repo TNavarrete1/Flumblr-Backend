@@ -41,7 +41,7 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setup() {
-        userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
+        // userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class UserServiceTest {
 
         // Create a mock for the dependencies
         Role userRole = new Role();
-        Theme defaultTheme = new Theme("default");
+        Theme defaultTheme = new Theme("default", null, null);
         User savedUser = new User("testUser", "hashedPassword", "test@example.com", userRole);
         Profile savedProfile = new Profile(savedUser, "", "", defaultTheme);
 
