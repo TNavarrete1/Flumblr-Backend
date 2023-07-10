@@ -22,14 +22,12 @@ public class S3Config {
     private String region;
 
     @Bean
-    public AmazonS3 generateS3Client(){
+    public AmazonS3 generateS3Client() {
         BasicAWSCredentials credentials = new BasicAWSCredentials(access_key, secret_key);
 
-        return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(region).build();
- 
+        return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(region).build();
 
     }
 
-
-    
 }

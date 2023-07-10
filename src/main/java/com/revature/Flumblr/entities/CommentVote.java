@@ -38,13 +38,10 @@ public class CommentVote {
     @JsonBackReference
     private Comment comment;
 
-    private String username;
-
     public CommentVote(User user, Comment comment, boolean vote) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.comment = comment;
         this.vote = vote;
-        this.username = user.getUsername();
     }
 }

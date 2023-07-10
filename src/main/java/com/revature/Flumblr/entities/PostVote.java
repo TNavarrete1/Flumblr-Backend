@@ -38,13 +38,11 @@ public class PostVote {
     @JsonBackReference
     private Post post;
 
-    private String username;
-
     public PostVote(User user, Post post, boolean vote) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.post = post;
         this.vote = vote;
-        this.username = user.getUsername();
+
     }
 }

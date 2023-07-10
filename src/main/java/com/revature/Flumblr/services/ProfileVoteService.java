@@ -9,19 +9,20 @@ import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileVoteRepository;
 
 import lombok.AllArgsConstructor;
+
 @AllArgsConstructor
 @Service
 public class ProfileVoteService {
-    ProfileVoteRepository profileVoteRepository;
-    ProfileService profileService;
-    UserService userService;
+    private final ProfileVoteRepository profileVoteRepository;
+    private final ProfileService profileService;
+    private final UserService userService;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public void vote(ProfileVoteRequest req) {
 
-        // Patrick will handle profileService
-
-        User user = null;
-        Profile profile = null;
+        User user = userService.findById(req.getUserId());
+        Profile profile = profileService.findById(req.getProfileId());
 
         ProfileVote vote = findByUserAndProfile(user, profile);
         if (vote == null) {
@@ -35,6 +36,8 @@ public class ProfileVoteService {
             }
         }
         save(vote);
+        notificationService.createNotification(user.getUsername() + " voted on your profile",
+                "profile:" + profile.getId(), profile.getUser(), notificationTypeService.findByName("profileLike"));
     }
 
     public void save(ProfileVote vote) {

@@ -42,6 +42,10 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    
+    @Column()
+    private String isVerified;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     @JsonBackReference
@@ -50,6 +54,10 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<PostView> postViews;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<PostShare> postShares;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -83,16 +91,23 @@ public class User {
     @JsonManagedReference
     private Set<Notification> notifications;
 
+    // users the user is following
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Follow> follows;
 
+    // users who are following this user
     @OneToMany(mappedBy = "follow", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Follow> following;
 
+    @OneToOne(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Verification verification;
+
     public User(String username, String password, String email, Role role) {
         this.username = username;
+        this.isVerified = "false";
         this.password = password;
         this.email = email;
         this.role = role;

@@ -3,11 +3,12 @@ package com.revature.Flumblr.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,10 @@ import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
-
+import com.revature.Flumblr.entities.User;
+import com.revature.Flumblr.entities.Verification;
+import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.repositories.VerifivationRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -28,9 +32,10 @@ import lombok.AllArgsConstructor;
 public class UserController {
     private final UserService userService;
     private final TokenService tokenService;
+    private final UserRepository userRepository;
+    private final VerifivationRepository verifivationRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody NewUserRequest req) {
@@ -58,27 +63,47 @@ public class UserController {
         // register user
         userService.registerUser(req);
 
-         logger.info("Successfully Registered");
+        logger.info("Successfully Registered");
 
         // return 201 - CREATED
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/verify-account")
+    public ResponseEntity<?> verify(@RequestParam("token") String token) {
+     
+       
+        Verification verificationToken = verifivationRepository.findByVerificationToken(token);
+
+        if(verificationToken != null){
+            User user = userRepository.findByEmailIgnoreCase(verificationToken.getUser().getEmail());
+
+            user.setIsVerified("true");
+
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body("Your account has been successfully verified!");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
+        }   
+    }
+
+
+
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody NewLoginRequest req) {
-     
-            // userservice to call login method
-            Principal principal = userService.login(req);
 
-              logger.info("Successfully logged in");
+        // userservice to call login method
+        Principal principal = userService.login(req);
 
-            // create a jwt token
-            String token = tokenService.generateJWT(principal);
-        
-    
-            principal.setToken(token);
-            // return status ok and return principal object
-            return ResponseEntity.status(HttpStatus.OK).body(principal);
+        logger.info("Successfully logged in");
+
+        // create a jwt token
+        String token = tokenService.generateJWT(principal);
+
+        principal.setToken(token);
+        // return status ok and return principal object
+        return ResponseEntity.status(HttpStatus.OK).body(principal);
     }
-    
+
 }
