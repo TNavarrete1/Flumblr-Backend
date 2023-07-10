@@ -39,6 +39,8 @@ public class PostResponse {
 
     private boolean bookmarked;
 
+    private boolean shared;
+
     private Date createTime;
 
     private Date editTime;

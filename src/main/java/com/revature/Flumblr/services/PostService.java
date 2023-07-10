@@ -2,6 +2,7 @@ package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.PostRepository;
+import com.revature.Flumblr.repositories.PostShareRepository;
 import com.revature.Flumblr.repositories.PostVoteRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_classes.SortedPost;
@@ -50,6 +51,7 @@ public class PostService {
     private final PostVoteRepository postVoteRepository;
     private final CommentVoteService commentVoteService;
     private final BookmarksRepository bookmarksRepository;
+    private final PostShareRepository postShareRepository;
 
     public PostResponse findByIdResponse(String postId, String requesterId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
@@ -77,10 +79,18 @@ public class PostService {
         PostResponse response = new PostResponse(post);
         PostVote postVote = postVoteRepository.findByUserAndPost(requestUser, post).orElse(null);
         Bookmark bookmark = bookmarksRepository.findByUserAndPost(requestUser, post).orElse(null);
+        PostShare postShare = postShareRepository.findByUserAndPost(requestUser, post).orElse(null);
         if (bookmark == null) {
             response.setBookmarked(false);
         } else {
             response.setBookmarked(true);
+        }
+
+        if (postShare == null) {
+            response.setShared(false);
+        } else {
+            response.setShared(true);
+            ;
         }
         response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
         response.setShareCount(post.getPostShares().size());
