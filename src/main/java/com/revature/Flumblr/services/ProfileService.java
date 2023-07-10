@@ -44,7 +44,7 @@ public class ProfileService {
     public void setTheme(String profileId, String themeName) {
         Theme theme = themeRepository.findByName(themeName);
         if(theme == null) {
-            throw new ResourceNotFoundException("No theme with name: " + themeName + "found.");
+            throw new ResourceNotFoundException("No theme with name: " + themeName + " found.");
         }
         profileRepository.setTheme(profileId, theme);
     }
