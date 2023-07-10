@@ -37,6 +37,8 @@ public class PostResponse {
 
     private PostVote userVote;
 
+    private boolean bookmarked;
+
     private Date createTime;
 
     private Date editTime;

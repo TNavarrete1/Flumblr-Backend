@@ -1,5 +1,6 @@
 package com.revature.Flumblr.services;
 
+import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.PostVoteRepository;
 import com.revature.Flumblr.repositories.UserRepository;
@@ -29,6 +30,7 @@ import com.revature.Flumblr.dtos.responses.UserResponse;
 import com.revature.Flumblr.entities.User;
 import lombok.AllArgsConstructor;
 
+import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Comment;
 import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.Follow;
@@ -47,10 +49,11 @@ public class PostService {
     private final TagService tagService;
     private final PostVoteRepository postVoteRepository;
     private final CommentVoteService commentVoteService;
+    private final BookmarksRepository bookmarksRepository;
 
     public PostResponse findByIdResponse(String postId, String requesterId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
-        if(userPost.isEmpty())
+        if (userPost.isEmpty())
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         return findByPostResponse(userPost.get(), requesterId);
     }
@@ -73,6 +76,12 @@ public class PostService {
 
         PostResponse response = new PostResponse(post);
         PostVote postVote = postVoteRepository.findByUserAndPost(requestUser, post).orElse(null);
+        Bookmark bookmark = bookmarksRepository.findByUserAndPost(requestUser, post).orElse(null);
+        if (bookmark == null) {
+            response.setBookmarked(false);
+        } else {
+            response.setBookmarked(true);
+        }
         response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
         response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
@@ -129,14 +138,14 @@ public class PostService {
         User requester = userService.findById(requesterId);
         List<UserResponse> usersShared = new ArrayList<UserResponse>();
         Set<String> followedId = new HashSet<String>();
-        for(Follow follow : requester.getFollows()) {
+        for (Follow follow : requester.getFollows()) {
             followedId.add(follow.getFollow().getId());
         }
         // include requester in 'share' info
         followedId.add(requesterId);
-        for(PostShare postShare : post.getPostShares()) {
+        for (PostShare postShare : post.getPostShares()) {
             User user = postShare.getUser();
-            if(followedId.contains(user.getId())) {
+            if (followedId.contains(user.getId())) {
                 usersShared.add(new UserResponse(user));
             }
         }
@@ -197,25 +206,24 @@ public class PostService {
 
         String mediaType = req.getParameter("mediaType");
         // if (mediaType == null) {
-        //     throw new FileNotUploadedException("Media Type can not be empty!");
+        // throw new FileNotUploadedException("Media Type can not be empty!");
         // }
 
         String[] tagsArray = req.getParameterValues("tags");
 
         Set<Tag> tagsList = new HashSet<>();
-    
 
-        for(String tagNames: tagsArray){
+        for (String tagNames : tagsArray) {
 
             System.out.println(tagNames);
 
             Tag tag = tagService.findByName(tagNames);
 
-            tagsList.add(tag); 
+            tagsList.add(tag);
         }
 
         Post post = new Post(message, mediaType, fileUrl, user, tagsList);
-        
+
         postRepository.save(post);
 
     }
