@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.Flumblr.dtos.requests.NotificationRequest;
+import com.revature.Flumblr.dtos.responses.NotificationResponse;
 import com.revature.Flumblr.entities.Notification;
 import com.revature.Flumblr.services.NotificationService;
 import com.revature.Flumblr.services.TokenService;
@@ -38,7 +39,7 @@ public class NotificationController {
     }
 
     @GetMapping("/all/{userId}")
-    public ResponseEntity<List<Notification>> getAllNotification(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<NotificationResponse>> getAllNotification(@RequestHeader("Authorization") String token,
             @PathVariable String userId) {
         tokenService.extractUserId(token);
 

@@ -51,11 +51,11 @@ public class ProfileController {
                                          @RequestPart("profileId") NewProfileRequest profileId,
                                          @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         String fileURL = null;
-        if(file != null) {
-            //need to get/delete old profile image as new one is uploaded
+        if (file != null) {
+            // need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
         //profileService.setProfileImg(profileId, fileURL);
@@ -66,10 +66,10 @@ public class ProfileController {
     // update profile bio
     @PatchMapping("/bio/{id}")
     ResponseEntity<?> updateProfileBio(@RequestBody NewProfileRequest req,
-                                       @PathVariable String id,
-                                       @RequestHeader("Authorization") String token) {
+            @PathVariable String id,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         profileService.setBio(req.getProfileId(), req.getBio());
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -78,10 +78,10 @@ public class ProfileController {
     // update theme
     @PatchMapping("/theme/{id}")
     ResponseEntity<?> updateTheme(@PathVariable String id,
-                                  @RequestBody NewProfileRequest req,
-                                  @RequestHeader("Authorization") String token) {
+            @RequestBody NewProfileRequest req,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         profileService.setTheme(req.getProfileId(), req.getThemeName());
         return ResponseEntity.status(HttpStatus.OK).build();

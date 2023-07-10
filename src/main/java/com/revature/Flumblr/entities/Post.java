@@ -65,6 +65,10 @@ public class Post {
 
     @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
+    private Set<PostShare> postShares;
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<PostVote> postVotes;
 
     @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -83,8 +87,10 @@ public class Post {
     @JsonManagedReference
     @JoinTable(name = "post_tag_list", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
+    
+    
 
-    public Post(String message, String mediaType, String fileUrl, User user) {
+    public Post(String message, String mediaType, String fileUrl, User user, Set<Tag> tagsList) {
 
         this.id = UUID.randomUUID().toString();
         this.s3Url = fileUrl;
@@ -93,6 +99,7 @@ public class Post {
         this.user = user;
         this.createTime = new Date();
         this.editTime = this.createTime;
+        this.tags = tagsList;
 
     }
 }

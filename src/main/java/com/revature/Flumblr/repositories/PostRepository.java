@@ -2,6 +2,8 @@ package com.revature.Flumblr.repositories;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -12,9 +14,16 @@ import com.revature.Flumblr.entities.User;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, String> {
-    List<Post> findByUserIdOrderByCreateTimeDesc(String userId);
+    List<Post> findByUserId(String userId);
 
-    List<Post> findAllByUserIn(List<User> following, Pageable pageable);
+    @Query("SELECT DISTINCT p FROM Post p left join p.postShares ps " + 
+    "WHERE p.user.id = :userId OR ps.user.id = :userId "
+    + "ORDER BY p.createTime DESC")
+    List<Post> findPostsAndSharesByUserId(@Param("userId") String userId);
+
+    @Query("SELECT DISTINCT p FROM Post p left join p.postShares ps " + 
+    "WHERE p.user IN :following OR ps.user IN :following")
+    List<Post> findPostsAndSharesForUserIn(@Param("following") List<User> following, Pageable pageable);
 
     List<Post> findAllByTagsNameIn(List<String> tags, Pageable pageable);
 
