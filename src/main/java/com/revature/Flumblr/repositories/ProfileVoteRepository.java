@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.ProfileVote;
 import com.revature.Flumblr.entities.User;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
