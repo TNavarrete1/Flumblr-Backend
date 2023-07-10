@@ -44,6 +44,7 @@ public class ProfileController {
     ResponseEntity<?> updateProfileImage(@RequestPart("file") MultipartFile file,
                                          @PathVariable String id,
                                          @RequestParam("id") String profileId,
+                                         //@RequestPart("profileId") NewProfileRequest profileId,
                                          @RequestHeader("Authorization") String token) {
 
         //handle invalid token
@@ -54,6 +55,7 @@ public class ProfileController {
             fileURL = s3StorageService.uploadFile(file);
         }
         profileService.setProfileImg(profileId, fileURL);
+        //profileService.setProfileImg(profileId.getProfileId(), fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
