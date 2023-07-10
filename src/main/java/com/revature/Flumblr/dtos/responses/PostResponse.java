@@ -20,6 +20,7 @@ public class PostResponse {
     private String id;
 
     private String username;
+    private String userId;
 
     private String message;
 
@@ -53,6 +54,7 @@ public class PostResponse {
     public PostResponse(Post post) {
         this.id = post.getId();
         this.username = post.getUser().getUsername();
+        this.userId = post.getUser().getId();
         this.message = post.getMessage();
         this.s3Url = post.getS3Url();
         this.profileImg = post.getUser().getProfile().getProfile_img();
