@@ -4,7 +4,6 @@ import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.PostVoteRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_classes.SortedPost;
-import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -28,7 +27,6 @@ import com.revature.Flumblr.dtos.responses.CommentResponse;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.dtos.responses.UserResponse;
 import com.revature.Flumblr.entities.User;
-
 import lombok.AllArgsConstructor;
 
 import com.revature.Flumblr.entities.Comment;
@@ -37,6 +35,7 @@ import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
+import com.revature.Flumblr.entities.Tag;
 
 @Service
 @AllArgsConstructor
@@ -45,6 +44,7 @@ public class PostService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final S3StorageService s3StorageService;
+    private final TagService tagService;
     private final PostVoteRepository postVoteRepository;
     private final CommentVoteService commentVoteService;
 
@@ -196,12 +196,26 @@ public class PostService {
         }
 
         String mediaType = req.getParameter("mediaType");
-        if (mediaType == null) {
-            throw new FileNotUploadedException("Media Type can not be empty!");
+        // if (mediaType == null) {
+        //     throw new FileNotUploadedException("Media Type can not be empty!");
+        // }
+
+        String[] tagsArray = req.getParameterValues("tags");
+
+        Set<Tag> tagsList = new HashSet<>();
+    
+
+        for(String tagNames: tagsArray){
+
+            System.out.println(tagNames);
+
+            Tag tag = tagService.findByName(tagNames);
+
+            tagsList.add(tag); 
         }
 
-        Post post = new Post(message, mediaType, fileUrl, user);
-
+        Post post = new Post(message, mediaType, fileUrl, user, tagsList);
+        
         postRepository.save(post);
 
     }

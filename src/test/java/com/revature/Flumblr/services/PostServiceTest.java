@@ -60,8 +60,7 @@ class PostServiceTest {
 
     @BeforeEach
     public void setup() {
-        postService = new PostService(postRepository, userService, userRepository, s3StorageService,
-            postVoteRepository, commentVoteService);
+        postService = new PostService(postRepository, userService, userRepository, s3StorageService, null, postVoteRepository, commentVoteService);
         user = new User();
         followed = new User();
         Set<Follow> follows = new HashSet<Follow>();
@@ -70,13 +69,7 @@ class PostServiceTest {
         user.setId(userId);
         user.setProfile(new Profile(user, null, "I'm a teapot", null));
         followed.setUsername("followable");
-        post = new Post("testPost", null, null, user);
-        postShares = new HashSet<PostShare>();
-        post.setPostShares(postShares);
-        postVotes = new HashSet<PostVote>();
-        post.setPostVotes(postVotes);
-        postComments = new ArrayList<Comment>();
-        post.setComments(postComments);
+        post = new Post("testPost", null, null, user, null);
     }
 
     @Test

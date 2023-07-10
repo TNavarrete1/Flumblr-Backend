@@ -60,14 +60,16 @@ class PostControllerTest {
         postResponses = new ArrayList<PostResponse>();
         comments = new ArrayList<Comment>();
         postVotes = new HashSet<PostVote>();
-        postShares = new HashSet<PostShare>();
-        Post addPost = new Post("testPost", null, null, user);
+
+        
+        Post addPost = new Post("testPost", null, null, user, null);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         addPost.setPostShares(postShares);
         posts.add(addPost);
-        postResponses.add(new PostResponse(addPost));
-        addPost = new Post("anotherPost", null, null, user);
+
+
+        addPost = new Post("anotherPost", null, null, user, null);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         addPost.setPostShares(postShares);
@@ -166,7 +168,7 @@ class PostControllerTest {
 
     @Test
     public void getPostTest() {
-        Post responsePost = new Post("testPost", null, null, user);
+        Post responsePost = new Post("testPost", null, null, user, null);
         responsePost.setComments(comments);
         responsePost.setPostVotes(postVotes);
         responsePost.setPostShares(postShares);
