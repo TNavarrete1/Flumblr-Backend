@@ -51,7 +51,7 @@ class ReportControllerTest {
         user.setId(userId);
         User otherUser = new User();
         otherUser.setId("3eefc30f-c7f9-49da-ae78-38d6f64a954d");
-        post = new Post("testPost", null, null, otherUser);
+        post = new Post("testPost", null, null, otherUser, null);
         reportRequest = new ReportPostRequest(post.getId(), "DISLIKE");
         reportController = new ReportController(tokenService, reportService);
         report = new Report(post, user, "DISLIKE");

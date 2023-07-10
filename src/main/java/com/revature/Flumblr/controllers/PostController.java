@@ -56,7 +56,6 @@ public class PostController {
         logger.trace("creating post from " + userId);
 
         MultipartFile file = req.getFile("file");
-
         String fileUrl = null;
 
         if (file != null) {

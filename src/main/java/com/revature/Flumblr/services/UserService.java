@@ -4,6 +4,7 @@ import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.repositories.ProfileRepository;
 
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
@@ -15,9 +16,12 @@ import java.util.Optional;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.repositories.VerifivationRepository;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import com.revature.Flumblr.entities.User;
+import com.revature.Flumblr.entities.Verification;
+
 import lombok.AllArgsConstructor;
 
 @Service
@@ -27,15 +31,49 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
+    private final VerifivationRepository verifivationRepository;
+    private final VerificationService verificationService;
 
     // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
+        
+        // verifying user email
+        User existingUseer = userRepository.findByEmailIgnoreCase(req.getEmail());
+
+        //check if email is a from a valid domain
+
+        boolean bool = verificationService.isValidEmailAddress(req.getEmail());
+
+        if(bool == false){
+            throw new ResourceConflictException("Email address is not valid");
+        }
+
+
+        if(existingUseer != null){
+            throw new ResourceConflictException("Email address is alrady being used!");
+        }    
+
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
+
         // save and return user
         User createdUser = userRepository.save(newUser);
+
+        // create new verification data based on Verification table based on new user 
+        Verification verification = new Verification(createdUser);
+        verifivationRepository.save(verification);
+
+        //send email to the user on the new email they entered
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(req.getEmail());
+        mailMessage.setSubject("Complete Registration!");
+        //mailMessage.setFrom("YOUR EMAIL ADDRESS");
+        mailMessage.setText("To confirm your account, please click here : " + 
+                            "http://localhost:5000/flumblr/api/auth/verify-account?token=" +  verification.getVerificationToken());
+
+        verificationService.sendEmail(mailMessage);
 
         // create and save unique profile id for each user to be updated on profile page
         // set profile_img to a default silhouette in s3 bucket - once uploaded add url as a default

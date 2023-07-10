@@ -3,7 +3,6 @@ package com.revature.Flumblr.services;
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_classes.SortedPost;
-import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -15,6 +14,7 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -23,14 +23,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
 import com.revature.Flumblr.entities.User;
-
 import lombok.AllArgsConstructor;
 
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostVote;
+import com.revature.Flumblr.entities.Tag;
 
 @Service
 @AllArgsConstructor
@@ -39,6 +38,7 @@ public class PostService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final S3StorageService s3StorageService;
+    private final TagService tagService;
 
     public List<Post> getFollowing(String userId, int page) {
         User user = userService.findById(userId);
@@ -106,12 +106,26 @@ public class PostService {
         }
 
         String mediaType = req.getParameter("mediaType");
-        if (mediaType == null) {
-            throw new FileNotUploadedException("Media Type can not be empty!");
+        // if (mediaType == null) {
+        //     throw new FileNotUploadedException("Media Type can not be empty!");
+        // }
+
+        String[] tagsArray = req.getParameterValues("tags");
+
+        Set<Tag> tagsList = new HashSet<>();
+    
+
+        for(String tagNames: tagsArray){
+
+            System.out.println(tagNames);
+
+            Tag tag = tagService.findByName(tagNames);
+
+            tagsList.add(tag); 
         }
 
-        Post post = new Post(message, mediaType, fileUrl, user);
-
+        Post post = new Post(message, mediaType, fileUrl, user, tagsList);
+        
         postRepository.save(post);
 
     }

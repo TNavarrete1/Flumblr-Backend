@@ -45,7 +45,7 @@ class ReportServiceTest {
         reportService = new ReportService(reportRepository, userService, postService);
         user = new User();
         user.setId(userId);
-        post = new Post("testPost", null, null, user);
+        post = new Post("testPost", null, null, user, null);
         report = new Report(post, user, "testReason");
     }
 

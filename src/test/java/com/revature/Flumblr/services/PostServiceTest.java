@@ -46,12 +46,12 @@ class PostServiceTest {
 
     @BeforeEach
     public void setup() {
-        postService = new PostService(postRepository, userService, userRepository, s3StorageService);
+        postService = new PostService(postRepository, userService, userRepository, s3StorageService, null);
         user = new User();
         followed = new User();
         user.setId(userId);
         followed.setUsername("followable");
-        post = new Post("testPost", null, null, user);
+        post = new Post("testPost", null, null, user, null);
     }
 
     @Test

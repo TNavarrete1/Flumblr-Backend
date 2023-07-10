@@ -49,15 +49,15 @@ class PostControllerTest {
         postController = new PostController(tokenService, postService, commentService, s3StorageService);
         user = new User();
         // necessary for PostResponse
-        user.setProfile(new Profile(user, null, "I'm a teapot"));
+        user.setProfile(new Profile(user, null, "I'm a teapot", null));
         posts = new ArrayList<Post>();
         comments = new ArrayList<Comment>();
         postVotes = new HashSet<PostVote>();
-        Post addPost = new Post("testPost", null, null, user);
+        Post addPost = new Post("testPost", null, null, user, null);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         posts.add(addPost);
-        addPost = new Post("anotherPost", null, null, user);
+        addPost = new Post("anotherPost", null, null, user, null);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         posts.add(addPost);
@@ -150,7 +150,7 @@ class PostControllerTest {
 
     @Test
     public void getPostTest() {
-        Post responsePost = new Post("testPost", null, null, user);
+        Post responsePost = new Post("testPost", null, null, user, null);
         responsePost.setComments(comments);
         responsePost.setPostVotes(postVotes);
         final String postId = "c4030998-a0f5-4850-a951-fb9bfc8dcf50";
