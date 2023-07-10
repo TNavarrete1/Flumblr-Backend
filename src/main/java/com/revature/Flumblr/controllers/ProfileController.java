@@ -103,17 +103,27 @@ public class ProfileController {
 
         //handle invalid token
         tokenService.validateToken(token, req.getUser_id());
-        Tag foundTag = tagService.findByName(req.getTag_name());
-        profileService.assignTagToProfile(req.getProfile_id(), foundTag.getId());
+        profileService.assignTagToProfile(req.getProfile_id(), req.getTag_name());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    //can now assign tags to a profile
+    //can now assign tags to a profile -- testing endpoint -- will be removed later
     @PutMapping("/{profileId}/tag/{tagId}")
     public Profile assignTagToProfile(@PathVariable String profileId,
                                       @PathVariable String tagId) {
 
         return profileService.assignTagToProfile(profileId, tagId);
+    }
+
+    @DeleteMapping("/tags")
+    public ResponseEntity<?> deleteTagAssociatedWithProfile(@RequestHeader("Authorization") String token,
+                                                            @RequestBody NewInterestRequest req) {
+
+        //handle invalid token
+        tokenService.validateToken(token, req.getUser_id());
+        Tag foundTag = tagService.findByName(req.getTag_name());
+        profileService.deleteTagsFromProfile(req.getProfile_id(), foundTag);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
