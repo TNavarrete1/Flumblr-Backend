@@ -30,6 +30,13 @@ public class VerificationService {
         this.javaMailSender = javaMailSender;
     }
 
+    @Value("${apiURL1}")
+    private String apiUrl1;
+
+    @Value("${apiURL2}")
+    private String apiUrl2;
+
+
     @Async
     public void sendEmail(SimpleMailMessage email) {
         javaMailSender.send(email);
@@ -78,6 +85,29 @@ public class VerificationService {
         }
         
         return true;
+    }
+
+
+    public SimpleMailMessage composeVerification(String email, String verificationToken){
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+
+        mailMessage.setTo(email);
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setText("To confirm your account, please click here : " + apiUrl1 +  verificationToken);
+
+        return mailMessage;
+    }
+
+    public SimpleMailMessage composeResetPassword(String email, String verificationToken){
+        
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+
+        mailMessage.setTo(email);
+        mailMessage.setSubject("Complete Password Reset!");
+        mailMessage.setText("To reset our Password, please click here : " + apiUrl2 +  verificationToken);
+
+        return mailMessage;
     }
 
 }

@@ -2,6 +2,7 @@ package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.repositories.PostRepository;
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -92,6 +93,10 @@ public class PostService {
         User user = userOpt.get();
         
         String message = req.getParameter("message");
+
+        if (message == null && fileUrl == null) {
+            throw new ResourceConflictException("Message or media required!");
+        }
         
         String mediaType = req.getParameter("mediaType");
 
