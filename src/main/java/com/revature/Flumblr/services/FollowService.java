@@ -63,11 +63,11 @@ public class FollowService {
                 "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 
-    public List<PotentialFollowerResponse> getPotentialListOfFollowers(String[] Tag) {
+    public List<PotentialFollowerResponse> getPotentialListOfFollowers(String[] tags) {
         List<PotentialFollowerResponse> collected = new ArrayList<>();
-        for (String singleTag : Tag) {
+        for (String tag : tags) {
             Optional<List<PotentialFollowerResponse>> listofFollowers = Optional.of(
-            new ArrayList<>(profileRepository.getPotentialListOfFollowers(singleTag)));
+            new ArrayList<>(profileRepository.getPotentialListOfFollowers(tag)));
             collected.addAll(listofFollowers.get());
         }
         return collected;
