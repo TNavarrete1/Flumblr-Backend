@@ -9,9 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewCommentRequest {
-    private String comment;
-    private String postId;
-    private String userId;
-    private String gifUrl;
+
+public class PotentialFollowerRequest {
+      private String[] tagList;   
+      private String userId;
 }
