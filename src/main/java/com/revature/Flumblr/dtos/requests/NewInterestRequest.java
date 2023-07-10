@@ -9,10 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewProfileRequest {
+public class NewInterestRequest {
 
-    private String profileId;
-    private String bio;
-    private String themeName;
+    private String user_id;
+    //possibly change to a list of tags?
+    private String tag_name;
 
 }

@@ -1,18 +1,21 @@
 package com.revature.Flumblr.controllers;
 
+import com.revature.Flumblr.dtos.requests.NewInterestRequest;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.dtos.responses.ProfileResponse;
+import com.revature.Flumblr.dtos.responses.TagInterestResponse;
 import com.revature.Flumblr.entities.Profile;
+import com.revature.Flumblr.entities.Tag;
 import com.revature.Flumblr.entities.User;
-import com.revature.Flumblr.services.ProfileService;
-import com.revature.Flumblr.services.S3StorageService;
-import com.revature.Flumblr.services.TokenService;
-import com.revature.Flumblr.services.UserService;
+import com.revature.Flumblr.services.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -20,10 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class ProfileController {
 
-    ProfileService profileService;
-    TokenService tokenService;
-    S3StorageService s3StorageService;
-    UserService userService;
+    private final ProfileService profileService;
+    private final TokenService tokenService;
+    private final S3StorageService s3StorageService;
+    private final UserService userService;
+    private final TagService tagService;
 
     @GetMapping("/{id}")
     ResponseEntity<ProfileResponse> readProfileBio(@PathVariable String id) {
@@ -86,6 +90,37 @@ public class ProfileController {
     // endpoint for up to 5 tags/interests to be stored
     // guessing these will be retrieved and stored when viewing posts to prioritize them
     // so a post and get mapping for tags? and delete
+//    @GetMapping("/tags")
+//    ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
+//                                                            @RequestBody NewInterestRequest req) {
+//
+//        //handle invalid token
+//        tokenService.validateToken(token, req.getUser_id());
+//        //depending on where these are being requested from, may be able to receive profileId in request body
+//        Profile profile = profileService.getProfileByUserId(req.getUser_id());
+//        TagInterestResponse res = new TagInterestResponse(profileService.getTagByProfileId(profile.getId()));
+//        return ResponseEntity.status(HttpStatus.OK).body(res);
+//    }
+//
+//    @PostMapping("/tags")
+//    ResponseEntity<?> postProfileInterests(@RequestHeader("Authorization") String token,
+//                                           @RequestBody NewInterestRequest req) {
+//
+//        //handle invalid token
+//        tokenService.validateToken(token, req.getUser_id());
+//        Set<Tag> tags = new HashSet<>();
+//        Tag foundTag = tagService.findByName(req.getTag_name());
+//        tags.add(foundTag);
+//        profileService.setTags(tags);
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
 
+    //can now assign tags to a profile
+    @PutMapping("/{profileId}/tag/{tagId}")
+    public Profile assignTagToProfile(@PathVariable String profileId,
+                                      @PathVariable String tagId) {
+
+        return profileService.assignTagToProfile(profileId, tagId);
+    }
 
 }
