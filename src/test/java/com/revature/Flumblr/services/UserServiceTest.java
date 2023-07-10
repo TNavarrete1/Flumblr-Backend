@@ -25,30 +25,29 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindrot.jbcrypt.BCrypt;
 
-
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     private UserService userService;
 
-    @Mock 
+    @Mock
     private UserRepository userRepository;
-    @Mock 
+    @Mock
     private RoleService roleService;
-    @Mock 
+    @Mock
     private ProfileRepository profileRepository;
-    @Mock 
+    @Mock
     private ThemeService themeService;
 
-      @BeforeEach
+    @BeforeEach
     public void setup() {
-    userService = new UserService(userRepository, roleService, profileRepository, themeService);
-}
+        userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
+    }
 
-   @Test
-   public void registerUserTest() {
+    @Test
+    public void registerUserTest() {
 
-   // Create a mock for NewUserRequest
+        // Create a mock for NewUserRequest
         NewUserRequest newUserRequest = new NewUserRequest();
         newUserRequest.setUsername("testUser");
         newUserRequest.setPassword("password");
@@ -73,12 +72,12 @@ public class UserServiceTest {
         assertEquals(savedUser, createdUser);
         verify(userRepository, times(1)).save(any(User.class));
         verify(profileRepository, times(1)).save(any(Profile.class));
-   }
+    }
 
-   @Test
-   public void loginTest() {
+    @Test
+    public void loginTest() {
 
-          // Mock user data
+        // Mock user data
         String username = "testuser";
         String password = "testpassword";
         Role userRole = new Role();
@@ -98,14 +97,14 @@ public class UserServiceTest {
 
         // Verify that the returned Principal contains the expected User
         assertEquals(user.getUsername(), result.getUsername());
-   
+
     }
 
     @Test
     public void testFindById() {
         // Mock user data
         Role userRole = new Role();
-        User user = new User("testUsername", "testPassword",  "testpassword", userRole);
+        User user = new User("testUsername", "testPassword", "testpassword", userRole);
 
         // Mock the userRepository behavior
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -122,9 +121,9 @@ public class UserServiceTest {
 
     @Test
     public void testFindByUsername() {
-     Role userRole = new Role();
-     String username = "testUsername";
-        User user = new User(username, "testPassword",  "testpassword", userRole);
+        Role userRole = new Role();
+        String username = "testUsername";
+        User user = new User(username, "testPassword", "testpassword", userRole);
 
         // Mock the userRepository behavior
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
@@ -139,12 +138,11 @@ public class UserServiceTest {
         assertEquals(user, result);
     }
 
-    
-     @Test
+    @Test
     public void isValidUsernameTest() {
         String validUsername = "test_user123";
         String invalidUsername = "test user";
-        
+
         assertTrue(userService.isValidUsername(validUsername));
         assertFalse(userService.isValidUsername(invalidUsername));
 
@@ -154,7 +152,7 @@ public class UserServiceTest {
     public void isValidPasswordTest() {
         String validPassword = "Password123";
         String invalidPassword = "password";
-        
+
         assertTrue(userService.isValidPassword(validPassword));
         assertFalse(userService.isValidPassword(invalidPassword));
     }
@@ -164,45 +162,43 @@ public class UserServiceTest {
         String password = "Password123";
         String confirmPassword = "Password123";
         String incorrectPassword = "Password12";
-     
-        
+
         assertTrue(userService.isSamePassword(password, confirmPassword));
         assertFalse(userService.isSamePassword(password, incorrectPassword));
     }
 
-
     @Test
     public void uniqueUsernameTest() {
-          String username = "testUsername";
+        String username = "testUsername";
 
-    // Mock the userRepository behavior
-    when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        // Mock the userRepository behavior
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-    // Call the isUniqueUsername method
-    boolean result = userService.isUniqueUsername(username);
+        // Call the isUniqueUsername method
+        boolean result = userService.isUniqueUsername(username);
 
-    // Verify that the userRepository.findByUsername method was called
-    verify(userRepository, times(1)).findByUsername(username);
+        // Verify that the userRepository.findByUsername method was called
+        verify(userRepository, times(1)).findByUsername(username);
 
-    // Verify the expected result
-    assertTrue(result);
+        // Verify the expected result
+        assertTrue(result);
     }
 
-     @Test
+    @Test
     public void usernameExistsTest() {
         Role userRole = new Role();
         String username = "testUsername";
-        User user = new User(username, "testPassword",  "testpassword", userRole);
+        User user = new User(username, "testPassword", "testpassword", userRole);
 
         // Mock the userRepository behavior
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
-         boolean result = userService.usernameExists(username);
+        boolean result = userService.usernameExists(username);
 
-    // Verify that the userRepository.findByUsername method was called
-    verify(userRepository, times(1)).findByUsername(username);
+        // Verify that the userRepository.findByUsername method was called
+        verify(userRepository, times(1)).findByUsername(username);
 
-     assertTrue(result);
+        assertTrue(result);
     }
 
 }
