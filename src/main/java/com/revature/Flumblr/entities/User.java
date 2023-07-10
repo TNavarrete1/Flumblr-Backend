@@ -43,7 +43,7 @@ public class User {
     private String email;
 
     @Column()
-    private boolean isVerified;
+    private boolean verified;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")

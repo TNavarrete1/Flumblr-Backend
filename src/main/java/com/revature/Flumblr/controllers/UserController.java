@@ -71,24 +71,20 @@ public class UserController {
 
     @GetMapping("/verify-account")
     public ResponseEntity<?> verify(@RequestParam("token") String token) {
-     
-       
+
         Verification verificationToken = verifivationRepository.findByVerificationToken(token);
 
-        if(verificationToken != null){
+        if (verificationToken != null) {
             User user = userRepository.findByEmailIgnoreCase(verificationToken.getUser().getEmail());
 
-            user.setIsVerified("true");
+            user.setVerified(true);
 
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.OK).body("Your account has been successfully verified!");
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
-        }   
+        }
     }
-
-
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody NewLoginRequest req) {
