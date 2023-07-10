@@ -1,11 +1,13 @@
 package com.revature.Flumblr.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NotificationRequest;
+import com.revature.Flumblr.dtos.responses.NotificationResponse;
 import com.revature.Flumblr.entities.Notification;
 import com.revature.Flumblr.entities.NotificationType;
 import com.revature.Flumblr.entities.User;
@@ -36,10 +38,14 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    public List<Notification> getNotificationByUser(String userId) {
+    public List<NotificationResponse> getNotificationByUser(String userId) {
         User user = userService.findById(userId);
         List<Notification> notifications = notificationRepository.findByUserOrderByCreateTimeDesc(user);
-        return notifications;
+        List<NotificationResponse> responses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            responses.add(new NotificationResponse(notification));
+        }
+        return responses;
     }
 
     public Notification findById(String id) {

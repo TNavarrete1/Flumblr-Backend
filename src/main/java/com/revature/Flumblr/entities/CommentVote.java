@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,14 +38,10 @@ public class CommentVote {
     @JsonBackReference
     private Comment comment;
 
-    @Transient
-    private String username;
-
     public CommentVote(User user, Comment comment, boolean vote) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.comment = comment;
         this.vote = vote;
-        this.username = user.getUsername();
     }
 }

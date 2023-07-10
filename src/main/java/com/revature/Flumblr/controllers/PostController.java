@@ -2,7 +2,6 @@ package com.revature.Flumblr.controllers;
 
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +26,9 @@ import com.revature.Flumblr.services.TokenService;
 import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.services.PostService;
 import com.revature.Flumblr.services.S3StorageService;
+import com.revature.Flumblr.services.PostShareService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
-import com.revature.Flumblr.entities.Post;
 
 import com.revature.Flumblr.services.CommentService;
 
@@ -45,6 +43,7 @@ public class PostController {
     private final TokenService tokenService;
     private final PostService postService;
     private final CommentService commentService;
+    private final PostShareService postShareService;
     private final S3StorageService s3StorageService;
 
     private final Logger logger = LoggerFactory.getLogger(PostController.class);
@@ -56,7 +55,6 @@ public class PostController {
         logger.trace("creating post from " + userId);
 
         MultipartFile file = req.getFile("file");
-
         String fileUrl = null;
 
         if (file != null) {
@@ -69,19 +67,32 @@ public class PostController {
 
     }
 
+    @PostMapping("/share/{postId}")
+    public ResponseEntity<?> sharePost(@RequestHeader("Authorization") String token,
+        @PathVariable String postId) {
+        String userId = tokenService.extractUserId(token);
+
+        postShareService.create(postId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/share/{postId}")
+    public ResponseEntity<?> unSharePost(@RequestHeader("Authorization") String token,
+        @PathVariable String postId) {
+        String userId = tokenService.extractUserId(token);
+
+        postShareService.delete(postId, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @GetMapping("/feed/{page}")
     public ResponseEntity<List<PostResponse>> getFeed(@RequestHeader("Authorization") String token,
             @PathVariable int page) {
         if (page <= 0)
             throw new BadRequestException("page must be > 0");
-        String userId = tokenService.extractUserId(token);
-        logger.trace("generating feed for " + userId);
-        List<Post> posts = postService.getFeed(page - 1);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("generating feed for " + requesterId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getFeed(page - 1, requesterId));
     }
 
     @GetMapping("/following/{page}")
@@ -89,14 +100,9 @@ public class PostController {
             @PathVariable int page) {
         if (page <= 0)
             throw new BadRequestException("page must be > 0");
-        String userId = tokenService.extractUserId(token);
-        logger.trace("generating feed for " + userId);
-        List<Post> posts = postService.getFollowing(userId, page - 1);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("generating feed for " + requesterId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getFollowing(requesterId, page - 1));
     }
 
     @GetMapping("/tag/{page}")
@@ -106,14 +112,10 @@ public class PostController {
             throw new BadRequestException("page must be > 0");
         if (tags.size() < 1)
             throw new BadRequestException("empty tags parameter");
-        String userId = tokenService.extractUserId(token);
-        logger.trace("getting posts by tag(s) " + tags + " for " + userId);
-        List<Post> posts = postService.findByTag(tags, page - 1);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("getting posts by tag(s) " + tags + " for " + requesterId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByTag(tags, page - 1, requesterId));
     }
 
     @GetMapping("/user/{userId}")
@@ -121,20 +123,15 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         logger.trace("getting posts from " + userId + " requested by " + requesterId);
-        List<Post> userPosts = postService.getUserPosts(userId);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : userPosts) {
-            resPosts.add(new PostResponse(userPost));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(resPosts);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId, requesterId));
     }
 
     @GetMapping("/id/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable String postId,
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
-        logger.trace("getting post " + postId + " requested by " + requesterId);
-        return ResponseEntity.status(HttpStatus.OK).body(new PostResponse(postService.findById(postId)));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByIdResponse(postId, requesterId));
     }
 
     @PostMapping("/comment")
@@ -224,8 +221,8 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getTrending(
             @PathVariable("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
             @RequestHeader("Authorization") String token) {
-        tokenService.extractUserId(token);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate));
+        String requesterId = tokenService.extractUserId(token);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate, requesterId));
     }
 
 }

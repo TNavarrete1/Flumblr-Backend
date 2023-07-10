@@ -3032,3 +3032,84 @@ Caused by: java.lang.IllegalArgumentException: Can't compare test expression of 
 
 2023-07-05T13:25:00.373-04:00  WARN 6764 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
 >>>>>>> bb3746a2e4f5e7fa772bbeb6cf650d73f7818662
+2023-07-09T20:15:00.345-04:00  WARN 22496 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'bookmarkController' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\controllers\BookmarkController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'bookmarkService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\BookmarkService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'postService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\PostService.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'userService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\UserService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'verificationService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\VerificationService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2023-07-09T20:15:00.521-04:00 ERROR 22496 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.revature.Flumblr.services.VerificationService required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2023-07-09T20:16:51.861-04:00  WARN 33308 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'bookmarkController' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\controllers\BookmarkController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'bookmarkService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\BookmarkService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'postService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\PostService.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'userService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\UserService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'verificationService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\VerificationService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2023-07-09T20:16:52.008-04:00 ERROR 33308 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.revature.Flumblr.services.VerificationService required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2023-07-09T20:24:48.534-04:00  WARN 39680 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'bookmarkController' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\controllers\BookmarkController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'bookmarkService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\BookmarkService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'postService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\PostService.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'userService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\UserService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'verificationService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\VerificationService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2023-07-09T20:24:48.650-04:00 ERROR 39680 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.revature.Flumblr.services.VerificationService required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2023-07-09T20:25:48.051-04:00  WARN 41960 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'bookmarkController' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\controllers\BookmarkController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'bookmarkService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\BookmarkService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'postService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\PostService.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'userService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\UserService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'verificationService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\VerificationService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2023-07-09T20:25:48.165-04:00 ERROR 41960 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.revature.Flumblr.services.VerificationService required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2023-07-09T20:33:14.052-04:00  WARN 30084 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'bookmarkController' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\controllers\BookmarkController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'bookmarkService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\BookmarkService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'postService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\PostService.class]: Unsatisfied dependency expressed through constructor parameter 1: Error creating bean with name 'userService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\UserService.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'verificationService' defined in file [X:\MergeArea\Flumblr-Backend\target\classes\com\revature\Flumblr\services\VerificationService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2023-07-09T20:33:14.144-04:00 ERROR 30084 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.revature.Flumblr.services.VerificationService required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2023-07-09T20:35:15.991-04:00  WARN 40864 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
