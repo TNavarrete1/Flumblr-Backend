@@ -1,7 +1,6 @@
 package com.revature.Flumblr.entities;
 
 import java.util.Set;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
