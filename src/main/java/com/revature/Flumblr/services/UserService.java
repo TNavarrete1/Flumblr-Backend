@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
+import com.revature.Flumblr.dtos.requests.changePasswordRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
 
 import java.util.Optional;
@@ -66,13 +67,11 @@ public class UserService {
         Verification verification = new Verification(createdUser);
         verifivationRepository.save(verification);
 
+        String verificationToken = verification.getVerificationToken(); 
+
         //send email to the user on the new email they entered
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(req.getEmail());
-        mailMessage.setSubject("Complete Registration!");
-        //mailMessage.setFrom("YOUR EMAIL ADDRESS");
-        mailMessage.setText("To confirm your account, please click here : " + 
-                            "http://localhost:5000/flumblr/api/auth/verify-account?token=" +  verification.getVerificationToken());
+        SimpleMailMessage mailMessage = verificationService.composeVerification(req.getEmail(), verificationToken);
+        
 
         verificationService.sendEmail(mailMessage);
 
@@ -139,5 +138,19 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+    public void changePassword(changePasswordRequest req, User user) {
+
+        String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
+
+        user.setPassword(hashed);
+
+        userRepository.save(user);
+
+        SimpleMailMessage mailMessage = verificationService.composeConfirmation(user.getEmail());
+
+        verificationService.sendEmail(mailMessage);
+        
     }
 }

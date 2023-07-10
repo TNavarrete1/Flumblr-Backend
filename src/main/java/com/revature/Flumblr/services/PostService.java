@@ -213,7 +213,6 @@ public class PostService {
         if (message == null && fileUrl == null) {
             throw new ResourceConflictException("Message or media required!");
         }
-
         String mediaType = req.getParameter("mediaType");
         // if (mediaType == null) {
         // throw new FileNotUploadedException("Media Type can not be empty!");
