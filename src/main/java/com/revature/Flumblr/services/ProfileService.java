@@ -6,6 +6,8 @@ import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.ProfileRepository;
 import com.revature.Flumblr.repositories.ThemeRepository;
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
+import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,24 @@ public class ProfileService {
     }
 
     public void setProfileImg(String profileId, String URL) {
+        if(URL == null) {
+            throw new FileNotUploadedException("An error occurred uploading the profile image.");
+        }
         profileRepository.setProfileImg(profileId, URL);
     }
 
     public void setBio(String profileId, String bio) {
+        if(bio == null) {
+            throw new BadRequestException("Cannot submit a null bio.");
+        }
         profileRepository.setBio(profileId, bio);
     }
 
     public void setTheme(String profileId, String themeName) {
         Theme theme = themeRepository.findByName(themeName);
+        if(theme == null) {
+            throw new ResourceNotFoundException("No theme with name: " + themeName + "found.");
+        }
         profileRepository.setTheme(profileId, theme);
     }
 
