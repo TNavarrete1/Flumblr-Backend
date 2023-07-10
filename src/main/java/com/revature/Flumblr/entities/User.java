@@ -42,9 +42,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    
     @Column()
-    private String isVerified;
+    private boolean isVerified;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
@@ -107,7 +106,6 @@ public class User {
 
     public User(String username, String password, String email, Role role) {
         this.username = username;
-        this.isVerified = "false";
         this.password = password;
         this.email = email;
         this.role = role;
