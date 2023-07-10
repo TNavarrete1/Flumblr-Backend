@@ -13,4 +13,5 @@ public class NewCommentRequest {
     private String comment;
     private String postId;
     private String userId;
+    private String gifUrl;
 }

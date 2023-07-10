@@ -43,7 +43,7 @@ public class User {
     private String email;
 
     @Column()
-    private boolean verified;
+    private Boolean verified;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
@@ -108,6 +108,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.verified = false;
         this.role = role;
         this.id = UUID.randomUUID().toString();
     }

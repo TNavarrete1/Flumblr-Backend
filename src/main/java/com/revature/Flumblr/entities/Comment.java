@@ -44,6 +44,9 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "text")
     private String comment;
 
+    @Column(name = "gif_url")
+    private String gifUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -58,10 +61,11 @@ public class Comment {
     @JsonManagedReference
     private Set<CommentVote> commentVotes;
 
-    public Comment(String comment, Post post, User user) {
+    public Comment(String comment, Post post, User user, String gifUrl) {
         this.comment = comment;
         this.post = post;
         this.user = user;
+        this.gifUrl = gifUrl;
         this.id = UUID.randomUUID().toString();
         this.createTime = new Date();
         this.editTime = new Date();
