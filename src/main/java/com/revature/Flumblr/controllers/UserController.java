@@ -120,7 +120,7 @@ public class UserController {
 
             userService.changePassword(req, user);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Your account has been successfully verified!");
+            return ResponseEntity.status(HttpStatus.OK).body("Your password has been successfully changed!");
         }
         else{
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
@@ -172,20 +172,21 @@ public class UserController {
             throw new ResourceNotFoundException("Invalid or Broken link");
         }
 
-        if(user.getIsVerified().equals("false")){
-            
-            
-            SimpleMailMessage mailMessage = verificationService.composeVerification(email, verification.getVerificationToken());
-        
-            verificationService.sendEmail(mailMessage);
-
-        }
+        if(user.getIsVerified().equalsIgnoreCase("true")){
 
             SimpleMailMessage mailMessage = verificationService.composeResetPassword(email, verification.getVerificationToken());
         
             verificationService.sendEmail(mailMessage);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        }else{
+
+        SimpleMailMessage mailMessage = verificationService.composeVerification(email, verification.getVerificationToken());
+        
+        verificationService.sendEmail(mailMessage);
+
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("Instructions are sent to your Email successfully!");
     }
 
  

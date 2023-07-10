@@ -140,6 +140,10 @@ public class UserService {
         user.setPassword(hashed);
 
         userRepository.save(user);
+
+        SimpleMailMessage mailMessage = verificationService.composeConfirmation(user.getEmail());
+
+        verificationService.sendEmail(mailMessage);
         
     }
 }
