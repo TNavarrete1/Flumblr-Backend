@@ -80,8 +80,12 @@ public class ProfileService {
         profileRepository.save(profile);
    }
 
+   //this doesn't work yet
    public int getTotal(String profileId) {
         int votes = 0;
+        if(profileRepository.findById(profileId).isEmpty()) {
+            throw new ResourceNotFoundException("Profile not found with id: " + profileId);
+        }
         List<ProfileVote> list = profileVoteRepository.findAllByProfileId(profileRepository.findById(profileId).get());
         for(ProfileVote vote : list) {
             if(vote.isVote()) votes++;
