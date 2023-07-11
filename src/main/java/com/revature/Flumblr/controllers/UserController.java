@@ -87,7 +87,7 @@ public class UserController {
             user.setVerified(true);
 
             userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.OK).body("Your account has been successfully verified!");
+            return ResponseEntity.status(HttpStatus.OK).build();
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
         }
@@ -130,8 +130,9 @@ public class UserController {
 
             userService.changePassword(req, user);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Your password has been successfully changed!");
-        } else {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        else{
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
         }
     }
