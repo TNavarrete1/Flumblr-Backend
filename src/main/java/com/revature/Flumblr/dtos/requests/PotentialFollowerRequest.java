@@ -13,4 +13,5 @@ import lombok.Setter;
 public class PotentialFollowerRequest {
       private String[] tagList;
       private String userId;
+      private String username;
 }
