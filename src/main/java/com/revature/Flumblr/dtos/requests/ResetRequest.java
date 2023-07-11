@@ -12,5 +12,5 @@ import lombok.Setter;
 public class ResetRequest {
 
     private String email;
-    
+
 }
