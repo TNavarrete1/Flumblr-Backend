@@ -60,7 +60,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<CommentMention> commentMention;
+    private Set<CommentMention> commentMentions;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
