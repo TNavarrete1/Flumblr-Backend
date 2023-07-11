@@ -49,7 +49,7 @@ public class Comment {
 
     @OneToMany(mappedBy = "comment", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<CommentMention> commentMention;
+    private Set<CommentMention> commentMentions;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
