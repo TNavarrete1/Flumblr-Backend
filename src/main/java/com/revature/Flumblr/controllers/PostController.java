@@ -29,7 +29,7 @@ import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.services.PostShareService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
+import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.services.CommentService;
 
 import lombok.AllArgsConstructor;
@@ -200,9 +200,9 @@ public class PostController {
             fileUrl = s3StorageService.uploadFile(file);
         }
 
-        postService.updatePost(postId, req, fileUrl);
+        PostResponse response = postService.updatePost(postId, req, fileUrl);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/user/{userId}")

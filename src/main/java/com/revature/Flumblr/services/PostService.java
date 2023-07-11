@@ -242,6 +242,7 @@ public class PostService {
         Post post = this.findById(postId);
         String newMessage = req.getParameter("message");
         String newMediaType = req.getParameter("mediaType");
+        String[] newTagsArray = req.getParameterValues("tags");
         String existingFileUrl = post.getS3Url();
 
         if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
@@ -259,6 +260,18 @@ public class PostService {
         if (fileUrl != null && !fileUrl.isEmpty()) {
             post.setS3Url(fileUrl);
         }
+
+        post.getTags().clear();
+
+        Set<Tag> newTagsSet = new HashSet<>();
+        if (newTagsArray != null) {
+            for (String tagName : newTagsArray) {
+                Tag tag = tagService.findByName(tagName);
+                newTagsSet.add(tag);
+            }
+        }
+        post.setTags(newTagsSet);
+
         post.setEditTime(new Date());
         postRepository.save(post);
         PostResponse response = findByPostResponse(post, post.getUser().getId());
