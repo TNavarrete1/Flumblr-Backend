@@ -60,7 +60,8 @@ class PostServiceTest {
 
     @BeforeEach
     public void setup() {
-        postService = new PostService(postRepository, userService, userRepository, s3StorageService, null, postVoteRepository, commentVoteService);
+        postService = new PostService(postRepository, userService, userRepository, s3StorageService, null,
+                postVoteRepository, commentVoteService, null, null);
         user = new User();
         followed = new User();
         Set<Follow> follows = new HashSet<Follow>();
@@ -101,18 +102,18 @@ class PostServiceTest {
         posts.add(post);
         when(userService.findById(userId)).thenReturn(user);
         when(postRepository.findAllByTagsNameIn(eq(tagStrings),
-            isA(Pageable.class))).thenReturn(posts);
+                isA(Pageable.class))).thenReturn(posts);
         List<PostResponse> resPosts = postService.findByTag(tagStrings, 1, userId);
         assertEquals("testPost", resPosts.get(0).getMessage());
         verify(postRepository, times(1)).findAllByTagsNameIn(eq(tagStrings),
-            isA(Pageable.class));
+                isA(Pageable.class));
     }
 
     @Test
-    public void getUserPostsTest () {
+    public void getUserPostsTest() {
         postService.findUserPostsAndShares(userId);
         verify(postRepository, times(1))
-            .findPostsAndSharesByUserId(userId);
+                .findPostsAndSharesByUserId(userId);
     }
 
     @Test
@@ -121,7 +122,7 @@ class PostServiceTest {
         String noPostId = "ac997ca0-852e-4b7b-b9c7-94f47cf38969";
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(postRepository.findById(noPostId)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             postService.findById(noPostId);
         });
         assertEquals(post, postService.findById(postId));

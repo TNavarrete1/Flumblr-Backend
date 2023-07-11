@@ -9,15 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewPostRequest {
-    private String id;
+public class NewInterestRequest {
 
-    private String username;
-
-    private String message;
-
-    private String mediaType;
-
-    private String[] tags;
+    private String user_id;
+    private String profile_id;
+    private String tag_name;
 
 }

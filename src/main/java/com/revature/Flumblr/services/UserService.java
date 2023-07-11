@@ -1,14 +1,15 @@
 package com.revature.Flumblr.services;
 
 import com.revature.Flumblr.entities.Profile;
-import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.repositories.ProfileRepository;
 
+import com.revature.Flumblr.repositories.ThemeRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewLoginRequest;
 import com.revature.Flumblr.dtos.requests.NewUserRequest;
+import com.revature.Flumblr.dtos.requests.changePasswordRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
 
 import java.util.Optional;
@@ -31,56 +32,53 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final ProfileRepository profileRepository;
+    private final ThemeRepository themeRepository;
     private final VerifivationRepository verifivationRepository;
     private final VerificationService verificationService;
-    private final ThemeService themeService;
 
     // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
-        
         // verifying user email
         User existingUseer = userRepository.findByEmailIgnoreCase(req.getEmail());
 
-        //check if email is a from a valid domain
+        // check if email is a from a valid domain
 
         boolean bool = verificationService.isValidEmailAddress(req.getEmail());
 
-        if(bool == false){
+        if (bool == false) {
             throw new ResourceConflictException("Email address is not valid");
         }
 
-
-        if(existingUseer != null){
+        if (existingUseer != null) {
             throw new ResourceConflictException("Email address is alrady being used!");
-        }    
+        }
 
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
 
         // save and return user
         User createdUser = userRepository.save(newUser);
 
-        // create new verification data based on Verification table based on new user 
+        // create new verification data based on Verification table based on new user
         Verification verification = new Verification(createdUser);
         verifivationRepository.save(verification);
 
-        //send email to the user on the new email they entered
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(req.getEmail());
-        mailMessage.setSubject("Complete Registration!");
-        //mailMessage.setFrom("YOUR EMAIL ADDRESS");
-        mailMessage.setText("To confirm your account, please click here : " + 
-                            "http://localhost:5000/flumblr/api/auth/verify-account?token=" +  verification.getVerificationToken());
+        String verificationToken = verification.getVerificationToken();
+
+        // send email to the user on the new email they entered
+        SimpleMailMessage mailMessage = verificationService.composeVerification(req.getEmail(), verificationToken);
 
         verificationService.sendEmail(mailMessage);
 
         // create and save unique profile id for each user to be updated on profile page
         // set profile_img to a default silhouette in s3 bucket - once uploaded add url
         // as a default
-        Theme theme = themeService.findByName("default");
-        Profile blankProfile = new Profile(createdUser, "", "", theme);
+
+        Profile blankProfile = new Profile(createdUser,
+                "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg",
+                "", themeRepository.findByName("default").get());
         profileRepository.save(blankProfile);
 
         return createdUser;
@@ -139,5 +137,19 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+    public void changePassword(changePasswordRequest req, User user) {
+
+        String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
+
+        user.setPassword(hashed);
+
+        userRepository.save(user);
+
+        SimpleMailMessage mailMessage = verificationService.composeConfirmation(user.getEmail());
+
+        verificationService.sendEmail(mailMessage);
+
     }
 }

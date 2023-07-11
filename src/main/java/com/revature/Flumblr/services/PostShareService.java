@@ -25,12 +25,12 @@ public class PostShareService {
 
     public void create(String postId, String userId) {
         Optional<PostShare> postShareOpt = postShareRepository.findByPostIdAndUserId(postId, userId);
-        if(!postShareOpt.isEmpty()) {
+        if (!postShareOpt.isEmpty()) {
             throw new ResourceConflictException("already shared Post(" + postId + ')');
         }
         User user = userService.findById(userId);
         Post post = postService.findById(postId);
-        if(post.getUser().getId().equals(user.getId()))
+        if (post.getUser().getId().equals(user.getId()))
             throw new ResourceConflictException("Post(" + postId + ") is by sharing User(" + userId + ')');
         PostShare postShare = new PostShare(user, post);
         postShareRepository.save(postShare);
@@ -41,9 +41,13 @@ public class PostShareService {
     @Transactional
     public void delete(String postId, String userId) {
         Optional<PostShare> postShareOpt = postShareRepository.findByPostIdAndUserId(postId, userId);
-        if(postShareOpt.isEmpty()) {
+        if (postShareOpt.isEmpty()) {
             throw new ResourceConflictException("haven't shared Post(" + postId + ')');
         }
         postShareRepository.delete(postShareOpt.get());
+    }
+
+    public PostShare findByUserAndPost(User user, Post post) {
+        return postShareRepository.findByUserAndPost(user, post).orElse(null);
     }
 }
