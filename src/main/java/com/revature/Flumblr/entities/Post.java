@@ -87,8 +87,6 @@ public class Post {
     @JsonManagedReference
     @JoinTable(name = "post_tag_list", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
-    
-    
 
     public Post(String message, String mediaType, String fileUrl, User user, Set<Tag> tagsList) {
 

@@ -9,15 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewPostRequest {
-    private String id;
 
-    private String username;
-
-    private String message;
-
-    private String mediaType;
-
-    private String[] tags;
-
+public class PotentialFollowerRequest {
+      private String[] tagList;
+      private String userId;
 }

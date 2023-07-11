@@ -1,4 +1,5 @@
 package com.revature.Flumblr.services;
+
 import com.revature.Flumblr.entities.*;
 import com.revature.Flumblr.repositories.*;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
@@ -81,7 +82,7 @@ class ReportServiceTest {
         String noReportId = "ac997ca0-852e-4b7b-b9c7-94f47cf38969";
         when(reportRepository.findById(reportId)).thenReturn(Optional.of(report));
         when(reportRepository.findById(noReportId)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             reportService.findById(noReportId);
         });
         assertEquals(report, reportService.findById(reportId));

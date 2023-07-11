@@ -7,5 +7,7 @@ import com.revature.Flumblr.entities.Verification;
 public interface VerifivationRepository extends JpaRepository<Verification, String> {
 
     Verification findByVerificationToken(String confirmationToken);
-    
+
+    Verification getByUserId(String id);
+
 }
