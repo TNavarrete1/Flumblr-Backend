@@ -1,6 +1,7 @@
 package com.revature.Flumblr.controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class FollowController {
     // username of user followed
     @PostMapping("/{followName}")
     public ResponseEntity<?> createFollow(@RequestHeader("Authorization") String token,
-    @PathVariable String followName) {
+            @PathVariable String followName) {
         String userId = tokenService.extractUserId(token);
         logger.trace(userId + " following " + followName);
         followService.create(userId, followName);
@@ -49,7 +50,7 @@ public class FollowController {
     // username of user followed
     @DeleteMapping("/{followName}")
     public ResponseEntity<?> deleteFollow(@RequestHeader("Authorization") String token,
-    @PathVariable String followName) {
+            @PathVariable String followName) {
         String userId = tokenService.extractUserId(token);
         logger.trace(userId + " unfollowing " + followName);
         followService.delete(userId, followName);
@@ -64,9 +65,9 @@ public class FollowController {
     }
 
     @PostMapping("/getFollowers")
-    public ResponseEntity<List<PotentialFollowerResponse>> getPotentialFollowers(
-    @RequestHeader("Authorization") String token, 
-    @RequestBody PotentialFollowerRequest req ) {
+    public ResponseEntity<Set<PotentialFollowerResponse>> getPotentialFollowers(
+            @RequestHeader("Authorization") String token,
+            @RequestBody PotentialFollowerRequest req) {
         tokenService.validateToken(token, req.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(followService.getPotentialListOfFollowers(req.getTagList()));
     }

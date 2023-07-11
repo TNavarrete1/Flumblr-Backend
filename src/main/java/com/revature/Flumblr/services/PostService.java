@@ -1,10 +1,11 @@
 package com.revature.Flumblr.services;
 
+import com.revature.Flumblr.repositories.BookmarksRepository;
 import com.revature.Flumblr.repositories.PostRepository;
+import com.revature.Flumblr.repositories.PostShareRepository;
 import com.revature.Flumblr.repositories.PostVoteRepository;
 import com.revature.Flumblr.repositories.UserRepository;
 import com.revature.Flumblr.utils.custom_classes.SortedPost;
-import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -28,15 +29,16 @@ import com.revature.Flumblr.dtos.responses.CommentResponse;
 import com.revature.Flumblr.dtos.responses.PostResponse;
 import com.revature.Flumblr.dtos.responses.UserResponse;
 import com.revature.Flumblr.entities.User;
-
 import lombok.AllArgsConstructor;
 
+import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Comment;
 import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
+import com.revature.Flumblr.entities.Tag;
 
 @Service
 @AllArgsConstructor
@@ -45,12 +47,15 @@ public class PostService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final S3StorageService s3StorageService;
+    private final TagService tagService;
     private final PostVoteRepository postVoteRepository;
     private final CommentVoteService commentVoteService;
+    private final BookmarksRepository bookmarksRepository;
+    private final PostShareRepository postShareRepository;
 
     public PostResponse findByIdResponse(String postId, String requesterId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
-        if(userPost.isEmpty())
+        if (userPost.isEmpty())
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         return findByPostResponse(userPost.get(), requesterId);
     }
@@ -73,6 +78,20 @@ public class PostService {
 
         PostResponse response = new PostResponse(post);
         PostVote postVote = postVoteRepository.findByUserAndPost(requestUser, post).orElse(null);
+        Bookmark bookmark = bookmarksRepository.findByUserAndPost(requestUser, post).orElse(null);
+        PostShare postShare = postShareRepository.findByUserAndPost(requestUser, post).orElse(null);
+        if (bookmark == null) {
+            response.setBookmarked(false);
+        } else {
+            response.setBookmarked(true);
+        }
+
+        if (postShare == null) {
+            response.setShared(false);
+        } else {
+            response.setShared(true);
+            ;
+        }
         response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
         response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
@@ -129,14 +148,14 @@ public class PostService {
         User requester = userService.findById(requesterId);
         List<UserResponse> usersShared = new ArrayList<UserResponse>();
         Set<String> followedId = new HashSet<String>();
-        for(Follow follow : requester.getFollows()) {
+        for (Follow follow : requester.getFollows()) {
             followedId.add(follow.getFollow().getId());
         }
         // include requester in 'share' info
         followedId.add(requesterId);
-        for(PostShare postShare : post.getPostShares()) {
+        for (PostShare postShare : post.getPostShares()) {
             User user = postShare.getUser();
-            if(followedId.contains(user.getId())) {
+            if (followedId.contains(user.getId())) {
                 usersShared.add(new UserResponse(user));
             }
         }
@@ -171,7 +190,9 @@ public class PostService {
             Optional<Post> postOptional = postRepository.findById(postId);
             if (postOptional.isPresent()) {
                 Post post = postOptional.get();
-                s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                if (post.getS3Url() != null) {
+                    s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                }
 
                 postRepository.deleteById(postId);
             } else {
@@ -194,13 +215,24 @@ public class PostService {
         if (message == null && fileUrl == null) {
             throw new ResourceConflictException("Message or media required!");
         }
-
         String mediaType = req.getParameter("mediaType");
-        if (mediaType == null) {
-            throw new FileNotUploadedException("Media Type can not be empty!");
+        // if (mediaType == null) {
+        // throw new FileNotUploadedException("Media Type can not be empty!");
+        // }
+
+        String[] tagsArray = req.getParameterValues("tags");
+        Set<Tag> tagsList = new HashSet<>();
+
+        if (tagsArray != null) {
+
+            for (String tagNames : tagsArray) {
+                Tag tag = tagService.findByName(tagNames);
+
+                tagsList.add(tag);
+            }
         }
 
-        Post post = new Post(message, mediaType, fileUrl, user);
+        Post post = new Post(message, mediaType, fileUrl, user, tagsList);
 
         postRepository.save(post);
 
@@ -237,7 +269,9 @@ public class PostService {
         List<Post> userPosts = postRepository.findByUserId(userId);
 
         for (Post post : userPosts) {
-            s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+            if (post.getS3Url() != null) {
+                s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+            }
             postRepository.delete(post);
         }
     }

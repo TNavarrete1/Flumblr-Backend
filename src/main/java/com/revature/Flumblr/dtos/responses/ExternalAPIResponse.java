@@ -7,14 +7,15 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
-public class ProfileResponse {
+@Setter
+public class ExternalAPIResponse {
 
-    private String username;
-    private String profileId;
-    private String profile_img;
-    private String bio;
-    private String themeName;
+    String result;
+    String reason;
+    String disposable;
+    String did_you_mean;
+    String domain;
+    String success;
 
 }

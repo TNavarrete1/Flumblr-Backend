@@ -55,7 +55,6 @@ public class PostController {
         logger.trace("creating post from " + userId);
 
         MultipartFile file = req.getFile("file");
-
         String fileUrl = null;
 
         if (file != null) {
@@ -70,7 +69,7 @@ public class PostController {
 
     @PostMapping("/share/{postId}")
     public ResponseEntity<?> sharePost(@RequestHeader("Authorization") String token,
-        @PathVariable String postId) {
+            @PathVariable String postId) {
         String userId = tokenService.extractUserId(token);
 
         postShareService.create(postId, userId);
@@ -79,7 +78,7 @@ public class PostController {
 
     @DeleteMapping("/share/{postId}")
     public ResponseEntity<?> unSharePost(@RequestHeader("Authorization") String token,
-        @PathVariable String postId) {
+            @PathVariable String postId) {
         String userId = tokenService.extractUserId(token);
 
         postShareService.delete(postId, userId);

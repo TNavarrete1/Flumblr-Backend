@@ -75,13 +75,13 @@ public class S3StorageService {
     }
 
     public void deleteFileFromS3Bucket(String fileUrl) {
-    try {
-        URL url = new URL(fileUrl);
-        String key = extractS3KeyFromUrl(url);
-        amazonS3Client.deleteObject(bucketName, key);
-    } catch (IOException e) {
-        throw new RuntimeException("Failed to delete file from S3: " + e.getMessage());
+        try {
+            URL url = new URL(fileUrl);
+            String key = extractS3KeyFromUrl(url);
+            amazonS3Client.deleteObject(bucketName, key);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete file from S3: " + e.getMessage());
+        }
     }
-}
 
 }

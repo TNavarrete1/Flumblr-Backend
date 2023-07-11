@@ -9,8 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+public class ResetRequest {
 
-public class PotentialFollowerRequest {
-      private String[] tagList;
-      private String userId;
+    private String email;
+
 }

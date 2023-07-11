@@ -38,6 +38,10 @@ public class PostResponse {
 
     private PostVote userVote;
 
+    private boolean bookmarked;
+
+    private boolean shared;
+
     private Date createTime;
 
     private Date editTime;
