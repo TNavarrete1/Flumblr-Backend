@@ -29,6 +29,6 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     @Query("UPDATE Profile p SET p.theme = :theme WHERE p.id = :id")
     Profile setTheme(String id, String theme);
 
-    @Query(value = "SELECT p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id JOIN profile_tag_list ptl ON ptl.profile_id = p.id JOIN tags t ON t.name = ptl.tag_id WHERE t.name = :tag", nativeQuery = true)
-    List<PotentialFollowerResponse> getPotentialListOfFollowers(@Param("tag") String tag);
+    @Query(value = "SELECT p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id JOIN profile_tag_list ptl ON ptl.profile_id = p.id JOIN tags t ON t.id = ptl.tag_id WHERE t.name = :tag", nativeQuery = true)
+    List<Object[]> getPotentialListOfFollowers(@Param("tag") String tag);
 }
