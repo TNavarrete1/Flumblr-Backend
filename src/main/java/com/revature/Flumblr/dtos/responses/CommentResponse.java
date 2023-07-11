@@ -28,6 +28,8 @@ public class CommentResponse {
 
     private String postId;
 
+    private String gifUrl;
+
     private CommentVote userVote;
 
     public CommentResponse(Comment comment) {
@@ -36,5 +38,6 @@ public class CommentResponse {
         this.createTime = comment.getCreateTime();
         this.editTime = comment.getEditTime();
         this.postId = comment.getPost().getId();
+        this.gifUrl = comment.getGifUrl();
     }
 }

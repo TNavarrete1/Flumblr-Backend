@@ -44,6 +44,12 @@ class PostServiceTest {
     @Mock
     private CommentVoteService commentVoteService;
 
+    @Mock
+    private BookmarksRepository bookmarksRepository;
+
+    @Mock
+    private PostShareRepository postShareRepository;
+
     private User user;
 
     private Post post;
@@ -57,20 +63,21 @@ class PostServiceTest {
     private List<Comment> postComments;
 
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
-
     @BeforeEach
     public void setup() {
-        postService = new PostService(postRepository, userService, userRepository, s3StorageService,
-            postVoteRepository, commentVoteService);
+        postService = new PostService(postRepository, userService, userRepository, s3StorageService, null,
+                postVoteRepository, commentVoteService, bookmarksRepository, postShareRepository);
         user = new User();
         followed = new User();
         Set<Follow> follows = new HashSet<Follow>();
+        Set<Tag> tags = new HashSet<Tag>();
+        tags.add(new Tag("car"));
         follows.add(new Follow(user, followed));
         user.setFollows(follows);
         user.setId(userId);
         user.setProfile(new Profile(user, null, "I'm a teapot", null));
         followed.setUsername("followable");
-        post = new Post("testPost", null, null, user);
+        post = new Post("testPost", null, null, user, tags);
         postShares = new HashSet<PostShare>();
         post.setPostShares(postShares);
         postVotes = new HashSet<PostVote>();
@@ -116,10 +123,10 @@ class PostServiceTest {
     }
 
     @Test
-    public void getUserPostsTest () {
+    public void getUserPostsTest() {
         postService.findUserPostsAndShares(userId);
         verify(postRepository, times(1))
-            .findPostsAndSharesByUserId(userId);
+                .findPostsAndSharesByUserId(userId);
     }
 
     @Test
@@ -128,7 +135,7 @@ class PostServiceTest {
         String noPostId = "ac997ca0-852e-4b7b-b9c7-94f47cf38969";
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(postRepository.findById(noPostId)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             postService.findById(noPostId);
         });
         assertEquals(post, postService.findById(postId));

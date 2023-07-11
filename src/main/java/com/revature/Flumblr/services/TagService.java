@@ -27,6 +27,22 @@ public class TagService {
     private final TagRepository tagRepository;
     private final PostRepository postRepository;
 
+    public void saveTag(Tag tag) {
+        tagRepository.save(tag);
+    }
+
+    public List<Tag> getTags(String tagId) {
+        if (tagId != null) {
+            return tagRepository.findAllById(tagId);
+        } else {
+            return tagRepository.findAll();
+        }
+    }
+
+    public void deleteTag(String tagId) {
+        tagRepository.deleteById(tagId);
+    }
+
     public Tag findByName(String name) {
         Optional<Tag> tag = tagRepository.findByName(name);
         if (tag.isEmpty()) {
@@ -99,4 +115,5 @@ public class TagService {
         tagRepository.save(tag);
         return tag;
     }
+
 }

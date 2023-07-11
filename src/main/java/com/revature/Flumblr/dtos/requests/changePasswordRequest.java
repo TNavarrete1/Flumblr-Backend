@@ -9,8 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+public class changePasswordRequest {
 
-public class PotentialFollowerRequest {
-      private String[] tagList;
-      private String userId;
+    private String password;
+    private String confirmPassword;
+    private String token;
+
 }

@@ -48,12 +48,15 @@ class PostControllerTest {
     private List<Comment> comments;
     private Set<PostVote> postVotes;
     private Set<PostShare> postShares;
+    private Set<Tag> tags;
 
     @BeforeEach
     public void setup() {
         postController = new PostController(tokenService, postService, commentService, postShareService,
             s3StorageService);
         user = new User();
+        tags = new HashSet<Tag>();
+        tags.add(new Tag("car"));
         // necessary for PostResponse
         user.setProfile(new Profile(user, null, "I'm a teapot", null));
         posts = new ArrayList<Post>();
@@ -61,13 +64,13 @@ class PostControllerTest {
         comments = new ArrayList<Comment>();
         postVotes = new HashSet<PostVote>();
         postShares = new HashSet<PostShare>();
-        Post addPost = new Post("testPost", null, null, user);
+        Post addPost = new Post("testPost", null, null, user, tags);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         addPost.setPostShares(postShares);
         posts.add(addPost);
         postResponses.add(new PostResponse(addPost));
-        addPost = new Post("anotherPost", null, null, user);
+        addPost = new Post("anotherPost", null, null, user, tags);
         addPost.setComments(comments);
         addPost.setPostVotes(postVotes);
         addPost.setPostShares(postShares);
@@ -182,7 +185,7 @@ class PostControllerTest {
 
     @Test
     public void getPostTest() {
-        Post responsePost = new Post("testPost", null, null, user);
+        Post responsePost = new Post("testPost", null, null, user, tags);
         responsePost.setComments(comments);
         responsePost.setPostVotes(postVotes);
         responsePost.setPostShares(postShares);

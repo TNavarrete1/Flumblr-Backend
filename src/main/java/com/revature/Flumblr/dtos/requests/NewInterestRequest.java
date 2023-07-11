@@ -9,8 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+public class NewInterestRequest {
 
-public class PotentialFollowerRequest {
-      private String[] tagList;
-      private String userId;
+    private String user_id;
+    private String profile_id;
+    private String tag_name;
+
 }

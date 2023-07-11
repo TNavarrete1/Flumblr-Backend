@@ -5,7 +5,9 @@ import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
 import com.revature.Flumblr.entities.*;
 import com.revature.Flumblr.repositories.ProfileRepository;
+import com.revature.Flumblr.repositories.ThemeRepository;
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.repositories.VerifivationRepository;
 
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,30 +27,39 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindrot.jbcrypt.BCrypt;
 
-
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     private UserService userService;
 
-    @Mock 
+    @Mock
     private UserRepository userRepository;
-    @Mock 
+
+    @Mock
     private RoleService roleService;
-    @Mock 
+
+    @Mock
     private ProfileRepository profileRepository;
-    @Mock 
-    private ThemeService themeService;
 
-      @BeforeEach
+    @Mock
+    private ThemeRepository themeRepository;
+
+    @Mock
+    private VerifivationRepository verifivationRepository;
+
+    @Mock
+    private VerificationService verificationService;
+
+    @BeforeEach
     public void setup() {
-    userService = new UserService(userRepository, roleService, profileRepository, themeService);
-}
+        userService = new UserService(userRepository, roleService, profileRepository,
+        themeRepository, verifivationRepository, verificationService);
+    }
 
-   @Test
-   public void registerUserTest() {
+    @Test
+    public void registerUserTest() {
 
-   // Create a mock for NewUserRequest
+        // Create a mock for NewUserRequest
         NewUserRequest newUserRequest = new NewUserRequest();
         newUserRequest.setUsername("testUser");
         newUserRequest.setPassword("password");
@@ -56,15 +67,16 @@ public class UserServiceTest {
 
         // Create a mock for the dependencies
         Role userRole = new Role();
-        Theme defaultTheme = new Theme("default");
+        Theme defaultTheme = new Theme("default", null, null);
         User savedUser = new User("testUser", "hashedPassword", "test@example.com", userRole);
         Profile savedProfile = new Profile(savedUser, "", "", defaultTheme);
 
         // Mock the behavior of the dependencies
         when(roleService.getByName("USER")).thenReturn(userRole);
-        when(themeService.findByName("default")).thenReturn(defaultTheme);
+        when(themeRepository.findByName("default")).thenReturn(Optional.of(defaultTheme));
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(profileRepository.save(any(Profile.class))).thenReturn(savedProfile);
+        when(verificationService.isValidEmailAddress(newUserRequest.getEmail())).thenReturn(true);
 
         // Call the method under test
         User createdUser = userService.registerUser(newUserRequest);
@@ -73,12 +85,12 @@ public class UserServiceTest {
         assertEquals(savedUser, createdUser);
         verify(userRepository, times(1)).save(any(User.class));
         verify(profileRepository, times(1)).save(any(Profile.class));
-   }
+    }
 
-   @Test
-   public void loginTest() {
+    @Test
+    public void loginTest() {
 
-          // Mock user data
+        // Mock user data
         String username = "testuser";
         String password = "testpassword";
         Role userRole = new Role();
@@ -98,14 +110,14 @@ public class UserServiceTest {
 
         // Verify that the returned Principal contains the expected User
         assertEquals(user.getUsername(), result.getUsername());
-   
+
     }
 
     @Test
     public void testFindById() {
         // Mock user data
         Role userRole = new Role();
-        User user = new User("testUsername", "testPassword",  "testpassword", userRole);
+        User user = new User("testUsername", "testPassword", "testpassword", userRole);
 
         // Mock the userRepository behavior
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -122,9 +134,9 @@ public class UserServiceTest {
 
     @Test
     public void testFindByUsername() {
-     Role userRole = new Role();
-     String username = "testUsername";
-        User user = new User(username, "testPassword",  "testpassword", userRole);
+        Role userRole = new Role();
+        String username = "testUsername";
+        User user = new User(username, "testPassword", "testpassword", userRole);
 
         // Mock the userRepository behavior
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
@@ -139,12 +151,11 @@ public class UserServiceTest {
         assertEquals(user, result);
     }
 
-    
-     @Test
+    @Test
     public void isValidUsernameTest() {
         String validUsername = "test_user123";
         String invalidUsername = "test user";
-        
+
         assertTrue(userService.isValidUsername(validUsername));
         assertFalse(userService.isValidUsername(invalidUsername));
 
@@ -154,7 +165,7 @@ public class UserServiceTest {
     public void isValidPasswordTest() {
         String validPassword = "Password123";
         String invalidPassword = "password";
-        
+
         assertTrue(userService.isValidPassword(validPassword));
         assertFalse(userService.isValidPassword(invalidPassword));
     }
@@ -164,45 +175,43 @@ public class UserServiceTest {
         String password = "Password123";
         String confirmPassword = "Password123";
         String incorrectPassword = "Password12";
-     
-        
+
         assertTrue(userService.isSamePassword(password, confirmPassword));
         assertFalse(userService.isSamePassword(password, incorrectPassword));
     }
 
-
     @Test
     public void uniqueUsernameTest() {
-          String username = "testUsername";
+        String username = "testUsername";
 
-    // Mock the userRepository behavior
-    when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        // Mock the userRepository behavior
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-    // Call the isUniqueUsername method
-    boolean result = userService.isUniqueUsername(username);
+        // Call the isUniqueUsername method
+        boolean result = userService.isUniqueUsername(username);
 
-    // Verify that the userRepository.findByUsername method was called
-    verify(userRepository, times(1)).findByUsername(username);
+        // Verify that the userRepository.findByUsername method was called
+        verify(userRepository, times(1)).findByUsername(username);
 
-    // Verify the expected result
-    assertTrue(result);
+        // Verify the expected result
+        assertTrue(result);
     }
 
-     @Test
+    @Test
     public void usernameExistsTest() {
         Role userRole = new Role();
         String username = "testUsername";
-        User user = new User(username, "testPassword",  "testpassword", userRole);
+        User user = new User(username, "testPassword", "testpassword", userRole);
 
         // Mock the userRepository behavior
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
-         boolean result = userService.usernameExists(username);
+        boolean result = userService.usernameExists(username);
 
-    // Verify that the userRepository.findByUsername method was called
-    verify(userRepository, times(1)).findByUsername(username);
+        // Verify that the userRepository.findByUsername method was called
+        verify(userRepository, times(1)).findByUsername(username);
 
-     assertTrue(result);
+        assertTrue(result);
     }
 
 }

@@ -16,13 +16,13 @@ import com.revature.Flumblr.entities.User;
 public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findByUserId(String userId);
 
-    @Query("SELECT DISTINCT p FROM Post p left join p.postShares ps " + 
-    "WHERE p.user.id = :userId OR ps.user.id = :userId "
-    + "ORDER BY p.createTime DESC")
+    @Query("SELECT DISTINCT p FROM Post p left join p.postShares ps " +
+            "WHERE p.user.id = :userId OR ps.user.id = :userId "
+            + "ORDER BY p.createTime DESC")
     List<Post> findPostsAndSharesByUserId(@Param("userId") String userId);
 
-    @Query("SELECT DISTINCT p FROM Post p left join p.postShares ps " + 
-    "WHERE p.user IN :following OR ps.user IN :following")
+    @Query("SELECT DISTINCT p FROM Post p left join p.postShares ps " +
+            "WHERE p.user IN :following OR ps.user IN :following")
     List<Post> findPostsAndSharesForUserIn(@Param("following") List<User> following, Pageable pageable);
 
     List<Post> findByTagsNameIn(List<String> tags, Pageable pageable);

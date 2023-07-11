@@ -1,4 +1,5 @@
 package com.revature.Flumblr.services;
+
 import com.revature.Flumblr.entities.*;
 import com.revature.Flumblr.repositories.*;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceConflictException;
@@ -54,14 +55,14 @@ class PostShareServiceTest {
     @BeforeEach
     public void setup() {
         postShareService = new PostShareService(postShareRepository, userService, postService,
-            notificationService, notificationTypeService);
+                notificationService, notificationTypeService);
         user = new User();
         user.setId(userId);
         otherUser = new User();
         otherUser.setId(otherUserId);
         thirdUser = new User();
         thirdUser.setId("a1229037-4ecc-4b9c-9da9-913152ad306b");
-        post = new Post("testPost", null, null, otherUser);
+        post = new Post("testPost", null, null, otherUser, null);
         postShare = new PostShare(user, post);
         existingShare = new PostShare(thirdUser, post);
     }

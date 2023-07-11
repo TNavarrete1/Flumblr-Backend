@@ -15,20 +15,19 @@ public class UserControllerTest {
     @Mock
     private TokenService tokenService;
 
-
     @BeforeEach
     public void setup() {
-    userController = new UserController(userService, tokenService);
-}
+        userController = new UserController(userService, tokenService, null, null, null);
+    }
 
-// @Test
-// public void registerUserTest() {
+    // @Test
+    // public void registerUserTest() {
 
-// }
+    // }
 
-// @Test
-// public void loginUserTest() {
-    
-// }
+    // @Test
+    // public void loginUserTest() {
+
+    // }
 
 }
