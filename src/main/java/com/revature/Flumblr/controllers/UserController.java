@@ -76,10 +76,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-
     @GetMapping("/verify-account")
     public ResponseEntity<?> changePassword(@RequestParam("token") String token) {
-     
+
         Verification verificationToken = verifivationRepository.findByVerificationToken(token);
 
         if (verificationToken != null) {
@@ -112,11 +111,10 @@ public class UserController {
 
     @PutMapping("/newpassword")
     public ResponseEntity<?> verify(@RequestBody changePasswordRequest req) {
-     
-       
+
         Verification verificationToken = verifivationRepository.findByVerificationToken(req.getToken());
 
-          // if password is not valid, throw exception
+        // if password is not valid, throw exception
         if (!userService.isValidPassword(req.getPassword())) {
             throw new ResourceConflictException(
                     "Password needs to be at least 8 characters long and contain at least one letter and one number");
@@ -127,61 +125,60 @@ public class UserController {
             throw new ResourceConflictException("Your password and confirm password do not match.");
         }
 
-        if(verificationToken != null){
+        if (verificationToken != null) {
             User user = userRepository.findByEmailIgnoreCase(verificationToken.getUser().getEmail());
 
             userService.changePassword(req, user);
 
             return ResponseEntity.status(HttpStatus.OK).body("Your password has been successfully changed!");
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
-        }   
+        }
     }
 
-
-   @PostMapping("/reset")
+    @PostMapping("/reset")
     public ResponseEntity<?> resetPassword(@RequestBody ResetRequest req) {
-     
+
         String email = req.getEmail();
 
-        if(email.equals(null)){
+        if (email.equals(null)) {
             throw new ResourceNotFoundException("Invalid email please provide a valid email.");
         }
 
         User user = userRepository.findByEmailIgnoreCase(email);
 
-        if(user == null){
+        if (user == null) {
             throw new ResourceNotFoundException("User can not be found by the provided email!");
         }
 
         logger.info("password reset requested from " + user.getUsername());
 
-        //create a new verificationToken based on the found user and send the token through email
+        // create a new verificationToken based on the found user and send the token
+        // through email
 
         Verification verification = verifivationRepository.getByUserId(user.getId());
 
-        if(verification == null){
+        if (verification == null) {
             throw new ResourceNotFoundException("Invalid or Broken link");
         }
 
-        if(user.getVerified() == true){
+        if (user.getVerified() == true) {
 
-            SimpleMailMessage mailMessage = verificationService.composeResetPassword(email, verification.getVerificationToken());
-        
+            SimpleMailMessage mailMessage = verificationService.composeResetPassword(email,
+                    verification.getVerificationToken());
+
             verificationService.sendEmail(mailMessage);
 
-        }else{
+        } else {
 
-        SimpleMailMessage mailMessage = verificationService.composeVerification(email, verification.getVerificationToken());
-        
-        verificationService.sendEmail(mailMessage);
+            SimpleMailMessage mailMessage = verificationService.composeVerification(email,
+                    verification.getVerificationToken());
+
+            verificationService.sendEmail(mailMessage);
 
         }
 
         return ResponseEntity.status(HttpStatus.OK).body("Instructions are sent to your Email successfully!");
     }
 
- 
-    
 }

@@ -11,9 +11,8 @@ import lombok.Setter;
 @Setter
 public class changePasswordRequest {
 
-
     private String password;
     private String confirmPassword;
     private String token;
-    
+
 }

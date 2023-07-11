@@ -32,21 +32,24 @@ public class ProfileController {
         Profile prof = profileService.getProfileByUserId(id);
         // frontend needs username for profile display
         User username = userService.findById(id);
-        // include profile id, image url, bio, and themeName in response body for frontend
-        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName());
+        // include profile id, image url, bio, and themeName in response body for
+        // frontend
+        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(),
+                prof.getBio(), prof.getTheme().getName());
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     // upload profile image
     @PatchMapping("/upload/{id}")
     ResponseEntity<?> updateProfileImage(@RequestPart("file") MultipartFile file,
-                                         @PathVariable String id,
-                                         //@RequestParam("id") String profileId,
-                                         // NOTE: in order for this to work in postman, must set CONTENT-TYPE of
-                                         // this @RequestPart specifically to "application/json" or you'll get 415
-                                         // as seen here: https://flumblr.s3.amazonaws.com/c16f66bb-b965-45e6-b176-f08d7b69ae5a-MULTIPARTFILE.png
-                                         @RequestPart("profileId") NewProfileRequest profileId,
-                                         @RequestHeader("Authorization") String token) {
+            @PathVariable String id,
+            // @RequestParam("id") String profileId,
+            // NOTE: in order for this to work in postman, must set CONTENT-TYPE of
+            // this @RequestPart specifically to "application/json" or you'll get 415
+            // as seen here:
+            // https://flumblr.s3.amazonaws.com/c16f66bb-b965-45e6-b176-f08d7b69ae5a-MULTIPARTFILE.png
+            @RequestPart("profileId") NewProfileRequest profileId,
+            @RequestHeader("Authorization") String token) {
 
         // handle invalid token
         tokenService.validateToken(token, id);
@@ -55,7 +58,7 @@ public class ProfileController {
             // need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
-        //profileService.setProfileImg(profileId, fileURL);
+        // profileService.setProfileImg(profileId, fileURL);
         profileService.setProfileImg(profileId.getProfileId(), fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -86,9 +89,9 @@ public class ProfileController {
 
     @GetMapping("/tags")
     ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
-                                                            @RequestBody NewInterestRequest req) {
+            @RequestBody NewInterestRequest req) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, req.getUser_id());
         TagInterestResponse res = new TagInterestResponse(profileService.getTagsByProfile(req.getProfile_id()));
         return ResponseEntity.status(HttpStatus.OK).body(res);
@@ -96,27 +99,27 @@ public class ProfileController {
 
     @PostMapping("/tags")
     ResponseEntity<?> postProfileInterests(@RequestHeader("Authorization") String token,
-                                           @RequestBody NewInterestRequest req) {
+            @RequestBody NewInterestRequest req) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, req.getUser_id());
         profileService.assignTagToProfile(req.getProfile_id(), req.getTag_name());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    //can now assign tags to a profile -- testing endpoint -- will be removed later
+    // can now assign tags to a profile -- testing endpoint -- will be removed later
     @PutMapping("/{profileId}/tag/{tagId}")
     public Profile assignTagToProfile(@PathVariable String profileId,
-                                      @PathVariable String tagId) {
+            @PathVariable String tagId) {
 
         return profileService.assignTagToProfile(profileId, tagId);
     }
 
     @DeleteMapping("/tags")
     public ResponseEntity<?> deleteTagAssociatedWithProfile(@RequestHeader("Authorization") String token,
-                                                            @RequestBody NewInterestRequest req) {
+            @RequestBody NewInterestRequest req) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, req.getUser_id());
         Tag foundTag = tagService.findByName(req.getTag_name());
         profileService.deleteTagsFromProfile(req.getProfile_id(), foundTag);
