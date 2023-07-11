@@ -57,11 +57,11 @@ public class PostController {
         MultipartFile file = req.getFile("file");
         String fileUrl = null;
 
+        postService.createPost(req, fileUrl, userId);
+
         if (file != null) {
             fileUrl = s3StorageService.uploadFile(file);
         }
-
-        postService.createPost(req, fileUrl, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
 

@@ -53,6 +53,12 @@ class PostServiceTest {
     @Mock
     private PostShareRepository postShareRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private NotificationTypeService notificationTypeService;
+
     private User user;
 
     private Post post;
@@ -71,7 +77,8 @@ class PostServiceTest {
     @BeforeEach
     public void setup() {
         postService = new PostService(postRepository, userService, userRepository, s3StorageService, null,
-                postVoteRepository, commentVoteService, bookmarksRepository, postShareRepository);
+            postVoteRepository, commentVoteService, bookmarksRepository, postShareRepository,
+            notificationService, notificationTypeService);
         user = new User();
         followed = new User();
         Set<Follow> follows = new HashSet<Follow>();
