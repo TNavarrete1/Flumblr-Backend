@@ -107,11 +107,11 @@ class PostServiceTest {
         post.setTags(tags);
         posts.add(post);
         when(userService.findById(userId)).thenReturn(user);
-        when(postRepository.findAllByTagsNameIn(eq(tagStrings),
+        when(postRepository.findByTagsNameIn(eq(tagStrings),
             isA(Pageable.class))).thenReturn(posts);
         List<PostResponse> resPosts = postService.findByTag(tagStrings, 1, userId);
         assertEquals("testPost", resPosts.get(0).getMessage());
-        verify(postRepository, times(1)).findAllByTagsNameIn(eq(tagStrings),
+        verify(postRepository, times(1)).findByTagsNameIn(eq(tagStrings),
             isA(Pageable.class));
     }
 
