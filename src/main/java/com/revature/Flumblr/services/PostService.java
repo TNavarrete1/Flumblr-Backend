@@ -234,12 +234,15 @@ public class PostService {
         if (mentionsArray != null) {
 
             for (String mentionName : mentionsArray) {
-                User mentioned = userService.findByUsername(mentionName);
-                notificationService.createNotification(user.getUsername() + " mentioned you in a post",
-                    "post:" + post.getId(), mentioned, 
-                    notificationTypeService.findByName("postMention"));
+                Optional<User> mentionedOpt = userRepository.findByUsername(mentionName);
+                if(mentionedOpt.isPresent()) {
+                    User mentioned = mentionedOpt.get();
+                    notificationService.createNotification(user.getUsername() + " mentioned you in a post",
+                        "post:" + post.getId(), mentioned, 
+                        notificationTypeService.findByName("postMention"));
 
-                mentionsList.add(new PostMention(mentioned, post));
+                    mentionsList.add(new PostMention(mentioned, post));
+                }
             }
         }
         post.setPostMentions(mentionsList);
@@ -267,12 +270,15 @@ public class PostService {
                 else newMentions.remove(existingUsername);
             }
             for(String newMention : newMentions) {
-                User mentioned = userService.findByUsername(newMention);
-                notificationService.createNotification(post.getUser().getUsername() +
-                    " mentioned you in a post", "post:" + post.getId(), mentioned, 
-                    notificationTypeService.findByName("postMention"));
+                Optional<User> mentionedOpt = userRepository.findByUsername(newMention);
+                if(mentionedOpt.isPresent()) {
+                    User mentioned = mentionedOpt.get();
+                    notificationService.createNotification(post.getUser().getUsername() +
+                        " mentioned you in a post", "post:" + post.getId(), mentioned, 
+                        notificationTypeService.findByName("postMention"));
 
-                mentions.add(new PostMention(mentioned, post));
+                    mentions.add(new PostMention(mentioned, post));
+                }
             }
         }
 
