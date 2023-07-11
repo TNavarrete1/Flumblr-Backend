@@ -5,7 +5,9 @@ import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
 import com.revature.Flumblr.entities.*;
 import com.revature.Flumblr.repositories.ProfileRepository;
+import com.revature.Flumblr.repositories.ThemeRepository;
 import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.repositories.VerifivationRepository;
 
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,17 +34,26 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private RoleService roleService;
+
     @Mock
     private ProfileRepository profileRepository;
+
     @Mock
-    private ThemeService themeService;
+    private ThemeRepository themeRepository;
+
+    @Mock
+    private VerifivationRepository verifivationRepository;
+
+    @Mock
+    private VerificationService verificationService;
 
     @BeforeEach
     public void setup() {
-        // userService = new UserService(userRepository, roleService, profileRepository,
-        // null, null, themeService);
+        userService = new UserService(userRepository, roleService, profileRepository,
+        themeRepository, verifivationRepository, verificationService);
     }
 
     @Test
@@ -62,9 +73,10 @@ public class UserServiceTest {
 
         // Mock the behavior of the dependencies
         when(roleService.getByName("USER")).thenReturn(userRole);
-        when(themeService.findByName("default")).thenReturn(defaultTheme);
+        when(themeRepository.findByName("default")).thenReturn(Optional.of(defaultTheme));
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(profileRepository.save(any(Profile.class))).thenReturn(savedProfile);
+        when(verificationService.isValidEmailAddress(newUserRequest.getEmail())).thenReturn(true);
 
         // Call the method under test
         User createdUser = userService.registerUser(newUserRequest);

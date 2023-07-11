@@ -119,7 +119,7 @@ public class PostService {
     }
 
     public List<PostResponse> findByTag(List<String> tags, int page, String requesterId) {
-        List<Post> posts = postRepository.findAllByTagsNameIn(tags,
+        List<Post> posts = postRepository.findByTagsNameIn(tags,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         for (Post userPost : posts) {
@@ -306,8 +306,6 @@ public class PostService {
         score += (numberofComments * 2);
         score += (numberofShares * 2.5);
         sortedPost.setScore(score);
-        sortedPost.setUpvotes(upVotes);
-        sortedPost.setDownvotes(downVotes);
     }
 
 }
