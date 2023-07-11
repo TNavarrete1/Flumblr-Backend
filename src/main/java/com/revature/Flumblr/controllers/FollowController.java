@@ -1,6 +1,7 @@
 package com.revature.Flumblr.controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class FollowController {
     }
 
     @PostMapping("/getFollowers")
-    public ResponseEntity<List<PotentialFollowerResponse>> getPotentialFollowers(
+    public ResponseEntity<Set<PotentialFollowerResponse>> getPotentialFollowers(
     @RequestHeader("Authorization") String token, 
     @RequestBody PotentialFollowerRequest req ) {
         tokenService.validateToken(token, req.getUserId());

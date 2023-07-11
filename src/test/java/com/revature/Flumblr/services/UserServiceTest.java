@@ -44,6 +44,7 @@ public class UserServiceTest {
         // userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
     }
 
+
     @Test
     public void registerUserTest() {
 

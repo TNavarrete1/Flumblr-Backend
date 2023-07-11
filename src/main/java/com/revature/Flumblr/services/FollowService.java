@@ -2,7 +2,10 @@ package com.revature.Flumblr.services;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+
 import jakarta.transaction.Transactional;
 
 
@@ -69,13 +72,20 @@ public class FollowService {
                 "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 
-    public List<PotentialFollowerResponse> getPotentialListOfFollowers(String[] tags) {
-        List<PotentialFollowerResponse> collected = new ArrayList<>();
-        for (String tag : tags) {
-            Optional<List<PotentialFollowerResponse>> listofFollowers = Optional.of(
-            new ArrayList<>(profileRepository.getPotentialListOfFollowers(tag)));
-            collected.addAll(listofFollowers.get());
-        }
-        return collected;
+  
+    public Set<PotentialFollowerResponse> getPotentialListOfFollowers(String[] tags) {
+    Set<PotentialFollowerResponse> collected = new HashSet<>();
+    for (String tag : tags) {
+        List<Object[]> results = profileRepository.getPotentialListOfFollowers(tag);
+            for (Object[] v : results) {
+                String profile_img = v[1].toString();
+                String bio = v[0].toString();
+                String username = v[2].toString();
+                PotentialFollowerResponse follower = new PotentialFollowerResponse(profile_img, bio, username);
+                collected.add(follower);
+            }
     }
+    return collected;
+}
+
 }
