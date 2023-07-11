@@ -80,21 +80,12 @@ public class PostService {
         PostVote postVote = postVoteRepository.findByUserAndPost(requestUser, post).orElse(null);
         Bookmark bookmark = bookmarksRepository.findByUserAndPost(requestUser, post).orElse(null);
         PostShare postShare = postShareRepository.findByUserAndPost(requestUser, post).orElse(null);
-        if (bookmark == null) {
-            response.setBookmarked(false);
-        } else {
-            response.setBookmarked(true);
-        }
 
-        if (postShare == null) {
-            response.setShared(false);
-        } else {
-            response.setShared(true);
-            ;
-        }
         response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
         response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
+        response.setBookmarked(bookmark);
+        response.setShared(postShare);
         response.setUpVotes(upVotes);
         response.setDownVotes(postVotes.size() - upVotes);
         response.setComments(comments);
