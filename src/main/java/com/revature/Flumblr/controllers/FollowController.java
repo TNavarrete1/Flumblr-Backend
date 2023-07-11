@@ -71,4 +71,13 @@ public class FollowController {
         tokenService.validateToken(token, req.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(followService.getPotentialListOfFollowers(req.getTagList()));
     }
+
+
+    @PostMapping("/getUserbyName")
+    public ResponseEntity<Set<PotentialFollowerResponse>> getPotentialFollowersbyUsername(
+            @RequestHeader("Authorization") String token,
+            @RequestBody PotentialFollowerRequest req) {
+        tokenService.validateToken(token, req.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(followService.getPotentialListOfFollowersbyName(req.getUsername()));
+    }
 }
