@@ -194,11 +194,13 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to update this post.");
         }
 
+        String fileUrl = null;
         MultipartFile file = req.getFile("file");
-        String fileUrl = s3StorageService.uploadFile(file);
-
         postService.updatePost(postId, req, fileUrl);
 
+        if (file != null) {
+            fileUrl = s3StorageService.uploadFile(file);
+        }
         return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
     }
 
