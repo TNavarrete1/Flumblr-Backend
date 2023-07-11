@@ -90,7 +90,7 @@ public class User {
     @JsonManagedReference
     private Set<Bookmark> bookmarks;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Profile profile;
 
