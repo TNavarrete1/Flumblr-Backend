@@ -15,7 +15,7 @@ public class PotentialFollowerResponse {
     private String profile_img;
     private String bio;
     private String username;
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import jakarta.transaction.Transactional;
 
-
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.repositories.FollowRepository;
@@ -29,6 +28,7 @@ public class FollowService {
     private final NotificationService notificationService;
     private final NotificationTypeService notificationTypeService;
     private final ProfileRepository profileRepository;
+
     public boolean doesFollow(String userId, String followName) {
         Optional<Follow> followOpt = followRepository.findByUserIdAndFollowUsername(userId, followName);
         return (!followOpt.isEmpty());
@@ -64,7 +64,7 @@ public class FollowService {
                     " already follows " + followName);
         User follower = userService.findById(userId);
         User followed = userService.findByUsername(followName);
-        if(follower.getId().equals(followed.getId()))
+        if (follower.getId().equals(followed.getId()))
             throw new ResourceConflictException("self-follow not permitted");
         Follow follow = new Follow(follower, followed);
         followRepository.save(follow);
@@ -72,11 +72,10 @@ public class FollowService {
                 "user:" + follower.getId(), followed, notificationTypeService.findByName("follow"));
     }
 
-  
     public Set<PotentialFollowerResponse> getPotentialListOfFollowers(String[] tags) {
-    Set<PotentialFollowerResponse> collected = new HashSet<>();
-    for (String tag : tags) {
-        List<Object[]> results = profileRepository.getPotentialListOfFollowers(tag);
+        Set<PotentialFollowerResponse> collected = new HashSet<>();
+        for (String tag : tags) {
+            List<Object[]> results = profileRepository.getPotentialListOfFollowers(tag);
             for (Object[] v : results) {
                 String profile_img = v[1].toString();
                 String bio = v[0].toString();
@@ -84,8 +83,8 @@ public class FollowService {
                 PotentialFollowerResponse follower = new PotentialFollowerResponse(profile_img, bio, username);
                 collected.add(follower);
             }
+        }
+        return collected;
     }
-    return collected;
-}
 
 }

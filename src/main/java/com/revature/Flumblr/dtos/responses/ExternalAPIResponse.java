@@ -17,5 +17,5 @@ public class ExternalAPIResponse {
     String did_you_mean;
     String domain;
     String success;
-    
+
 }

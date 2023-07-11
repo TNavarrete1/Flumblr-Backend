@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 
 public class PotentialFollowerRequest {
-      private String[] tagList;   
+      private String[] tagList;
       private String userId;
 }
