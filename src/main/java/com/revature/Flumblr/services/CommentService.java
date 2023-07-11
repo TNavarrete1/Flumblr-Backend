@@ -1,11 +1,14 @@
 package com.revature.Flumblr.services;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.entities.Comment;
+import com.revature.Flumblr.entities.CommentMention;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.repositories.CommentRepository;
@@ -29,9 +32,25 @@ public class CommentService {
         User user = userRepository.getReferenceById(req.getUserId());
         Post post = postRepository.getReferenceById(req.getPostId());
         Comment com = new Comment(req.getComment(), post, user, req.getGifUrl());
+
+        Set<CommentMention> mentionsSet = new HashSet<CommentMention>();
+
+        for(String mentionName : req.getMentions()) {
+            Optional<User> optMentioned = userRepository.findByUsername(mentionName);
+            if(optMentioned.isPresent()) {
+                User mentioned = optMentioned.get();
+                notificationService.createNotification(user.getUsername() +
+                    " mentioned you in a comment", "comment:" + com.getId(), mentioned, 
+                    notificationTypeService.findByName("postMention"));
+                mentionsSet.add(new CommentMention(mentioned, com));
+            }
+        }
+        com.setCommentMentions(mentionsSet);
+
         commentRepository.save(com);
+
         notificationService.createNotification(user.getUsername() + " commented on your post",
-                "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postComment"));
+            "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postComment"));
     }
 
     public Comment findById(String commentId) {

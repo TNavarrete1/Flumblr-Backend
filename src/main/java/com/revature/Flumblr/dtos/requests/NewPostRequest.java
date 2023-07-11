@@ -20,4 +20,5 @@ public class NewPostRequest {
 
     private String[] tags;
 
+    private String[] mentions;
 }
