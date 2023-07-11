@@ -17,7 +17,7 @@ public class UserControllerTest {
 
     @BeforeEach
     public void setup() {
-        userController = new UserController(userService, tokenService, null, null);
+        userController = new UserController(userService, tokenService, null, null, null);
     }
 
     // @Test

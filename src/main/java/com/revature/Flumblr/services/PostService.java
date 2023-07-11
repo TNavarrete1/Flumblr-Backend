@@ -190,7 +190,9 @@ public class PostService {
             Optional<Post> postOptional = postRepository.findById(postId);
             if (postOptional.isPresent()) {
                 Post post = postOptional.get();
-                s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                if (post.getS3Url() != null) {
+                    s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                }
 
                 postRepository.deleteById(postId);
             } else {
@@ -213,7 +215,6 @@ public class PostService {
         if (message == null && fileUrl == null) {
             throw new ResourceConflictException("Message or media required!");
         }
-
         String mediaType = req.getParameter("mediaType");
         // if (mediaType == null) {
         // throw new FileNotUploadedException("Media Type can not be empty!");
@@ -269,7 +270,9 @@ public class PostService {
         List<Post> userPosts = postRepository.findByUserId(userId);
 
         for (Post post : userPosts) {
-            s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+            if (post.getS3Url() != null) {
+                    s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+                }
             postRepository.delete(post);
         }
     }

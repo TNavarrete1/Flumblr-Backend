@@ -9,10 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewProfileRequest {
+public class ResetRequest {
 
-    private String profileId;
-    private String bio;
-    private String themeName;
-
+    private String email;
+    
 }

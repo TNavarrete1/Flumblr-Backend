@@ -41,38 +41,39 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setup() {
-        userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
+        // userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
     }
 
-    // @Test
-    // public void registerUserTest() {
 
-    //     // Create a mock for NewUserRequest
-    //     NewUserRequest newUserRequest = new NewUserRequest();
-    //     newUserRequest.setUsername("testUser");
-    //     newUserRequest.setPassword("password");
-    //     newUserRequest.setEmail("test@example.com");
+    @Test
+    public void registerUserTest() {
 
-    //     // Create a mock for the dependencies
-    //     Role userRole = new Role();
-    //     Theme defaultTheme = new Theme("default");
-    //     User savedUser = new User("testUser", "hashedPassword", "test@example.com", userRole);
-    //     Profile savedProfile = new Profile(savedUser, "", "", defaultTheme);
+        // Create a mock for NewUserRequest
+        NewUserRequest newUserRequest = new NewUserRequest();
+        newUserRequest.setUsername("testUser");
+        newUserRequest.setPassword("password");
+        newUserRequest.setEmail("test@example.com");
 
-    //     // Mock the behavior of the dependencies
-    //     when(roleService.getByName("USER")).thenReturn(userRole);
-    //     when(themeService.findByName("default")).thenReturn(defaultTheme);
-    //     when(userRepository.save(any(User.class))).thenReturn(savedUser);
-    //     when(profileRepository.save(any(Profile.class))).thenReturn(savedProfile);
+        // Create a mock for the dependencies
+        Role userRole = new Role();
+        Theme defaultTheme = new Theme("default", null, null);
+        User savedUser = new User("testUser", "hashedPassword", "test@example.com", userRole);
+        Profile savedProfile = new Profile(savedUser, "", "", defaultTheme);
 
-    //     // Call the method under test
-    //     User createdUser = userService.registerUser(newUserRequest);
+        // Mock the behavior of the dependencies
+        when(roleService.getByName("USER")).thenReturn(userRole);
+        when(themeService.findByName("default")).thenReturn(defaultTheme);
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(profileRepository.save(any(Profile.class))).thenReturn(savedProfile);
 
-    //     // Assert the results
-    //     assertEquals(savedUser, createdUser);
-    //     verify(userRepository, times(1)).save(any(User.class));
-    //     verify(profileRepository, times(1)).save(any(Profile.class));
-    // }
+        // Call the method under test
+        User createdUser = userService.registerUser(newUserRequest);
+
+        // Assert the results
+        assertEquals(savedUser, createdUser);
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(profileRepository, times(1)).save(any(Profile.class));
+    }
 
     @Test
     public void loginTest() {

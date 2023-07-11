@@ -9,10 +9,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewProfileRequest {
+public class changePasswordRequest {
 
-    private String profileId;
-    private String bio;
-    private String themeName;
 
+    private String password;
+    private String confirmPassword;
+    private String token;
+    
 }

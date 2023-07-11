@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.User;

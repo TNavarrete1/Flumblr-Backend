@@ -1,7 +1,6 @@
 package com.revature.Flumblr.entities;
 
 import java.util.Set;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -32,10 +31,5 @@ public class Theme {
     @OneToMany(mappedBy = "theme", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Profile> profiles;
-
-    public Theme(String themeName) {
-        this.id = UUID.randomUUID().toString();
-        this.name = themeName;
-    }
 
 }
