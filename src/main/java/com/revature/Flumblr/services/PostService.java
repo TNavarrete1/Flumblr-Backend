@@ -246,6 +246,7 @@ public class PostService {
 
         if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
             s3StorageService.deleteFileFromS3Bucket(existingFileUrl);
+            post.setS3Url(null);
         }
         if (newMessage != null && !newMessage.isEmpty()) {
             post.setMessage(newMessage);
