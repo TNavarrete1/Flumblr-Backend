@@ -4,8 +4,8 @@ INSERT INTO notification_types (name,id) VALUES
 ('follow', '3'),
 ('share', '4'),
 ('profileLike', '5'),
-('commentLike', '6')
-('profileMention', '7')
+('commentLike', '6'),
+('postMention', '7'),
 ('commentMention', '8');
 
 INSERT INTO themes (name,id) VALUES
