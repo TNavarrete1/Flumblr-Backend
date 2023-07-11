@@ -9,8 +9,6 @@ import lombok.Setter;
 public class SortedPost {
     private PostResponse content;
     private double score;
-    private int upvotes;
-    private int downvotes;
 
     public SortedPost(PostResponse content) {
         this.content = content;
