@@ -103,7 +103,7 @@ public class TagService {
         downVotes = postVotes.size() - upVotes;
         int numberofComments = post.getComments().size();
         int numberofShares = post.getPostShares().size();
-        double score = downVotes + upVotes * 1.5;
+        double score = 3 + downVotes + upVotes * 1.5;
         score += (numberofComments * 2);
         score += (numberofShares * 2.5);
         return score;
