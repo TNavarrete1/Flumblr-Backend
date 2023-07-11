@@ -35,6 +35,7 @@ public class ProfileService {
     }
 
     public void setBio(String profileId, String bio) {
+        //set max character limit of 255 characters for bio
         if(bio == null) {
             throw new BadRequestException("Cannot submit a null bio.");
         }
@@ -80,7 +81,7 @@ public class ProfileService {
         profileRepository.save(profile);
    }
 
-   //this doesn't work yet
+   //this doesn't work yet -- maybe make a check to see if list is empty before iterating
    public int getTotal(String profileId) {
         int votes = 0;
         if(profileRepository.findById(profileId).isEmpty()) {
