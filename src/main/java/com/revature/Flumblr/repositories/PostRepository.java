@@ -29,7 +29,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     // get all posts that have tags
     @Query("SELECT p FROM Post p WHERE p.createTime >= :dateBefore AND size(p.tags) > 0")
-    List<Post> findAllWithTagsAfter(@Param("dateBefore") Date dateBefore);
+    Iterable<Post> findAllWithTagsAfter(@Param("dateBefore") Date dateBefore);
 
     List<Post> findByCreateTimeGreaterThanEqual(Date fromDate);
 
