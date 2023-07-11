@@ -30,4 +30,8 @@ public class BookmarkService {
         bookmarksRepository.delete(new Bookmark(request.getBookmarkId(), user,
                 post));
     }
+
+    public Bookmark findByUserAndPost(User user, Post post) {
+        return bookmarksRepository.findByUserAndPost(user, post).orElse(null);
+    }
 }

@@ -42,22 +42,23 @@ public class ProfileController {
     // upload profile image
     @PatchMapping("/upload/{id}")
     ResponseEntity<?> updateProfileImage(@RequestPart("file") MultipartFile file,
-                                         @PathVariable String id,
-                                         //@RequestParam("id") String profileId,
-                                         // NOTE: in order for this to work in postman, must set CONTENT-TYPE of
-                                         // this @RequestPart specifically to "application/json" or you'll get 415
-                                         // as seen here: https://flumblr.s3.amazonaws.com/c16f66bb-b965-45e6-b176-f08d7b69ae5a-MULTIPARTFILE.png
-                                         @RequestPart("profileId") NewProfileRequest profileId,
-                                         @RequestHeader("Authorization") String token) {
+            @PathVariable String id,
+            // @RequestParam("id") String profileId,
+            // NOTE: in order for this to work in postman, must set CONTENT-TYPE of
+            // this @RequestPart specifically to "application/json" or you'll get 415
+            // as seen here:
+            // https://flumblr.s3.amazonaws.com/c16f66bb-b965-45e6-b176-f08d7b69ae5a-MULTIPARTFILE.png
+            @RequestPart("profileId") NewProfileRequest profileId,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         String fileURL = null;
-        if(file != null) {
-            //need to get/delete old profile image as new one is uploaded
+        if (file != null) {
+            // need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
-        //profileService.setProfileImg(profileId, fileURL);
+        // profileService.setProfileImg(profileId, fileURL);
         profileService.setProfileImg(profileId.getProfileId(), fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -65,10 +66,10 @@ public class ProfileController {
     // update profile bio
     @PatchMapping("/bio/{id}")
     ResponseEntity<?> updateProfileBio(@RequestBody NewProfileRequest req,
-                                       @PathVariable String id,
-                                       @RequestHeader("Authorization") String token) {
+            @PathVariable String id,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         profileService.setBio(req.getProfileId(), req.getBio());
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -77,10 +78,10 @@ public class ProfileController {
     // update theme
     @PatchMapping("/theme/{id}")
     ResponseEntity<?> updateTheme(@PathVariable String id,
-                                  @RequestBody NewProfileRequest req,
-                                  @RequestHeader("Authorization") String token) {
+            @RequestBody NewProfileRequest req,
+            @RequestHeader("Authorization") String token) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, id);
         profileService.setTheme(req.getProfileId(), req.getThemeName());
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -88,9 +89,9 @@ public class ProfileController {
 
     @GetMapping("/tags")
     ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
-                                                            @RequestBody NewInterestRequest req) {
+            @RequestBody NewInterestRequest req) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, req.getUser_id());
         TagInterestResponse res = new TagInterestResponse(profileService.getTagsByProfile(req.getProfile_id()));
         return ResponseEntity.status(HttpStatus.OK).body(res);
@@ -98,9 +99,9 @@ public class ProfileController {
 
     @PostMapping("/tags")
     ResponseEntity<?> postProfileInterests(@RequestHeader("Authorization") String token,
-                                           @RequestBody NewInterestRequest req) {
+            @RequestBody NewInterestRequest req) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, req.getUser_id());
         profileService.assignTagToProfile(req.getProfile_id(), req.getTag_name());
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -108,9 +109,9 @@ public class ProfileController {
 
     @DeleteMapping("/tags")
     public ResponseEntity<?> deleteTagAssociatedWithProfile(@RequestHeader("Authorization") String token,
-                                                            @RequestBody NewInterestRequest req) {
+            @RequestBody NewInterestRequest req) {
 
-        //handle invalid token
+        // handle invalid token
         tokenService.validateToken(token, req.getUser_id());
         Tag foundTag = tagService.findByName(req.getTag_name());
         profileService.deleteTagsFromProfile(req.getProfile_id(), foundTag);

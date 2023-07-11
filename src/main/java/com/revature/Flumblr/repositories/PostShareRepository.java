@@ -5,12 +5,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.User;
 
 @Repository
-public interface BookmarksRepository extends JpaRepository<Bookmark, String> {
+public interface PostShareRepository extends JpaRepository<PostShare, String> {
+    Optional<PostShare> findByPostIdAndUserId(String postId, String userId);
 
-    Optional<Bookmark> findByUserAndPost(User user, Post post);
+    Optional<PostShare> findByUserAndPost(User user, Post post);
 }

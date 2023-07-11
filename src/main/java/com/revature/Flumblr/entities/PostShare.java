@@ -20,13 +20,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "post_votes")
-public class PostVote {
-
+@Table(name = "post_share")
+public class PostShare {
     @Id
     private String id;
-
-    private boolean vote;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -38,11 +35,9 @@ public class PostVote {
     @JsonBackReference
     private Post post;
 
-    public PostVote(User user, Post post, boolean vote) {
+    public PostShare(User user, Post post) {
         this.id = UUID.randomUUID().toString();
         this.user = user;
         this.post = post;
-        this.vote = vote;
-
     }
 }

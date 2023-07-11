@@ -9,15 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewPostRequest {
-    private String id;
+public class changePasswordRequest {
 
-    private String username;
-
-    private String message;
-
-    private String mediaType;
-
-    private String[] tags;
+    private String password;
+    private String confirmPassword;
+    private String token;
 
 }

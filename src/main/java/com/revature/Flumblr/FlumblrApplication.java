@@ -11,5 +11,4 @@ public class FlumblrApplication {
 
 		System.out.println("Application is Running . . .");
 	}
-
 }

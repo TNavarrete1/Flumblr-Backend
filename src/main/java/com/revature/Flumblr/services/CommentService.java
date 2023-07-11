@@ -28,9 +28,9 @@ public class CommentService {
     public void commentOnPost(NewCommentRequest req) {
         User user = userRepository.getReferenceById(req.getUserId());
         Post post = postRepository.getReferenceById(req.getPostId());
-        Comment com = new Comment(req.getComment(), post, user);
+        Comment com = new Comment(req.getComment(), post, user, req.getGifUrl());
         commentRepository.save(com);
-        notificationService.createNotification("User " + user.getUsername() + " commented on your post",
+        notificationService.createNotification(user.getUsername() + " commented on your post",
                 "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postComment"));
     }
 
@@ -41,10 +41,12 @@ public class CommentService {
         }
         return commentOpt.get();
     }
+
     public String getCommentOwner(String commentId) {
         Comment comment = findById(commentId);
         return comment.getUser().getId();
     }
+
     public void deleteComment(String commentId) {
         Comment comment = findById(commentId);
         commentRepository.delete(comment);

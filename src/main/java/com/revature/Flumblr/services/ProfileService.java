@@ -28,23 +28,22 @@ public class ProfileService {
     }
 
     public void setProfileImg(String profileId, String URL) {
-        if(URL == null) {
+        if (URL == null) {
             throw new FileNotUploadedException("An error occurred uploading the profile image.");
         }
         profileRepository.setProfileImg(profileId, URL);
     }
 
     public void setBio(String profileId, String bio) {
-        //set max character limit of 255 characters for bio
-        if(bio == null) {
-            throw new BadRequestException("Cannot submit a null bio.");
+        if(bio == null || bio.length() > 254) {
+            throw new BadRequestException("A valid Bio can be up to 254 characters in length.");
         }
         profileRepository.setBio(profileId, bio);
     }
 
     public void setTheme(String profileId, String themeName) {
-        Theme theme = themeRepository.findByName(themeName);
-        if(theme == null) {
+        Theme theme = themeRepository.findByName(themeName).get();
+        if (theme == null) {
             throw new ResourceNotFoundException("No theme with name: " + themeName + " found.");
         }
         profileRepository.setTheme(profileId, theme);
@@ -52,28 +51,28 @@ public class ProfileService {
 
     public Profile findById(String id) {
         Optional<Profile> opt = profileRepository.findById(id);
-        if(opt.isEmpty()) {
+        if (opt.isEmpty()) {
             throw new ResourceNotFoundException("Unable to find profile ID: " + id);
         }
         return opt.get();
     }
 
-   public Profile assignTagToProfile(String profileId, String tagName) {
+    public Profile assignTagToProfile(String profileId, String tagName) {
         Set<Tag> tagSet = null;
         Profile profile = profileRepository.findById(profileId).get();
         Tag tag = tagRepository.findByName(tagName).get();
         tagSet = profile.getTags();
-        if(tagSet.size() >= 5) {
+        if (tagSet.size() >= 5) {
             throw new BadRequestException("A profile cannot store more than five (5) tags at a time.");
         }
         tagSet.add(tag);
         profile.setTags(tagSet);
         return profileRepository.save(profile);
-   }
+    }
 
-   public Set<Tag> getTagsByProfile(String profileId) {
+    public Set<Tag> getTagsByProfile(String profileId) {
         return profileRepository.findById(profileId).get().getTags();
-   }
+    }
 
    public void deleteTagsFromProfile(String profileId, Tag tag) {
         Profile profile = profileRepository.findById(profileId).get();

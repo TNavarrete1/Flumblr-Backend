@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 
+import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
-import com.revature.Flumblr.entities.Comment;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +22,7 @@ public class PostResponse {
     private String id;
 
     private String username;
+    private String userId;
 
     private String message;
 
@@ -37,6 +38,12 @@ public class PostResponse {
 
     private int downVotes;
 
+    private PostVote userVote;
+
+    private Bookmark bookmarked;
+
+    private PostShare shared;
+
     private Date createTime;
 
     private Date editTime;
@@ -45,45 +52,21 @@ public class PostResponse {
 
     private Set<Tag> tags;
 
-    public PostResponse(Post post, int upVotes, int downVotes) {
-        this.id = post.getId();
-        this.username = post.getUser().getUsername();
-        this.message = post.getMessage();
-        this.s3Url = post.getS3Url();
-        this.profileImg = post.getUser().getProfile().getProfile_img();
-        this.mediaType = post.getMediaType();
-        this.createTime = post.getCreateTime();
-        this.editTime = post.getEditTime();
-        this.comments = new ArrayList<CommentResponse>();
-        this.tags = post.getTags();
-        this.upVotes = upVotes;
-        this.downVotes = downVotes;
-        for (Comment comment : post.getComments()) {
-            this.comments.add(new CommentResponse(comment));
-        }
-    }
+    private int shareCount;
+
+    private List<UserResponse> sharedBy;
 
     // have to get votes
     public PostResponse(Post post) {
-        Set<PostVote> postVotes = post.getPostVotes();
-        int upVotes = 0;
-        for(PostVote postVote : postVotes) {
-            if(postVote.isVote()) upVotes++;
-        }
         this.id = post.getId();
         this.username = post.getUser().getUsername();
+        this.userId = post.getUser().getId();
         this.message = post.getMessage();
         this.s3Url = post.getS3Url();
         this.profileImg = post.getUser().getProfile().getProfile_img();
         this.mediaType = post.getMediaType();
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();
-        this.comments = new ArrayList<CommentResponse>();
         this.tags = post.getTags();
-        this.upVotes = upVotes;
-        this.downVotes = postVotes.size() - upVotes;
-        for (Comment comment : post.getComments()) {
-            this.comments.add(new CommentResponse(comment));
-        }
     }
 }

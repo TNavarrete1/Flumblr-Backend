@@ -35,6 +35,9 @@ class FollowServiceTest {
     @Mock
     private NotificationTypeService notificationTypeService;
 
+    @Mock
+    private ProfileRepository profileRepository;
+
     private User user;
 
     private User followed;
@@ -45,12 +48,17 @@ class FollowServiceTest {
 
     @BeforeEach
     public void setup() {
-        followService = new FollowService(followRepository, userService, notificationService,
-            notificationTypeService);
+        followService = new FollowService(
+                followRepository,
+                userService,
+                notificationService,
+                notificationTypeService,
+                profileRepository);
         user = new User();
         followed = new User();
         unFollowed = new User();
         user.setId(userId);
+        user.setUsername("follower");
         followed.setUsername("followable");
         unFollowed.setUsername("unfollowable");
     }
@@ -105,6 +113,7 @@ class FollowServiceTest {
             "unfollowable")).thenReturn(Optional.empty());
         when(followRepository.findByUserIdAndFollowUsername(userId,
             "followable")).thenReturn(Optional.of(new Follow(user, followed)));
+        when(userService.findById(userId)).thenReturn(user);
         assertThrows(ResourceConflictException.class, ()->{
             followService.delete(userId, "unfollowable");
         });
