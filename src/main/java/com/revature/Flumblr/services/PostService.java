@@ -219,8 +219,9 @@ public class PostService {
         // }
 
         String[] tagsArray = req.getParameterValues("tags");
-
         Set<Tag> tagsList = new HashSet<>();
+
+        if(tagsArray != null){
 
         for (String tagNames : tagsArray) {
 
@@ -230,6 +231,7 @@ public class PostService {
 
             tagsList.add(tag);
         }
+    }
 
         Post post = new Post(message, mediaType, fileUrl, user, tagsList);
 
