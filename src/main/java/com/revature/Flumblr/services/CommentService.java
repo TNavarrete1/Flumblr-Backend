@@ -41,7 +41,7 @@ public class CommentService {
                 User mentioned = optMentioned.get();
                 notificationService.createNotification(user.getUsername() +
                     " mentioned you in a comment", "comment:" + com.getId(), mentioned, 
-                    notificationTypeService.findByName("postMention"));
+                    notificationTypeService.findByName("commentMention"));
                 mentionsSet.add(new CommentMention(mentioned, com));
             }
         }
