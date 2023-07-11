@@ -44,10 +44,6 @@ public class ProfileController {
     ResponseEntity<?> updateProfileImage(@RequestPart("file") MultipartFile file,
             @PathVariable String id,
             // @RequestParam("id") String profileId,
-            // NOTE: in order for this to work in postman, must set CONTENT-TYPE of
-            // this @RequestPart specifically to "application/json" or you'll get 415
-            // as seen here:
-            // https://flumblr.s3.amazonaws.com/c16f66bb-b965-45e6-b176-f08d7b69ae5a-MULTIPARTFILE.png
             @RequestPart("profileId") NewProfileRequest profileId,
             @RequestHeader("Authorization") String token) {
 

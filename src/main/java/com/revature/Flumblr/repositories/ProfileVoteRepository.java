@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface ProfileVoteRepository extends JpaRepository<ProfileVote, String> {
     Optional<ProfileVote> findByUserAndProfile(User user, Profile profile);
 
-    List<ProfileVote> findAllByProfileId(Profile profile);
+    List<ProfileVote> findAllByProfile(Profile profile);
 
 }

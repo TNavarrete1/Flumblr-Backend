@@ -61,6 +61,7 @@ public class ProfileService {
         Set<Tag> tagSet = null;
         Profile profile = profileRepository.findById(profileId).get();
         Tag tag = tagRepository.findByName(tagName).get();
+        //if tag does not exist need to create tag also
         tagSet = profile.getTags();
         if (tagSet.size() >= 5) {
             throw new BadRequestException("A profile cannot store more than five (5) tags at a time.");
@@ -80,13 +81,15 @@ public class ProfileService {
         profileRepository.save(profile);
    }
 
-   //this doesn't work yet -- maybe make a check to see if list is empty before iterating
    public int getTotal(String profileId) {
         int votes = 0;
         if(profileRepository.findById(profileId).isEmpty()) {
             throw new ResourceNotFoundException("Profile not found with id: " + profileId);
         }
-        List<ProfileVote> list = profileVoteRepository.findAllByProfileId(profileRepository.findById(profileId).get());
+        List<ProfileVote> list = profileVoteRepository.findAllByProfile(profileRepository.findById(profileId).get());
+        if(list.size() == 0 ) {
+            return 0;
+        }
         for(ProfileVote vote : list) {
             if(vote.isVote()) votes++;
         }
