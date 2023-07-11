@@ -47,6 +47,10 @@ public class Comment {
     @Column(name = "gif_url")
     private String gifUrl;
 
+    @OneToMany(mappedBy = "comment", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<CommentMention> commentMention;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
