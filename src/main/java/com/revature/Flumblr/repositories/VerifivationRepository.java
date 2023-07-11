@@ -9,5 +9,5 @@ public interface VerifivationRepository extends JpaRepository<Verification, Stri
     Verification findByVerificationToken(String confirmationToken);
 
     Verification getByUserId(String id);
-    
+
 }

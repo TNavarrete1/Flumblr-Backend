@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
-
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -23,13 +22,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="verifications")
+@Table(name = "verifications")
 public class Verification {
 
     @Id
     private String id;
 
-    @Column(name="verification_token")
+    @Column(name = "verification_token")
     private String verificationToken;
 
     @Column()

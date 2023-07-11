@@ -49,12 +49,11 @@ class FollowServiceTest {
     @BeforeEach
     public void setup() {
         followService = new FollowService(
-            followRepository, 
-            userService, 
-            notificationService, 
-            notificationTypeService, 
-            profileRepository
-        );
+                followRepository,
+                userService,
+                notificationService,
+                notificationTypeService,
+                profileRepository);
         user = new User();
         followed = new User();
         unFollowed = new User();

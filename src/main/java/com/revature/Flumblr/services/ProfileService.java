@@ -32,14 +32,14 @@ public class ProfileService {
     }
 
     public void setProfileImg(String profileId, String URL) {
-        if(URL == null) {
+        if (URL == null) {
             throw new FileNotUploadedException("An error occurred uploading the profile image.");
         }
         profileRepository.setProfileImg(profileId, URL);
     }
 
     public void setBio(String profileId, String bio) {
-        if(bio == null) {
+        if (bio == null) {
             throw new BadRequestException("Cannot submit a null bio.");
         }
         profileRepository.setBio(profileId, bio);
@@ -49,8 +49,8 @@ public class ProfileService {
         Optional<Theme> themeOpt = themeRepository.findByName(themeName);
 
         Theme theme = themeOpt.get();
-        
-        if(theme == null) {
+
+        if (theme == null) {
             throw new ResourceNotFoundException("No theme with name: " + themeName + " found.");
         }
         profileRepository.setTheme(profileId, theme);
@@ -64,27 +64,26 @@ public class ProfileService {
         return opt.get();
     }
 
-   public Profile assignTagToProfile(String profileId, String tagName) {
+    public Profile assignTagToProfile(String profileId, String tagName) {
         Set<Tag> tagSet = null;
         Profile profile = profileRepository.findById(profileId).get();
         Tag tag = tagRepository.findByName(tagName).get();
         tagSet = profile.getTags();
-        if(tagSet.size() >= 5) {
+        if (tagSet.size() >= 5) {
             throw new BadRequestException("A profile cannot store more than five (5) tags at a time.");
         }
         tagSet.add(tag);
         profile.setTags(tagSet);
         return profileRepository.save(profile);
-   }
+    }
 
-   public Set<Tag> getTagsByProfile(String profileId) {
+    public Set<Tag> getTagsByProfile(String profileId) {
         return profileRepository.findById(profileId).get().getTags();
-   }
+    }
 
-   public void deleteTagsFromProfile(String profileId, Tag tag) {
-        //???
+    public void deleteTagsFromProfile(String profileId, Tag tag) {
+        // ???
         profileRepository.findById(profileId).get().getTags().remove(tag);
-   }
-
+    }
 
 }

@@ -41,9 +41,9 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setup() {
-        // userService = new UserService(userRepository, roleService, profileRepository, null, null, themeService);
+        // userService = new UserService(userRepository, roleService, profileRepository,
+        // null, null, themeService);
     }
-
 
     @Test
     public void registerUserTest() {

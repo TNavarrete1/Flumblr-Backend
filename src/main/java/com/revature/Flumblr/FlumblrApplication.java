@@ -8,7 +8,7 @@ public class FlumblrApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FlumblrApplication.class, args);
-		
+
 		System.out.println("Application is Running . . .");
 	}
 }

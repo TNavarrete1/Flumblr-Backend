@@ -20,7 +20,7 @@ public class TagService {
     }
 
     public List<Tag> getTags(String tagId) {
-        if(tagId != null) {
+        if (tagId != null) {
             return tagRepository.findAllById(tagId);
         } else {
             return tagRepository.findAll();

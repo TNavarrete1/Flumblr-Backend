@@ -18,7 +18,3 @@ INSERT INTO themes (name,id) VALUES
 
 INSERT INTO roles (id, name) VALUES ('0e99fc8f-e5e3-4966-a6df-f407c40d8d3c', 'ADMIN');
 INSERT INTO roles (id, name) VALUES ('96de8a55-f37b-40c9-8fec-418bfaccdd5d', 'USER');
-
-
-INSERT INTO roles (id, name) VALUES ('0e99fc8f-e5e3-4966-a6df-f407c40d8d3c', 'ADMIN');
-INSERT INTO roles (id, name) VALUES ('96de8a55-f37b-40c9-8fec-418bfaccdd5d', 'USER');

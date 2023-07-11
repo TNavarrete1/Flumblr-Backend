@@ -223,17 +223,14 @@ public class PostService {
         String[] tagsArray = req.getParameterValues("tags");
         Set<Tag> tagsList = new HashSet<>();
 
-        if(tagsArray != null){
+        if (tagsArray != null) {
 
-        for (String tagNames : tagsArray) {
+            for (String tagNames : tagsArray) {
+                Tag tag = tagService.findByName(tagNames);
 
-            System.out.println(tagNames);
-
-            Tag tag = tagService.findByName(tagNames);
-
-            tagsList.add(tag);
+                tagsList.add(tag);
+            }
         }
-    }
 
         Post post = new Post(message, mediaType, fileUrl, user, tagsList);
 
@@ -273,8 +270,8 @@ public class PostService {
 
         for (Post post : userPosts) {
             if (post.getS3Url() != null) {
-                    s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
-                }
+                s3StorageService.deleteFileFromS3Bucket(post.getS3Url());
+            }
             postRepository.delete(post);
         }
     }

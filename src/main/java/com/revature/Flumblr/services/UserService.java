@@ -36,51 +36,49 @@ public class UserService {
     private final VerifivationRepository verifivationRepository;
     private final VerificationService verificationService;
 
-
     // private final PostService postService;
 
     public User registerUser(NewUserRequest req) {
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
-        
         // verifying user email
         User existingUseer = userRepository.findByEmailIgnoreCase(req.getEmail());
 
-        //check if email is a from a valid domain
+        // check if email is a from a valid domain
 
         boolean bool = verificationService.isValidEmailAddress(req.getEmail());
 
-        if(bool == false){
+        if (bool == false) {
             throw new ResourceConflictException("Email address is not valid");
         }
 
-
-        if(existingUseer != null){
+        if (existingUseer != null) {
             throw new ResourceConflictException("Email address is alrady being used!");
-        }    
+        }
 
         User newUser = new User(req.getUsername(), hashed, req.getEmail(), roleService.getByName("USER"));
 
         // save and return user
         User createdUser = userRepository.save(newUser);
 
-        // create new verification data based on Verification table based on new user 
+        // create new verification data based on Verification table based on new user
         Verification verification = new Verification(createdUser);
         verifivationRepository.save(verification);
 
-        String verificationToken = verification.getVerificationToken(); 
+        String verificationToken = verification.getVerificationToken();
 
-        //send email to the user on the new email they entered
+        // send email to the user on the new email they entered
         SimpleMailMessage mailMessage = verificationService.composeVerification(req.getEmail(), verificationToken);
-        
 
         verificationService.sendEmail(mailMessage);
 
         // create and save unique profile id for each user to be updated on profile page
-        // set profile_img to a default silhouette in s3 bucket - once uploaded add url as a default
-        
-        Profile blankProfile = new Profile(createdUser, "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg", 
-        "", themeRepository.findByName("default").get());
+        // set profile_img to a default silhouette in s3 bucket - once uploaded add url
+        // as a default
+
+        Profile blankProfile = new Profile(createdUser,
+                "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg",
+                "", themeRepository.findByName("default").get());
         profileRepository.save(blankProfile);
 
         return createdUser;
@@ -152,6 +150,6 @@ public class UserService {
         SimpleMailMessage mailMessage = verificationService.composeConfirmation(user.getEmail());
 
         verificationService.sendEmail(mailMessage);
-        
+
     }
 }
