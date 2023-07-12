@@ -189,4 +189,17 @@ class PostServiceTest {
         verify(postRepository, times(1)).findByCreateTimeGreaterThanEqual(inDate);
     }
 
+    @Test
+    public void getUserBookmarkedPostsTest() {
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post);
+        when(userService.findById(userId)).thenReturn(user);
+        when(postRepository.findByBookmarksUser(user)).thenReturn(posts);
+        
+        List<PostResponse> resPosts = postService.getUserBookmarkedPosts(userId);
+        verify(postRepository, times(1)).findByBookmarksUser(user);
+        assertEquals(resPosts.size(), 1);
+        assertEquals(resPosts.get(0).getMessage(), "testPost");
+    }
+
 }
