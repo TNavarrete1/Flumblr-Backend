@@ -17,9 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 import java.util.Set;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +53,12 @@ class PostServiceTest {
     @Mock
     private PostShareRepository postShareRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private NotificationTypeService notificationTypeService;
+
     private User user;
 
     private Post post;
@@ -62,15 +71,18 @@ class PostServiceTest {
 
     private List<Comment> postComments;
 
+    private Set<Tag> tags;
+
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
     @BeforeEach
     public void setup() {
         postService = new PostService(postRepository, userService, userRepository, s3StorageService, null,
-                postVoteRepository, commentVoteService, bookmarksRepository, postShareRepository);
+            postVoteRepository, commentVoteService, bookmarksRepository, postShareRepository,
+            notificationService, notificationTypeService);
         user = new User();
         followed = new User();
         Set<Follow> follows = new HashSet<Follow>();
-        Set<Tag> tags = new HashSet<Tag>();
+        tags = new HashSet<Tag>();
         tags.add(new Tag("car"));
         follows.add(new Follow(user, followed));
         user.setFollows(follows);
@@ -98,6 +110,7 @@ class PostServiceTest {
 
     @Test
     public void getFeedTest() {
+        when(userService.findById(userId)).thenReturn(user);
         List<Post> posts = new ArrayList<Post>();
         posts.add(post);
         postService.getFeed(1, userId);
@@ -124,9 +137,15 @@ class PostServiceTest {
 
     @Test
     public void getUserPostsTest() {
-        postService.findUserPostsAndShares(userId);
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post);
+        when(userService.findById(userId)).thenReturn(user);
+        when(postRepository.findPostsAndSharesByUserId(userId)).thenReturn(posts);
+        List<PostResponse> resPosts = postService.getUserPosts(userId, userId);
         verify(postRepository, times(1))
                 .findPostsAndSharesByUserId(userId);
+        assertEquals(resPosts.size(), 1);
+        assertEquals(resPosts.get(0).getMessage(), "testPost");
     }
 
     @Test
@@ -140,6 +159,47 @@ class PostServiceTest {
         });
         assertEquals(post, postService.findById(postId));
         verify(postRepository, times(2)).findById(anyString());
+    }
+
+    @Test
+    public void getTrendingTest() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date inDate = null;
+        try {
+            inDate = formatter.parse("29-06-2023");
+        } catch (Exception e) {
+            fail();
+        }
+        Set<PostVote> post2Votes = new HashSet<PostVote>();
+        User otherUser = new User();
+        otherUser.setProfile(new Profile(otherUser, null, "I'm a user", null));
+        Post post2 = new Post("#cat is suspicious", null, null, otherUser, tags);
+        post2Votes.add(new PostVote("blah", true, user, post2));
+        post2.setPostVotes(post2Votes);
+        post2.setComments(postComments);
+        post2.setPostShares(postShares);
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post); posts.add(post2);
+        when(userService.findById(userId)).thenReturn(user);
+        when(postRepository.findByCreateTimeGreaterThanEqual(inDate)).thenReturn(posts);
+        List<PostResponse> resPosts = postService.getTrending(inDate, userId);
+        assertTrue(resPosts.get(0).getMessage().equals("#cat is suspicious"));
+        assertTrue(resPosts.get(1).getMessage().equals("testPost"));
+        assertEquals(resPosts.size(), 2);
+        verify(postRepository, times(1)).findByCreateTimeGreaterThanEqual(inDate);
+    }
+
+    @Test
+    public void getUserBookmarkedPostsTest() {
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post);
+        when(userService.findById(userId)).thenReturn(user);
+        when(postRepository.findByBookmarksUser(user)).thenReturn(posts);
+        
+        List<PostResponse> resPosts = postService.getUserBookmarkedPosts(userId);
+        verify(postRepository, times(1)).findByBookmarksUser(user);
+        assertEquals(resPosts.size(), 1);
+        assertEquals(resPosts.get(0).getMessage(), "testPost");
     }
 
 }

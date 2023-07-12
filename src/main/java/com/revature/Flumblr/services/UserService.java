@@ -61,6 +61,15 @@ public class UserService {
         // save and return user
         User createdUser = userRepository.save(newUser);
 
+        // create and save unique profile id for each user to be updated on profile page
+        // set profile_img to a default silhouette in s3 bucket - once uploaded add url
+        // as a default
+
+        Profile blankProfile = new Profile(createdUser,
+                "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg",
+                "", themeRepository.findByName("default").get());
+        profileRepository.save(blankProfile);
+
         // create new verification data based on Verification table based on new user
         Verification verification = new Verification(createdUser);
         verifivationRepository.save(verification);
@@ -71,15 +80,6 @@ public class UserService {
         SimpleMailMessage mailMessage = verificationService.composeVerification(req.getEmail(), verificationToken);
 
         verificationService.sendEmail(mailMessage);
-
-        // create and save unique profile id for each user to be updated on profile page
-        // set profile_img to a default silhouette in s3 bucket - once uploaded add url
-        // as a default
-
-        Profile blankProfile = new Profile(createdUser,
-                "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg",
-                "", themeRepository.findByName("default").get());
-        profileRepository.save(blankProfile);
 
         return createdUser;
     }
@@ -142,6 +142,10 @@ public class UserService {
     public void changePassword(changePasswordRequest req, User user) {
 
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
+
+        if(user.getPassword().equals(hashed)){
+            throw new ResourceConflictException("Password can not be similar to your old password");
+        }
 
         user.setPassword(hashed);
 

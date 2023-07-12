@@ -15,6 +15,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,6 +37,7 @@ import com.revature.Flumblr.entities.Comment;
 import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostMention;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
@@ -52,16 +54,36 @@ public class PostService {
     private final CommentVoteService commentVoteService;
     private final BookmarksRepository bookmarksRepository;
     private final PostShareRepository postShareRepository;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public PostResponse findByIdResponse(String postId, String requesterId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
         if (userPost.isEmpty())
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
-        return findByPostResponse(userPost.get(), requesterId);
+        User requestUser = userService.findById(requesterId);
+        return postResponseFromPost(userPost.get(), requestUser, makeFollowedIds(requestUser));
     }
 
-    public PostResponse findByPostResponse(Post post, String requesterId) {
-        User requestUser = userService.findById(requesterId);
+    public List<PostResponse> postResponsesFromPosts(List<Post> posts, User requestUser) {
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        Set<String> followedIds = makeFollowedIds(requestUser);
+        for(Post post : posts) {
+            resPosts.add(postResponseFromPost(post, requestUser, followedIds));
+        }
+        return resPosts;
+    }
+
+    private Set<String> makeFollowedIds(User requestUser) {
+        Set<String> followedIds = new HashSet<String>();
+        for (Follow follow : requestUser.getFollows()) {
+            followedIds.add(follow.getFollow().getId());
+        }
+        followedIds.add(requestUser.getId());
+        return followedIds;
+    }
+
+    public PostResponse postResponseFromPost(Post post, User requestUser, Set<String> followedIds) {
         Set<PostVote> postVotes = post.getPostVotes();
         int upVotes = 0;
         for (PostVote postVote : postVotes) {
@@ -81,7 +103,8 @@ public class PostService {
         Bookmark bookmark = bookmarksRepository.findByUserAndPost(requestUser, post).orElse(null);
         PostShare postShare = postShareRepository.findByUserAndPost(requestUser, post).orElse(null);
 
-        response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
+        response.setSharedBy(findUsersForSharesAndFollowedIds(post, followedIds));
+
         response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
         response.setBookmarked(bookmark);
@@ -92,6 +115,12 @@ public class PostService {
         return response;
     }
 
+    public List<PostResponse> getUserBookmarkedPosts(String userId) {
+        User user = userService.findById(userId);
+        List<Post> posts = postRepository.findByBookmarksUser(user);
+        return postResponsesFromPosts(posts, user);
+    }
+
     public List<PostResponse> getFollowing(String userId, int page) {
         User user = userService.findById(userId);
         List<User> following = new ArrayList<User>();
@@ -100,53 +129,27 @@ public class PostService {
         }
         List<Post> posts = postRepository.findPostsAndSharesForUserIn(following,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, userId);
-            resPosts.add(response);
-        }
-        return resPosts;
+
+        return postResponsesFromPosts(posts, user);
     }
 
     public List<PostResponse> getFeed(int page, String requesterId) {
         List<Post> posts = postRepository.findAllBy(PageRequest.of(page, 20, Sort.by("createTime").descending()));
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, requesterId);
-            resPosts.add(response);
-        }
-        return resPosts;
+        return postResponsesFromPosts(posts, userService.findById(requesterId));
     }
 
     public List<PostResponse> findByTag(List<String> tags, int page, String requesterId) {
         List<Post> posts = postRepository.findByTagsNameIn(tags,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, requesterId);
-            resPosts.add(response);
-        }
-
-        return resPosts;
-    }
-
-    public List<Post> findUserPostsAndShares(String userId) {
-        return this.postRepository.findPostsAndSharesByUserId(userId);
+        return postResponsesFromPosts(posts, userService.findById(requesterId));
     }
 
     // return list of users that user follows who also shared the post
-    public List<UserResponse> findUsersForSharesAndRequesterId(Post post, String requesterId) {
-        User requester = userService.findById(requesterId);
+    public List<UserResponse> findUsersForSharesAndFollowedIds(Post post, Set<String> followedIds) {
         List<UserResponse> usersShared = new ArrayList<UserResponse>();
-        Set<String> followedId = new HashSet<String>();
-        for (Follow follow : requester.getFollows()) {
-            followedId.add(follow.getFollow().getId());
-        }
-        // include requester in 'share' info
-        followedId.add(requesterId);
         for (PostShare postShare : post.getPostShares()) {
             User user = postShare.getUser();
-            if (followedId.contains(user.getId())) {
+            if (followedIds.contains(user.getId())) {
                 usersShared.add(new UserResponse(user));
             }
         }
@@ -155,12 +158,7 @@ public class PostService {
 
     public List<PostResponse> getUserPosts(String userId, String requesterId) {
         List<Post> userPosts = this.postRepository.findPostsAndSharesByUserId(userId);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : userPosts) {
-            PostResponse response = findByPostResponse(userPost, requesterId);
-            resPosts.add(response);
-        }
-        return resPosts;
+        return postResponsesFromPosts(userPosts, userService.findById(requesterId));
     }
 
     public Post findById(String postId) {
@@ -225,18 +223,64 @@ public class PostService {
 
         Post post = new Post(message, mediaType, fileUrl, user, tagsList);
 
-        postRepository.save(post);
+        String[] mentionsArray = req.getParameterValues("mentions");
+        Set<PostMention> mentionsList = new HashSet<PostMention>();
+        if (mentionsArray != null) {
 
+            for (String mentionName : mentionsArray) {
+                Optional<User> mentionedOpt = userRepository.findByUsername(mentionName);
+                if(mentionedOpt.isPresent()) {
+                    User mentioned = mentionedOpt.get();
+                    notificationService.createNotification(user.getUsername() + " mentioned you in a post",
+                        "post:" + post.getId(), mentioned, 
+                        notificationTypeService.findByName("postMention"));
+
+                    mentionsList.add(new PostMention(mentioned, post));
+                }
+            }
+        }
+        post.setPostMentions(mentionsList);
+
+        postRepository.save(post);
     }
 
     public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
         Post post = this.findById(postId);
+        User user = post.getUser();
         String newMessage = req.getParameter("message");
         String newMediaType = req.getParameter("mediaType");
+        String[] newTagsArray = req.getParameterValues("tags");
         String existingFileUrl = post.getS3Url();
+
+        Set<PostMention> mentions = post.getPostMentions();
+        String[] newMentionArray = req.getParameterValues("mentions");
+        Iterator<PostMention> mentionIter = mentions.iterator();
+        if(newMentionArray == null) mentions.clear();
+        else {
+            Set<String> newMentions = new HashSet<String>(
+                Arrays.asList(newMentionArray));
+            while(mentionIter.hasNext()) {
+                String existingUsername = mentionIter.next().getUser().getUsername();
+                if(!newMentions.contains(existingUsername))
+                    mentionIter.remove();
+                else newMentions.remove(existingUsername);
+            }
+            for(String newMention : newMentions) {
+                Optional<User> mentionedOpt = userRepository.findByUsername(newMention);
+                if(mentionedOpt.isPresent()) {
+                    User mentioned = mentionedOpt.get();
+                    notificationService.createNotification(post.getUser().getUsername() +
+                        " mentioned you in a post", "post:" + post.getId(), mentioned, 
+                        notificationTypeService.findByName("postMention"));
+
+                    mentions.add(new PostMention(mentioned, post));
+                }
+            }
+        }
 
         if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
             s3StorageService.deleteFileFromS3Bucket(existingFileUrl);
+            post.setS3Url(null);
         }
         if (newMessage != null && !newMessage.isEmpty()) {
             post.setMessage(newMessage);
@@ -249,10 +293,21 @@ public class PostService {
         if (fileUrl != null && !fileUrl.isEmpty()) {
             post.setS3Url(fileUrl);
         }
+
+        post.getTags().clear();
+
+        Set<Tag> newTagsSet = new HashSet<>();
+        if (newTagsArray != null) {
+            for (String tagName : newTagsArray) {
+                Tag tag = tagService.findByName(tagName);
+                newTagsSet.add(tag);
+            }
+        }
+        post.setTags(newTagsSet);
+
         post.setEditTime(new Date());
         postRepository.save(post);
-        PostResponse response = findByPostResponse(post, post.getUser().getId());
-        return response;
+        return postResponseFromPost(post, user, makeFollowedIds(user));
     }
 
     public void deletePostsByUserId(String userId) {
@@ -269,6 +324,8 @@ public class PostService {
 
     public List<PostResponse> getTrending(Date fromDate, String requesterId) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);
+        User requestUser = userService.findById(requesterId);
+        Set<String> followedIds = makeFollowedIds(requestUser);
 
         PriorityQueue<SortedPost> sortedPosts = new PriorityQueue<SortedPost>(11,
                 new Comparator<SortedPost>() {
@@ -280,7 +337,7 @@ public class PostService {
 
         for (Post userPost : responses) {
             // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
-            SortedPost sortedPost = new SortedPost(findByPostResponse(userPost, requesterId));
+            SortedPost sortedPost = new SortedPost(postResponseFromPost(userPost, requestUser, followedIds));
             calculateScore(sortedPost);
 
             sortedPosts.add(sortedPost);

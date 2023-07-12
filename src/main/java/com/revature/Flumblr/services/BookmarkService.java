@@ -21,14 +21,21 @@ public class BookmarkService {
     public Bookmark bookmarkPost(BookmarkRequest request) {
         User user = userService.findById(request.getUserId());
         Post post = postService.findById(request.getPostId());
-        return bookmarksRepository.save(new Bookmark(user, post));
+        Bookmark bookmark = findByUserAndPost(user, post);
+        if (bookmark == null) {
+            return bookmarksRepository.save(new Bookmark(user, post));
+        }
+        return bookmark;
     }
 
     public void removeBookmark(DeleteBookmarkRequest request) {
         User user = userService.findById(request.getUserId());
         Post post = postService.findById(request.getPostId());
-        bookmarksRepository.delete(new Bookmark(request.getBookmarkId(), user,
-                post));
+        Bookmark bookmark = findByUserAndPost(user, post);
+        if (bookmark != null) {
+            bookmarksRepository.delete(bookmark);
+        }
+
     }
 
     public Bookmark findByUserAndPost(User user, Post post) {
