@@ -32,6 +32,8 @@ public class CommentResponse {
 
     private CommentVote userVote;
 
+    private String profileImg;
+
     public CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
         this.comment = comment.getComment();
@@ -39,5 +41,6 @@ public class CommentResponse {
         this.editTime = comment.getEditTime();
         this.postId = comment.getPost().getId();
         this.gifUrl = comment.getGifUrl();
+        this.profileImg = comment.getUser().getProfile().getProfile_img();
     }
 }

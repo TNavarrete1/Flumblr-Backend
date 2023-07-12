@@ -77,13 +77,38 @@ public class FollowService {
         for (String tag : tags) {
             List<Object[]> results = profileRepository.getPotentialListOfFollowers(tag);
             for (Object[] v : results) {
-                String profile_img = v[1].toString();
-                String bio = v[0].toString();
-                String username = v[2].toString();
-                PotentialFollowerResponse follower = new PotentialFollowerResponse(profile_img, bio, username);
+                String profileId = v[0].toString();
+                String profile_img = String.valueOf(v[2]);
+                String bio = String.valueOf(v[1]);
+                String username = v[3].toString();
+                PotentialFollowerResponse follower = new PotentialFollowerResponse(profile_img, bio, username, profileId);
+                collected.add(follower);
                 collected.add(follower);
             }
         }
+        return collected;
+    }
+
+
+    public Set<PotentialFollowerResponse> getPotentialListOfFollowersbyName(String userName) {
+        Set<PotentialFollowerResponse> collected = new HashSet<>();
+            List<Object[]> results = profileRepository.getPotentialListOfUsersByUsername(userName);
+            for (Object[] v : results) {
+                //  System.out.println("Loop start");
+                //  System.out.println(v[0]);
+                //  System.out.println(v[1]);
+                //  System.out.println(v[2]);
+                //  System.out.println(v[3]);
+                // for (Object p : v) {
+                //     System.out.println(p);
+                // }
+                String profileId = v[0].toString();
+                String profile_img = String.valueOf(v[2]);
+                String bio = String.valueOf(v[1]);
+                String username = v[3].toString();
+                PotentialFollowerResponse follower = new PotentialFollowerResponse(profile_img, bio, username, profileId);
+                collected.add(follower);
+            }
         return collected;
     }
 
