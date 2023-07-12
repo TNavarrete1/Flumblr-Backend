@@ -59,12 +59,17 @@ public class ProfileService {
 
     public Profile assignTagToProfile(String profileId, String tagName) {
         Set<Tag> tagSet = null;
+        Tag tag = null;
         Profile profile = profileRepository.findById(profileId).get();
-        Tag tag = tagRepository.findByName(tagName).get();
-        //if tag does not exist need to create tag also
         tagSet = profile.getTags();
         if (tagSet.size() >= 5) {
             throw new BadRequestException("A profile cannot store more than five (5) tags at a time.");
+        }
+        Optional<Tag> tagOpt = tagRepository.findByName(tagName);
+        if(tagOpt.isEmpty()) {
+            tag = tagRepository.save(new Tag(tagName));
+        } else {
+            tag= tagOpt.get();
         }
         tagSet.add(tag);
         profile.setTags(tagSet);

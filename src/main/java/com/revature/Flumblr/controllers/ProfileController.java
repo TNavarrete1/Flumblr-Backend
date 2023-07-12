@@ -83,13 +83,13 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/tags")
+    @GetMapping("/tags/{profileId}")
     ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
-            @RequestBody NewInterestRequest req) {
+                                                            @PathVariable String profileId) {
 
         // handle invalid token
-        tokenService.validateToken(token, req.getUser_id());
-        TagInterestResponse res = new TagInterestResponse(profileService.getTagsByProfile(req.getProfile_id()));
+        tokenService.extractUserId(token);
+        TagInterestResponse res = new TagInterestResponse(profileService.getTagsByProfile(profileId));
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
