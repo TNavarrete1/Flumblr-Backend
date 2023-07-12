@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
 
@@ -38,9 +40,9 @@ public class PostResponse {
 
     private PostVote userVote;
 
-    private boolean bookmarked;
+    private Bookmark bookmarked;
 
-    private boolean shared;
+    private PostShare shared;
 
     private Date createTime;
 
