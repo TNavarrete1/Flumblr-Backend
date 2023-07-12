@@ -96,6 +96,17 @@ public class PostService {
         return response;
     }
 
+    public List<PostResponse> getUserBookmarkedPosts(String userId) {
+        User user = userService.findById(userId);
+        List<Post> posts = postRepository.findByBookmarksUser(user);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : posts) {
+            PostResponse response = findByPostResponse(userPost, userId);
+            resPosts.add(response);
+        }
+        return resPosts;
+    }
+
     public List<PostResponse> getFollowing(String userId, int page) {
         User user = userService.findById(userId);
         List<User> following = new ArrayList<User>();

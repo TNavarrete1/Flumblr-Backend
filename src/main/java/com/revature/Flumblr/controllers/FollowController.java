@@ -57,7 +57,7 @@ public class FollowController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<String>> getFollows(@RequestHeader("Authorization") String token) {
         String userId = tokenService.extractUserId(token);
         logger.trace("getting follows for " + userId);
