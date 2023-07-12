@@ -6,7 +6,6 @@ on:
   # The workflow will run every time a push is made to the main branch
   push:
     branches: [ main, Develop ]
-  workflow_dispatch:
 
 # A workflow run is made up of one or more jobs
 jobs:
