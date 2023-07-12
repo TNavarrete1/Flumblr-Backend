@@ -5,10 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import com.revature.Flumblr.entities.Comment;
-import com.revature.Flumblr.entities.CommentMention;
 import com.revature.Flumblr.entities.CommentVote;
 
 /**
@@ -38,7 +37,7 @@ public class CommentResponse {
 
     private String profileImg;
 
-    private Set<CommentMention> mentions;
+    private List<String> mentions;
 
     public CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
@@ -49,6 +48,5 @@ public class CommentResponse {
         this.postId = comment.getPost().getId();
         this.gifUrl = comment.getGifUrl();
         this.profileImg = comment.getUser().getProfile().getProfile_img();
-        this.mentions = comment.getCommentMentions();
     }
 }

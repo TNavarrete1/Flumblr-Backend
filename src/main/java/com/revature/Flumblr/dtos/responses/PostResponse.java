@@ -53,7 +53,7 @@ public class PostResponse {
 
     private Set<Tag> tags;
 
-    private Set<PostMention> mentions;
+    private List<String> mentions;
 
     private int shareCount;
 
@@ -71,6 +71,5 @@ public class PostResponse {
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();
         this.tags = post.getTags();
-        this.mentions = post.getPostMentions();
     }
 }

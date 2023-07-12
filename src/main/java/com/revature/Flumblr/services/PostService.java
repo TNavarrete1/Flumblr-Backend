@@ -34,6 +34,7 @@ import lombok.AllArgsConstructor;
 
 import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Comment;
+import com.revature.Flumblr.entities.CommentMention;
 import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
@@ -68,7 +69,7 @@ public class PostService {
     public List<PostResponse> postResponsesFromPosts(List<Post> posts, User requestUser) {
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
         Set<String> followedIds = makeFollowedIds(requestUser);
-        for(Post post : posts) {
+        for (Post post : posts) {
             resPosts.add(postResponseFromPost(post, requestUser, followedIds));
         }
         return resPosts;
@@ -95,6 +96,7 @@ public class PostService {
             CommentVote commentVote = commentVoteService.findByUserAndComment(requestUser, comment);
             CommentResponse commentResponse = new CommentResponse(comment);
             commentResponse.setUserVote(commentVote);
+            commentResponse.setMentions(getMentions(comment));
             comments.add(commentResponse);
         }
 
@@ -104,7 +106,6 @@ public class PostService {
         PostShare postShare = postShareRepository.findByUserAndPost(requestUser, post).orElse(null);
 
         response.setSharedBy(findUsersForSharesAndFollowedIds(post, followedIds));
-
         response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
         response.setBookmarked(bookmark);
@@ -112,6 +113,7 @@ public class PostService {
         response.setUpVotes(upVotes);
         response.setDownVotes(postVotes.size() - upVotes);
         response.setComments(comments);
+        response.setMentions(getMentions(post));
         return response;
     }
 
@@ -229,11 +231,11 @@ public class PostService {
 
             for (String mentionName : mentionsArray) {
                 Optional<User> mentionedOpt = userRepository.findByUsername(mentionName);
-                if(mentionedOpt.isPresent()) {
+                if (mentionedOpt.isPresent()) {
                     User mentioned = mentionedOpt.get();
                     notificationService.createNotification(user.getUsername() + " mentioned you in a post",
-                        "post:" + post.getId(), mentioned, 
-                        notificationTypeService.findByName("postMention"));
+                            "post:" + post.getId(), mentioned,
+                            notificationTypeService.findByName("postMention"));
 
                     mentionsList.add(new PostMention(mentioned, post));
                 }
@@ -255,23 +257,25 @@ public class PostService {
         Set<PostMention> mentions = post.getPostMentions();
         String[] newMentionArray = req.getParameterValues("mentions");
         Iterator<PostMention> mentionIter = mentions.iterator();
-        if(newMentionArray == null) mentions.clear();
+        if (newMentionArray == null)
+            mentions.clear();
         else {
             Set<String> newMentions = new HashSet<String>(
-                Arrays.asList(newMentionArray));
-            while(mentionIter.hasNext()) {
+                    Arrays.asList(newMentionArray));
+            while (mentionIter.hasNext()) {
                 String existingUsername = mentionIter.next().getUser().getUsername();
-                if(!newMentions.contains(existingUsername))
+                if (!newMentions.contains(existingUsername))
                     mentionIter.remove();
-                else newMentions.remove(existingUsername);
+                else
+                    newMentions.remove(existingUsername);
             }
-            for(String newMention : newMentions) {
+            for (String newMention : newMentions) {
                 Optional<User> mentionedOpt = userRepository.findByUsername(newMention);
-                if(mentionedOpt.isPresent()) {
+                if (mentionedOpt.isPresent()) {
                     User mentioned = mentionedOpt.get();
                     notificationService.createNotification(post.getUser().getUsername() +
-                        " mentioned you in a post", "post:" + post.getId(), mentioned, 
-                        notificationTypeService.findByName("postMention"));
+                            " mentioned you in a post", "post:" + post.getId(), mentioned,
+                            notificationTypeService.findByName("postMention"));
 
                     mentions.add(new PostMention(mentioned, post));
                 }
@@ -371,6 +375,20 @@ public class PostService {
         score += (numberofComments * 2);
         score += (numberofShares * 2.5);
         sortedPost.setScore(score);
+    }
+
+    private List<String> getMentions(Comment comment) {
+        List<String> mentionedUsers = new ArrayList<>();
+        Set<CommentMention> mentions = comment.getCommentMentions();
+        mentions.forEach(user -> mentionedUsers.add(user.getUser().getUsername()));
+        return mentionedUsers;
+    }
+
+    private List<String> getMentions(Post post) {
+        List<String> mentionedUsers = new ArrayList<>();
+        Set<PostMention> mentions = post.getPostMentions();
+        mentions.forEach(user -> mentionedUsers.add(user.getUser().getUsername()));
+        return mentionedUsers;
     }
 
 }
