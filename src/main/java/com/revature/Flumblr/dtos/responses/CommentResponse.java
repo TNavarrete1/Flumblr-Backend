@@ -20,6 +20,8 @@ import com.revature.Flumblr.entities.CommentVote;
 public class CommentResponse {
     private String username;
 
+    private String userId;
+
     private String comment;
 
     private Date createTime;
@@ -36,6 +38,7 @@ public class CommentResponse {
 
     public CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
+        this.userId = comment.getUser().getId();
         this.comment = comment.getComment();
         this.createTime = comment.getCreateTime();
         this.editTime = comment.getEditTime();
