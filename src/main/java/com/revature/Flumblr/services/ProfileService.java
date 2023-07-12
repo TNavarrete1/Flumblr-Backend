@@ -1,19 +1,14 @@
 package com.revature.Flumblr.services;
 
-import com.revature.Flumblr.entities.Profile;
-import com.revature.Flumblr.entities.Tag;
-import com.revature.Flumblr.entities.Theme;
-import com.revature.Flumblr.entities.User;
-import com.revature.Flumblr.repositories.ProfileRepository;
-import com.revature.Flumblr.repositories.TagRepository;
-import com.revature.Flumblr.repositories.ThemeRepository;
-import com.revature.Flumblr.repositories.UserRepository;
+import com.revature.Flumblr.entities.*;
+import com.revature.Flumblr.repositories.*;
 import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import com.revature.Flumblr.utils.custom_exceptions.FileNotUploadedException;
 import com.revature.Flumblr.utils.custom_exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +20,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ThemeRepository themeRepository;
     private final TagRepository tagRepository;
+    private final ProfileVoteRepository profileVoteRepository;
 
     public Profile getProfileByUserId(String id) {
         User existingUser = userRepository.getReferenceById(id);
@@ -39,21 +35,18 @@ public class ProfileService {
     }
 
     public void setBio(String profileId, String bio) {
-        if (bio == null) {
-            throw new BadRequestException("Cannot submit a null bio.");
+        if(bio == null || bio.length() > 254) {
+            throw new BadRequestException("A valid Bio can be up to 254 characters in length.");
         }
         profileRepository.setBio(profileId, bio);
     }
 
     public void setTheme(String profileId, String themeName) {
         Optional<Theme> themeOpt = themeRepository.findByName(themeName);
-
-        Theme theme = themeOpt.get();
-
-        if (theme == null) {
+        if (themeOpt.isEmpty()) {
             throw new ResourceNotFoundException("No theme with name: " + themeName + " found.");
         }
-        profileRepository.setTheme(profileId, theme);
+        profileRepository.setTheme(profileId, themeOpt.get());
     }
 
     public Profile findById(String id) {
@@ -66,11 +59,17 @@ public class ProfileService {
 
     public Profile assignTagToProfile(String profileId, String tagName) {
         Set<Tag> tagSet = null;
+        Tag tag = null;
         Profile profile = profileRepository.findById(profileId).get();
-        Tag tag = tagRepository.findByName(tagName).get();
         tagSet = profile.getTags();
         if (tagSet.size() >= 5) {
             throw new BadRequestException("A profile cannot store more than five (5) tags at a time.");
+        }
+        Optional<Tag> tagOpt = tagRepository.findByName(tagName);
+        if(tagOpt.isEmpty()) {
+            tag = tagRepository.save(new Tag(tagName));
+        } else {
+            tag= tagOpt.get();
         }
         tagSet.add(tag);
         profile.setTags(tagSet);
@@ -81,9 +80,26 @@ public class ProfileService {
         return profileRepository.findById(profileId).get().getTags();
     }
 
-    public void deleteTagsFromProfile(String profileId, Tag tag) {
-        // ???
-        profileRepository.findById(profileId).get().getTags().remove(tag);
-    }
+   public void deleteTagsFromProfile(String profileId, Tag tag) {
+        Profile profile = profileRepository.findById(profileId).get();
+        profile.getTags().remove(tag);
+        profileRepository.save(profile);
+   }
+
+   public int getTotal(String profileId) {
+        int votes = 0;
+        Optional<Profile> profOpt = profileRepository.findById(profileId);
+        if(profOpt.isEmpty()) {
+            throw new ResourceNotFoundException("Profile not found with id: " + profileId);
+        }
+        List<ProfileVote> list = profileVoteRepository.findAllByProfile(profOpt.get());
+        if(list.size() == 0 ) {
+            return 0;
+        }
+        for(ProfileVote vote : list) {
+            if(vote.isVote()) votes++;
+        }
+        return votes;
+   }
 
 }
