@@ -110,6 +110,7 @@ class PostServiceTest {
 
     @Test
     public void getFeedTest() {
+        when(userService.findById(userId)).thenReturn(user);
         List<Post> posts = new ArrayList<Post>();
         posts.add(post);
         postService.getFeed(1, userId);
@@ -136,9 +137,15 @@ class PostServiceTest {
 
     @Test
     public void getUserPostsTest() {
-        postService.findUserPostsAndShares(userId);
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post);
+        when(userService.findById(userId)).thenReturn(user);
+        when(postRepository.findPostsAndSharesByUserId(userId)).thenReturn(posts);
+        List<PostResponse> resPosts = postService.getUserPosts(userId, userId);
         verify(postRepository, times(1))
                 .findPostsAndSharesByUserId(userId);
+        assertEquals(resPosts.size(), 1);
+        assertEquals(resPosts.get(0).getMessage(), "testPost");
     }
 
     @Test
