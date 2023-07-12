@@ -62,26 +62,25 @@ public class PostService {
         if (userPost.isEmpty())
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
         User requestUser = userService.findById(requesterId);
-        Set<String> followedIds = new HashSet<String>();
-        for (Follow follow : requestUser.getFollows()) {
-            followedIds.add(follow.getFollow().getId());
-        }
-        // include requester in 'share' info
-        followedIds.add(requesterId);
-        return postResponseFromPost(userPost.get(), requestUser, followedIds);
+        return postResponseFromPost(userPost.get(), requestUser, makeFollowedIds(requestUser));
     }
 
     public List<PostResponse> postResponsesFromPosts(List<Post> posts, User requestUser) {
         List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        Set<String> followedIds = makeFollowedIds(requestUser);
+        for(Post post : posts) {
+            resPosts.add(postResponseFromPost(post, requestUser, followedIds));
+        }
+        return resPosts;
+    }
+
+    private Set<String> makeFollowedIds(User requestUser) {
         Set<String> followedIds = new HashSet<String>();
         for (Follow follow : requestUser.getFollows()) {
             followedIds.add(follow.getFollow().getId());
         }
         followedIds.add(requestUser.getId());
-        for(Post post : posts) {
-            resPosts.add(postResponseFromPost(post, requestUser, followedIds));
-        }
-        return resPosts;
+        return followedIds;
     }
 
     public PostResponse postResponseFromPost(Post post, User requestUser, Set<String> followedIds) {
@@ -119,12 +118,7 @@ public class PostService {
     public List<PostResponse> getUserBookmarkedPosts(String userId) {
         User user = userService.findById(userId);
         List<Post> posts = postRepository.findByBookmarksUser(user);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, userId);
-            resPosts.add(response);
-        }
-        return resPosts;
+        return postResponsesFromPosts(posts, user);
     }
 
     public List<PostResponse> getFollowing(String userId, int page) {
@@ -250,8 +244,9 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
+    public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
         Post post = this.findById(postId);
+        User user = post.getUser();
         String newMessage = req.getParameter("message");
         String newMediaType = req.getParameter("mediaType");
         String[] newTagsArray = req.getParameterValues("tags");
@@ -312,6 +307,7 @@ public class PostService {
 
         post.setEditTime(new Date());
         postRepository.save(post);
+        return postResponseFromPost(post, user, makeFollowedIds(user));
     }
 
     public void deletePostsByUserId(String userId) {
@@ -329,12 +325,7 @@ public class PostService {
     public List<PostResponse> getTrending(Date fromDate, String requesterId) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);
         User requestUser = userService.findById(requesterId);
-        Set<String> followedIds = new HashSet<String>();
-        for (Follow follow : requestUser.getFollows()) {
-            followedIds.add(follow.getFollow().getId());
-        }
-        // include requester in 'share' info
-        followedIds.add(requesterId);
+        Set<String> followedIds = makeFollowedIds(requestUser);
 
         PriorityQueue<SortedPost> sortedPosts = new PriorityQueue<SortedPost>(11,
                 new Comparator<SortedPost>() {
