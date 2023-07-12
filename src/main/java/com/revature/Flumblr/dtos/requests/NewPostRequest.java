@@ -18,7 +18,7 @@ public class NewPostRequest {
 
     private String mediaType;
 
-    private String[] tags;
+    private String[] tags = new String[] {};
 
-    private String[] mentions;
+    private String[] mentions = new String[] {};
 }
