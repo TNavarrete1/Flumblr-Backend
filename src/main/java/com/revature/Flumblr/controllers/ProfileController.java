@@ -1,5 +1,6 @@
 package com.revature.Flumblr.controllers;
 
+import com.revature.Flumblr.dtos.requests.DeleteImageRequest;
 import com.revature.Flumblr.dtos.requests.NewInterestRequest;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.dtos.responses.ProfileResponse;
@@ -8,6 +9,7 @@ import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.Tag;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.services.*;
+import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -111,6 +113,21 @@ public class ProfileController {
         tokenService.validateToken(token, req.getUser_id());
         Tag foundTag = tagService.findByName(req.getTag_name());
         profileService.deleteTagsFromProfile(req.getProfile_id(), foundTag);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @DeleteMapping("/image")
+    public ResponseEntity<?> deleteImage(@RequestHeader("Authorization") String token,
+                                         @RequestBody DeleteImageRequest req) {
+
+        //handle invalid token
+        tokenService.extractUserId(token);
+        String defaultImgURL = "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg";
+        if(req.getUrl().equals(defaultImgURL)) {
+            throw new BadRequestException("Cannot delete the default image from profile");
+        }
+        profileService.setProfileImg(req.getProfileId(), defaultImgURL);
+        s3StorageService.deleteFileFromS3Bucket(req.getUrl());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
