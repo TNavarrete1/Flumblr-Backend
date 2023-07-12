@@ -2,9 +2,11 @@ package com.revature.Flumblr.services;
 
 import static org.mockito.Mockito.verify;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.revature.Flumblr.entities.Notification;
 import com.revature.Flumblr.entities.NotificationType;
@@ -20,6 +22,11 @@ public class NotificationServiceTest {
 
     @InjectMocks
     NotificationService notificationService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     void testCreateNotification() {
