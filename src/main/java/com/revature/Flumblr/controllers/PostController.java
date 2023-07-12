@@ -29,7 +29,6 @@ import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.services.PostShareService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
-
 import com.revature.Flumblr.services.CommentService;
 
 import lombok.AllArgsConstructor;
@@ -194,12 +193,16 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to update this post.");
         }
 
+        String fileUrl = null;
         MultipartFile file = req.getFile("file");
-        String fileUrl = s3StorageService.uploadFile(file);
 
-        postService.updatePost(postId, req, fileUrl);
+        if (file != null) {
+            fileUrl = s3StorageService.uploadFile(file);
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).body("Post was successfully updated.");
+        PostResponse response = postService.updatePost(postId, req, fileUrl);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/user/{userId}")
@@ -223,6 +226,12 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate, requesterId));
+    }
+
+    @GetMapping("/bookmarked")
+    public ResponseEntity<List<PostResponse>> getBookmarked(@RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserBookmarkedPosts(requesterId));
     }
 
 }

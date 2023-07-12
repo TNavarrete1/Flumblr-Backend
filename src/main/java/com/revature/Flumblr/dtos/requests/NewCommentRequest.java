@@ -14,4 +14,5 @@ public class NewCommentRequest {
     private String postId;
     private String userId;
     private String gifUrl;
+    private String[] mentions = new String[] {};
 }

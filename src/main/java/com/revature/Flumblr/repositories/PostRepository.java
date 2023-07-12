@@ -34,4 +34,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findByCreateTimeGreaterThanEqual(Date fromDate);
 
     List<Post> findAllBy(Pageable pageable);
+
+    List<Post> findByBookmarksUser(User user);
 }
