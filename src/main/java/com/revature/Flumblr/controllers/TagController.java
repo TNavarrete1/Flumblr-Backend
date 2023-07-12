@@ -38,4 +38,5 @@ public class TagController {
         logger.trace("getting trending for requester: " + requesterId);
         return ResponseEntity.status(HttpStatus.OK).body(tagService.getTrending(fromDate));
     }
+
 }
