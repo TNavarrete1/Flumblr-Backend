@@ -96,6 +96,17 @@ public class PostService {
         return response;
     }
 
+    public List<PostResponse> getUserBookmarkedPosts(String userId) {
+        User user = userService.findById(userId);
+        List<Post> posts = postRepository.findByBookmarksUser(user);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : posts) {
+            PostResponse response = findByPostResponse(userPost, userId);
+            resPosts.add(response);
+        }
+        return resPosts;
+    }
+
     public List<PostResponse> getFollowing(String userId, int page) {
         User user = userService.findById(userId);
         List<User> following = new ArrayList<User>();
@@ -254,6 +265,7 @@ public class PostService {
         Post post = this.findById(postId);
         String newMessage = req.getParameter("message");
         String newMediaType = req.getParameter("mediaType");
+        String[] newTagsArray = req.getParameterValues("tags");
         String existingFileUrl = post.getS3Url();
 
         Set<PostMention> mentions = post.getPostMentions();
@@ -284,6 +296,7 @@ public class PostService {
 
         if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
             s3StorageService.deleteFileFromS3Bucket(existingFileUrl);
+            post.setS3Url(null);
         }
         if (newMessage != null && !newMessage.isEmpty()) {
             post.setMessage(newMessage);
@@ -296,6 +309,18 @@ public class PostService {
         if (fileUrl != null && !fileUrl.isEmpty()) {
             post.setS3Url(fileUrl);
         }
+
+        post.getTags().clear();
+
+        Set<Tag> newTagsSet = new HashSet<>();
+        if (newTagsArray != null) {
+            for (String tagName : newTagsArray) {
+                Tag tag = tagService.findByName(tagName);
+                newTagsSet.add(tag);
+            }
+        }
+        post.setTags(newTagsSet);
+
         post.setEditTime(new Date());
         postRepository.save(post);
         PostResponse response = findByPostResponse(post, post.getUser().getId());

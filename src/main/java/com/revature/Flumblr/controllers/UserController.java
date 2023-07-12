@@ -87,7 +87,7 @@ public class UserController {
             user.setVerified(true);
 
             userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.OK).body("Email is Verified successfully! ");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
         }
@@ -163,16 +163,18 @@ public class UserController {
             throw new ResourceNotFoundException("Invalid or Broken link");
         }
 
-        if (user.getVerified() == true) {
+        if(user.getVerified() == null || user.getVerified() == false) {
 
-            SimpleMailMessage mailMessage = verificationService.composeResetPassword(email,
+            SimpleMailMessage mailMessage = verificationService.composeVerification(email,
                     verification.getVerificationToken());
 
             verificationService.sendEmail(mailMessage);
 
-        } else {
+        }
 
-            SimpleMailMessage mailMessage = verificationService.composeVerification(email,
+        else if (user.getVerified() == true) {
+
+            SimpleMailMessage mailMessage = verificationService.composeResetPassword(email,
                     verification.getVerificationToken());
 
             verificationService.sendEmail(mailMessage);

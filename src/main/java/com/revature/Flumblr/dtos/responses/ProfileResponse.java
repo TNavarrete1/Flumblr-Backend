@@ -16,5 +16,6 @@ public class ProfileResponse {
     private String profile_img;
     private String bio;
     private String themeName;
+    private int votes;
 
 }
