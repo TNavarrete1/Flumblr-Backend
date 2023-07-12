@@ -229,4 +229,10 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate, requesterId));
     }
 
+    @GetMapping("/bookmarked")
+    public ResponseEntity<List<PostResponse>> getBookmarked(@RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserBookmarkedPosts(requesterId));
+    }
+
 }
