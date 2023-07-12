@@ -17,9 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 import java.util.Set;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,6 +65,8 @@ class PostServiceTest {
 
     private List<Comment> postComments;
 
+    private Set<Tag> tags;
+
     private static final String userId = "51194080-3452-4503-b271-6df469cb7983";
     @BeforeEach
     public void setup() {
@@ -70,7 +75,7 @@ class PostServiceTest {
         user = new User();
         followed = new User();
         Set<Follow> follows = new HashSet<Follow>();
-        Set<Tag> tags = new HashSet<Tag>();
+        tags = new HashSet<Tag>();
         tags.add(new Tag("car"));
         follows.add(new Follow(user, followed));
         user.setFollows(follows);
@@ -140,6 +145,34 @@ class PostServiceTest {
         });
         assertEquals(post, postService.findById(postId));
         verify(postRepository, times(2)).findById(anyString());
+    }
+
+    @Test
+    public void getTrendingTest() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date inDate = null;
+        try {
+            inDate = formatter.parse("29-06-2023");
+        } catch (Exception e) {
+            fail();
+        }
+        Set<PostVote> post2Votes = new HashSet<PostVote>();
+        User otherUser = new User();
+        otherUser.setProfile(new Profile(otherUser, null, "I'm a user", null));
+        Post post2 = new Post("#cat is suspicious", null, null, otherUser, tags);
+        post2Votes.add(new PostVote("blah", true, user, post2));
+        post2.setPostVotes(post2Votes);
+        post2.setComments(postComments);
+        post2.setPostShares(postShares);
+        List<Post> posts = new ArrayList<Post>();
+        posts.add(post); posts.add(post2);
+        when(userService.findById(userId)).thenReturn(user);
+        when(postRepository.findByCreateTimeGreaterThanEqual(inDate)).thenReturn(posts);
+        List<PostResponse> resPosts = postService.getTrending(inDate, userId);
+        assertTrue(resPosts.get(0).getMessage().equals("#cat is suspicious"));
+        assertTrue(resPosts.get(1).getMessage().equals("testPost"));
+        assertEquals(resPosts.size(), 2);
+        verify(postRepository, times(1)).findByCreateTimeGreaterThanEqual(inDate);
     }
 
 }

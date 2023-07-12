@@ -1,6 +1,5 @@
 package com.revature.Flumblr.repositories;
 
-import com.revature.Flumblr.dtos.responses.PotentialFollowerResponse;
 import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.Theme;
 import com.revature.Flumblr.entities.User;
@@ -34,6 +33,9 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     @Query("UPDATE Profile p SET p.theme = :theme WHERE p.id = :id")
     void setTheme(String id, Theme theme);
 
-    @Query(value = "SELECT p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id JOIN profile_tag_list ptl ON ptl.profile_id = p.id JOIN tags t ON t.id = ptl.tag_id WHERE t.name = :tag", nativeQuery = true)
+    @Query(value = "SELECT p.id, p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id JOIN profile_tag_list ptl ON ptl.profile_id = p.id JOIN tags t ON t.id = ptl.tag_id WHERE t.name = :tag", nativeQuery = true)
     List<Object[]> getPotentialListOfFollowers(@Param("tag") String tag);
+
+    @Query(value = "SELECT p.id, p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id WHERE u.username LIKE %:username%", nativeQuery = true)
+    List<Object[]> getPotentialListOfUsersByUsername(@Param("username") String username);
 }
