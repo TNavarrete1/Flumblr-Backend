@@ -56,6 +56,35 @@ class TagServiceTest {
     }
 
     @Test
+    public void findByNameExistTest() {
+        String name = "realTag";
+        Tag tag = new Tag(name);
+        when(tagRepository.findByName(name)).thenReturn(java.util.Optional.of(tag));
+
+        Tag result = tagService.findByName(name);
+
+        assertEquals(tag, result);
+    }
+
+    @Test
+    public void findByNameNotExistTest() {
+        String name = "realTag";
+        Tag tag = new Tag(name);
+        when(tagRepository.findByName(name)).thenReturn(java.util.Optional.empty());
+
+        Tag result = tagService.findByName(name);
+
+        assertEquals(tag.getName(), result.getName());
+    }
+
+    @Test
+    void createTagTest() {
+        String name = "realTag";
+        Tag result = tagService.createTag(name);
+        verify(tagRepository).save(result);
+    }
+
+    @Test
     public void getTrendingTest() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date inDate = null;
@@ -74,17 +103,24 @@ class TagServiceTest {
         post3Tags.add(catTag);
         List<Post> trendPosts = new ArrayList<Post>();
         Post post1 = new Post("#dog", "none", null, user, post1Tags);
-        post1.setPostShares(postShares); post1.setPostVotes(postVotes); post1.setComments(postComments);
+        post1.setPostShares(postShares);
+        post1.setPostVotes(postVotes);
+        post1.setComments(postComments);
         Post post2 = new Post("#cat", "none", null, otherUser, post2Tags);
-        post2.setPostShares(postShares); post2.setPostVotes(postVotes); post2.setComments(postComments);
+        post2.setPostShares(postShares);
+        post2.setPostVotes(postVotes);
+        post2.setComments(postComments);
         Post post3 = new Post("another #cat post", "none", null, user, post3Tags);
-        post3.setPostShares(postShares); post3.setPostVotes(postVotes); post3.setComments(postComments);
-        trendPosts.add(post1); trendPosts.add(post2); trendPosts.add(post3);
+        post3.setPostShares(postShares);
+        post3.setPostVotes(postVotes);
+        post3.setComments(postComments);
+        trendPosts.add(post1);
+        trendPosts.add(post2);
+        trendPosts.add(post3);
         when(postRepository.findAllWithTagsAfter(inDate)).thenReturn(trendPosts);
         List<String> resTags = tagService.getTrending(inDate);
         assertEquals(resTags, Arrays.asList("cat", "dog"));
         verify(postRepository, times(1)).findAllWithTagsAfter(inDate);
     }
-
 
 }
