@@ -15,6 +15,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,6 +37,7 @@ import com.revature.Flumblr.entities.Comment;
 import com.revature.Flumblr.entities.CommentVote;
 import com.revature.Flumblr.entities.Follow;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostMention;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
@@ -52,6 +54,8 @@ public class PostService {
     private final CommentVoteService commentVoteService;
     private final BookmarksRepository bookmarksRepository;
     private final PostShareRepository postShareRepository;
+    private final NotificationService notificationService;
+    private final NotificationTypeService notificationTypeService;
 
     public PostResponse findByIdResponse(String postId, String requesterId) {
         Optional<Post> userPost = this.postRepository.findById(postId);
@@ -90,6 +94,17 @@ public class PostService {
         response.setDownVotes(postVotes.size() - upVotes);
         response.setComments(comments);
         return response;
+    }
+
+    public List<PostResponse> getUserBookmarkedPosts(String userId) {
+        User user = userService.findById(userId);
+        List<Post> posts = postRepository.findByBookmarksUser(user);
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        for (Post userPost : posts) {
+            PostResponse response = findByPostResponse(userPost, userId);
+            resPosts.add(response);
+        }
+        return resPosts;
     }
 
     public List<PostResponse> getFollowing(String userId, int page) {
@@ -225,8 +240,25 @@ public class PostService {
 
         Post post = new Post(message, mediaType, fileUrl, user, tagsList);
 
-        postRepository.save(post);
+        String[] mentionsArray = req.getParameterValues("mentions");
+        Set<PostMention> mentionsList = new HashSet<PostMention>();
+        if (mentionsArray != null) {
 
+            for (String mentionName : mentionsArray) {
+                Optional<User> mentionedOpt = userRepository.findByUsername(mentionName);
+                if(mentionedOpt.isPresent()) {
+                    User mentioned = mentionedOpt.get();
+                    notificationService.createNotification(user.getUsername() + " mentioned you in a post",
+                        "post:" + post.getId(), mentioned, 
+                        notificationTypeService.findByName("postMention"));
+
+                    mentionsList.add(new PostMention(mentioned, post));
+                }
+            }
+        }
+        post.setPostMentions(mentionsList);
+
+        postRepository.save(post);
     }
 
     public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
@@ -235,6 +267,32 @@ public class PostService {
         String newMediaType = req.getParameter("mediaType");
         String[] newTagsArray = req.getParameterValues("tags");
         String existingFileUrl = post.getS3Url();
+
+        Set<PostMention> mentions = post.getPostMentions();
+        String[] newMentionArray = req.getParameterValues("mentions");
+        Iterator<PostMention> mentionIter = mentions.iterator();
+        if(newMentionArray == null) mentions.clear();
+        else {
+            Set<String> newMentions = new HashSet<String>(
+                Arrays.asList(newMentionArray));
+            while(mentionIter.hasNext()) {
+                String existingUsername = mentionIter.next().getUser().getUsername();
+                if(!newMentions.contains(existingUsername))
+                    mentionIter.remove();
+                else newMentions.remove(existingUsername);
+            }
+            for(String newMention : newMentions) {
+                Optional<User> mentionedOpt = userRepository.findByUsername(newMention);
+                if(mentionedOpt.isPresent()) {
+                    User mentioned = mentionedOpt.get();
+                    notificationService.createNotification(post.getUser().getUsername() +
+                        " mentioned you in a post", "post:" + post.getId(), mentioned, 
+                        notificationTypeService.findByName("postMention"));
+
+                    mentions.add(new PostMention(mentioned, post));
+                }
+            }
+        }
 
         if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
             s3StorageService.deleteFileFromS3Bucket(existingFileUrl);

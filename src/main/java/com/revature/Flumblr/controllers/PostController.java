@@ -29,7 +29,6 @@ import com.revature.Flumblr.services.S3StorageService;
 import com.revature.Flumblr.services.PostShareService;
 import com.revature.Flumblr.dtos.requests.NewCommentRequest;
 import com.revature.Flumblr.dtos.responses.PostResponse;
-import com.revature.Flumblr.entities.Post;
 import com.revature.Flumblr.services.CommentService;
 
 import lombok.AllArgsConstructor;
@@ -196,6 +195,7 @@ public class PostController {
 
         String fileUrl = null;
         MultipartFile file = req.getFile("file");
+
         if (file != null) {
             fileUrl = s3StorageService.uploadFile(file);
         }
@@ -226,6 +226,12 @@ public class PostController {
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
         return ResponseEntity.status(HttpStatus.OK).body(postService.getTrending(fromDate, requesterId));
+    }
+
+    @GetMapping("/bookmarked")
+    public ResponseEntity<List<PostResponse>> getBookmarked(@RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserBookmarkedPosts(requesterId));
     }
 
 }
