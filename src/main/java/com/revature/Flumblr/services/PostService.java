@@ -61,11 +61,30 @@ public class PostService {
         Optional<Post> userPost = this.postRepository.findById(postId);
         if (userPost.isEmpty())
             throw new ResourceNotFoundException("Post(" + postId + ") Not Found");
-        return findByPostResponse(userPost.get(), requesterId);
+        User requestUser = userService.findById(requesterId);
+        Set<String> followedIds = new HashSet<String>();
+        for (Follow follow : requestUser.getFollows()) {
+            followedIds.add(follow.getFollow().getId());
+        }
+        // include requester in 'share' info
+        followedIds.add(requesterId);
+        return postResponseFromPost(userPost.get(), requestUser, followedIds);
     }
 
-    public PostResponse findByPostResponse(Post post, String requesterId) {
-        User requestUser = userService.findById(requesterId);
+    public List<PostResponse> postResponsesFromPosts(List<Post> posts, User requestUser) {
+        List<PostResponse> resPosts = new ArrayList<PostResponse>();
+        Set<String> followedIds = new HashSet<String>();
+        for (Follow follow : requestUser.getFollows()) {
+            followedIds.add(follow.getFollow().getId());
+        }
+        followedIds.add(requestUser.getId());
+        for(Post post : posts) {
+            resPosts.add(postResponseFromPost(post, requestUser, followedIds));
+        }
+        return resPosts;
+    }
+
+    public PostResponse postResponseFromPost(Post post, User requestUser, Set<String> followedIds) {
         Set<PostVote> postVotes = post.getPostVotes();
         int upVotes = 0;
         for (PostVote postVote : postVotes) {
@@ -85,7 +104,8 @@ public class PostService {
         Bookmark bookmark = bookmarksRepository.findByUserAndPost(requestUser, post).orElse(null);
         PostShare postShare = postShareRepository.findByUserAndPost(requestUser, post).orElse(null);
 
-        response.setSharedBy(findUsersForSharesAndRequesterId(post, requesterId));
+        response.setSharedBy(findUsersForSharesAndFollowedIds(post, followedIds));
+
         response.setShareCount(post.getPostShares().size());
         response.setUserVote(postVote);
         response.setBookmarked(bookmark);
@@ -104,53 +124,27 @@ public class PostService {
         }
         List<Post> posts = postRepository.findPostsAndSharesForUserIn(following,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, userId);
-            resPosts.add(response);
-        }
-        return resPosts;
+
+        return postResponsesFromPosts(posts, user);
     }
 
     public List<PostResponse> getFeed(int page, String requesterId) {
         List<Post> posts = postRepository.findAllBy(PageRequest.of(page, 20, Sort.by("createTime").descending()));
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, requesterId);
-            resPosts.add(response);
-        }
-        return resPosts;
+        return postResponsesFromPosts(posts, userService.findById(requesterId));
     }
 
     public List<PostResponse> findByTag(List<String> tags, int page, String requesterId) {
         List<Post> posts = postRepository.findByTagsNameIn(tags,
                 PageRequest.of(page, 20, Sort.by("createTime").descending()));
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : posts) {
-            PostResponse response = findByPostResponse(userPost, requesterId);
-            resPosts.add(response);
-        }
-
-        return resPosts;
-    }
-
-    public List<Post> findUserPostsAndShares(String userId) {
-        return this.postRepository.findPostsAndSharesByUserId(userId);
+        return postResponsesFromPosts(posts, userService.findById(requesterId));
     }
 
     // return list of users that user follows who also shared the post
-    public List<UserResponse> findUsersForSharesAndRequesterId(Post post, String requesterId) {
-        User requester = userService.findById(requesterId);
+    public List<UserResponse> findUsersForSharesAndFollowedIds(Post post, Set<String> followedIds) {
         List<UserResponse> usersShared = new ArrayList<UserResponse>();
-        Set<String> followedId = new HashSet<String>();
-        for (Follow follow : requester.getFollows()) {
-            followedId.add(follow.getFollow().getId());
-        }
-        // include requester in 'share' info
-        followedId.add(requesterId);
         for (PostShare postShare : post.getPostShares()) {
             User user = postShare.getUser();
-            if (followedId.contains(user.getId())) {
+            if (followedIds.contains(user.getId())) {
                 usersShared.add(new UserResponse(user));
             }
         }
@@ -159,12 +153,7 @@ public class PostService {
 
     public List<PostResponse> getUserPosts(String userId, String requesterId) {
         List<Post> userPosts = this.postRepository.findPostsAndSharesByUserId(userId);
-        List<PostResponse> resPosts = new ArrayList<PostResponse>();
-        for (Post userPost : userPosts) {
-            PostResponse response = findByPostResponse(userPost, requesterId);
-            resPosts.add(response);
-        }
-        return resPosts;
+        return postResponsesFromPosts(userPosts, userService.findById(requesterId));
     }
 
     public Post findById(String postId) {
@@ -250,7 +239,7 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public PostResponse updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
+    public void updatePost(String postId, MultipartHttpServletRequest req, String fileUrl) {
         Post post = this.findById(postId);
         String newMessage = req.getParameter("message");
         String newMediaType = req.getParameter("mediaType");
@@ -298,8 +287,6 @@ public class PostService {
         }
         post.setEditTime(new Date());
         postRepository.save(post);
-        PostResponse response = findByPostResponse(post, post.getUser().getId());
-        return response;
     }
 
     public void deletePostsByUserId(String userId) {
@@ -316,6 +303,13 @@ public class PostService {
 
     public List<PostResponse> getTrending(Date fromDate, String requesterId) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);
+        User requestUser = userService.findById(requesterId);
+        Set<String> followedIds = new HashSet<String>();
+        for (Follow follow : requestUser.getFollows()) {
+            followedIds.add(follow.getFollow().getId());
+        }
+        // include requester in 'share' info
+        followedIds.add(requesterId);
 
         PriorityQueue<SortedPost> sortedPosts = new PriorityQueue<SortedPost>(11,
                 new Comparator<SortedPost>() {
@@ -327,7 +321,7 @@ public class PostService {
 
         for (Post userPost : responses) {
             // Integer numberOfVotes = postVoteRepository.findAllByPost(userPost).size();
-            SortedPost sortedPost = new SortedPost(findByPostResponse(userPost, requesterId));
+            SortedPost sortedPost = new SortedPost(postResponseFromPost(userPost, requestUser, followedIds));
             calculateScore(sortedPost);
 
             sortedPosts.add(sortedPost);
