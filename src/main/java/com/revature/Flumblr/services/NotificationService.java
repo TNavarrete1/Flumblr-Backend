@@ -57,4 +57,14 @@ public class NotificationService {
         return notificationOpt.get();
     }
 
+    public List<NotificationResponse> getUnreadNotificationByUser(String userId) {
+        User user = userService.findById(userId);
+        List<Notification> notifications = notificationRepository.findByUserAndViewedOrderByCreateTimeDesc(user, false);
+        List<NotificationResponse> responses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            responses.add(new NotificationResponse(notification));
+        }
+        return responses;
+    }
+
 }

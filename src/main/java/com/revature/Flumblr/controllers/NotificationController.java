@@ -46,6 +46,15 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.getNotificationByUser(userId));
     }
 
+    @GetMapping("/unread/{userId}")
+    public ResponseEntity<List<NotificationResponse>> getUnreadNotification(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String userId) {
+        tokenService.extractUserId(token);
+
+        return ResponseEntity.status(HttpStatus.OK).body(notificationService.getUnreadNotificationByUser(userId));
+    }
+
     @PutMapping("/{notificationId}")
     public ResponseEntity<?> readNotification(@RequestBody NotificationRequest req,
             @RequestHeader("Authorization") String token) {
