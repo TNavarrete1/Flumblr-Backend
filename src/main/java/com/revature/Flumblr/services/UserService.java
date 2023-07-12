@@ -143,6 +143,10 @@ public class UserService {
 
         String hashed = BCrypt.hashpw(req.getPassword(), BCrypt.gensalt());
 
+        if(user.getPassword().equals(hashed)){
+            throw new ResourceConflictException("Password can not be similar to your old password");
+        }
+
         user.setPassword(hashed);
 
         userRepository.save(user);
