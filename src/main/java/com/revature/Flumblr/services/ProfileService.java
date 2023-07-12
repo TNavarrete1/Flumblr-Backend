@@ -42,11 +42,11 @@ public class ProfileService {
     }
 
     public void setTheme(String profileId, String themeName) {
-        Theme theme = themeRepository.findByName(themeName).get();
-        if (theme == null) {
+        Optional<Theme> themeOpt = themeRepository.findByName(themeName);
+        if (themeOpt.isEmpty()) {
             throw new ResourceNotFoundException("No theme with name: " + themeName + " found.");
         }
-        profileRepository.setTheme(profileId, theme);
+        profileRepository.setTheme(profileId, themeOpt.get());
     }
 
     public Profile findById(String id) {
@@ -88,10 +88,11 @@ public class ProfileService {
 
    public int getTotal(String profileId) {
         int votes = 0;
-        if(profileRepository.findById(profileId).isEmpty()) {
+        Optional<Profile> profOpt = profileRepository.findById(profileId);
+        if(profOpt.isEmpty()) {
             throw new ResourceNotFoundException("Profile not found with id: " + profileId);
         }
-        List<ProfileVote> list = profileVoteRepository.findAllByProfile(profileRepository.findById(profileId).get());
+        List<ProfileVote> list = profileVoteRepository.findAllByProfile(profOpt.get());
         if(list.size() == 0 ) {
             return 0;
         }
