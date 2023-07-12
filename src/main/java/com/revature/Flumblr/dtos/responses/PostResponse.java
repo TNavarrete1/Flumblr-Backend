@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Post;
+import com.revature.Flumblr.entities.PostMention;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
@@ -52,6 +53,8 @@ public class PostResponse {
 
     private Set<Tag> tags;
 
+    private Set<PostMention> mentions;
+
     private int shareCount;
 
     private List<UserResponse> sharedBy;
@@ -68,5 +71,6 @@ public class PostResponse {
         this.createTime = post.getCreateTime();
         this.editTime = post.getEditTime();
         this.tags = post.getTags();
+        this.mentions = post.getPostMentions();
     }
 }
