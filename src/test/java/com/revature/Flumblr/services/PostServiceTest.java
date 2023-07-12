@@ -69,6 +69,8 @@ class PostServiceTest {
 
     private Set<PostVote> postVotes;
 
+    private Set<PostMention> postMentions;
+    
     private List<Comment> postComments;
 
     private Set<Tag> tags;
@@ -96,6 +98,8 @@ class PostServiceTest {
         post.setPostVotes(postVotes);
         postComments = new ArrayList<Comment>();
         post.setComments(postComments);
+        postMentions = new HashSet<PostMention>();
+        post.setPostMentions(postMentions);
     }
 
     @Test
@@ -178,6 +182,7 @@ class PostServiceTest {
         post2.setPostVotes(post2Votes);
         post2.setComments(postComments);
         post2.setPostShares(postShares);
+        post2.setPostMentions(postMentions);
         List<Post> posts = new ArrayList<Post>();
         posts.add(post); posts.add(post2);
         when(userService.findById(userId)).thenReturn(user);
