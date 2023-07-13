@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import com.revature.Flumblr.dtos.requests.NewUserRequest;
 import com.revature.Flumblr.dtos.requests.ResetRequest;
 import com.revature.Flumblr.dtos.requests.changePasswordRequest;
 import com.revature.Flumblr.dtos.responses.Principal;
+import com.revature.Flumblr.dtos.responses.UserResponse;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.entities.Verification;
 import com.revature.Flumblr.repositories.UserRepository;
@@ -131,8 +133,7 @@ public class UserController {
             userService.changePassword(req, user);
 
             return ResponseEntity.status(HttpStatus.OK).build();
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body("The link is invalid or broken!");
         }
     }
@@ -163,7 +164,7 @@ public class UserController {
             throw new ResourceNotFoundException("Invalid or Broken link");
         }
 
-        if(user.getVerified() == null || user.getVerified() == false) {
+        if (user.getVerified() == null || user.getVerified() == false) {
 
             SimpleMailMessage mailMessage = verificationService.composeVerification(email,
                     verification.getVerificationToken());
@@ -182,6 +183,13 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/user/{username}")
+    ResponseEntity<UserResponse> readUserByUsername(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new UserResponse(user));
     }
 
 }
