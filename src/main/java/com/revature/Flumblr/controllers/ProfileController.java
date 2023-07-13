@@ -1,5 +1,6 @@
 package com.revature.Flumblr.controllers;
 
+import com.revature.Flumblr.dtos.requests.DeleteImageRequest;
 import com.revature.Flumblr.dtos.requests.NewInterestRequest;
 import com.revature.Flumblr.dtos.requests.NewProfileRequest;
 import com.revature.Flumblr.dtos.responses.ProfileResponse;
@@ -8,6 +9,7 @@ import com.revature.Flumblr.entities.Profile;
 import com.revature.Flumblr.entities.Tag;
 import com.revature.Flumblr.entities.User;
 import com.revature.Flumblr.services.*;
+import com.revature.Flumblr.utils.custom_exceptions.BadRequestException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,11 +53,10 @@ public class ProfileController {
         tokenService.validateToken(token, id);
         String fileURL = null;
         if (file != null) {
-            // need to get/delete old profile image as new one is uploaded
             fileURL = s3StorageService.uploadFile(file);
         }
         // profileService.setProfileImg(profileId, fileURL);
-        profileService.setProfileImg(profileId.getProfileId(), fileURL);
+        profileService.deleteAndSetNewProfileImg(profileId.getProfileId(), fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -111,6 +112,21 @@ public class ProfileController {
         tokenService.validateToken(token, req.getUser_id());
         Tag foundTag = tagService.findByName(req.getTag_name());
         profileService.deleteTagsFromProfile(req.getProfile_id(), foundTag);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @DeleteMapping("/image")
+    public ResponseEntity<?> deleteImage(@RequestHeader("Authorization") String token,
+                                         @RequestBody DeleteImageRequest req) {
+
+        //handle invalid token
+        tokenService.extractUserId(token);
+        String defaultImgURL = "https://flumblr.s3.amazonaws.com/f3c5b50f-8683-4502-8954-494c0fca1487-profile.jpg";
+        if(req.getUrl().equals(defaultImgURL)) {
+            throw new BadRequestException("Cannot delete the default image from profile");
+        }
+        profileService.setProfileImg(req.getProfileId(), defaultImgURL);
+        s3StorageService.deleteFileFromS3Bucket(req.getUrl());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
