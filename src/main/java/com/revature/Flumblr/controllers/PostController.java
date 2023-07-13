@@ -125,6 +125,15 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId, requesterId));
     }
+    @GetMapping("/user/name/{username}")
+    public ResponseEntity<List<PostResponse>> getUserPostsByUsername(@PathVariable String username,
+            @RequestHeader("Authorization") String token) {
+        String requesterId = tokenService.extractUserId(token);
+        logger.trace("getting posts from " + username + " requested by " + requesterId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPostsByUsername(username, requesterId));
+    }
+
 
     @GetMapping("/id/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable String postId,
@@ -211,7 +220,7 @@ public class PostController {
         String requesterId = tokenService.extractUserId(token);
         String role = tokenService.extractRole(token);
 
-        if (!userId.equals(requesterId) && !role.equals("admin")) {
+        if (!userId.equals(requesterId) && !role.equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete these posts.");
         }
 
