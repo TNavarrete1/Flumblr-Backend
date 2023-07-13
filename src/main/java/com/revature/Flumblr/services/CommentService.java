@@ -28,7 +28,7 @@ public class CommentService {
     private final NotificationService notificationService;
     private final NotificationTypeService notificationTypeService;
 
-    public void commentOnPost(NewCommentRequest req) {
+    public String commentOnPost(NewCommentRequest req) {
         User user = userRepository.getReferenceById(req.getUserId());
         Post post = postRepository.getReferenceById(req.getPostId());
         Comment com = new Comment(req.getComment(), post, user, req.getGifUrl());
@@ -51,6 +51,8 @@ public class CommentService {
 
         notificationService.createNotification(user.getUsername() + " commented on your post",
             "post:" + post.getId(), post.getUser(), notificationTypeService.findByName("postComment"));
+
+         return  com.getId();
     }
 
     public Comment findById(String commentId) {

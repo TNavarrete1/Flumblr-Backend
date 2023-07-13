@@ -143,12 +143,11 @@ public class PostController {
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<?> commentOnPost(@RequestBody NewCommentRequest req,
+    public ResponseEntity<String> commentOnPost(@RequestBody NewCommentRequest req,
             @RequestHeader("Authorization") String token) {
 
         tokenService.validateToken(token, req.getUserId());
-        commentService.commentOnPost(req);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.commentOnPost(req));
     }
 
     @DeleteMapping("/comments/{commentId}")
