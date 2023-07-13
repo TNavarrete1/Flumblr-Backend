@@ -23,6 +23,8 @@ public class CommentResponse {
 
     private String userId;
 
+    private String commentId;
+
     private String comment;
 
     private Date createTime;
@@ -42,6 +44,7 @@ public class CommentResponse {
     public CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
         this.userId = comment.getUser().getId();
+        this.commentId = comment.getId();
         this.comment = comment.getComment();
         this.createTime = comment.getCreateTime();
         this.editTime = comment.getEditTime();
