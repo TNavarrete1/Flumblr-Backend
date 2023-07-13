@@ -70,7 +70,7 @@ public class ReportController {
         Map<String, Object> claimMap = tokenService.extractAllClaims(token);
         String roleName = (String) claimMap.get("role");
         String tokenId = (String) claimMap.get("id");
-        if (!roleName.equals("ADMIN") && !tokenId.equals(userId)) {
+        if (!roleName.equals("ADMIN") || !tokenId.equals(userId)) {
             logger.debug("unauthorized report query by user " + tokenId);
             throw new UnauthorizedException("Must be Admin to see reports");
         }
