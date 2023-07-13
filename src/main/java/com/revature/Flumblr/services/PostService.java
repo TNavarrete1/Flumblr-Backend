@@ -325,6 +325,14 @@ public class PostService {
             postRepository.delete(post);
         }
     }
+    public List<PostResponse> getUserPostsByUsername(String username, String requesterId) {
+        User user = userService.findByUsername(username);
+        if (user == null)
+            throw new ResourceNotFoundException("User with username " + username + " not found");
+        List<Post> userPosts = this.postRepository.findByUser(user);
+        return postResponsesFromPosts(userPosts, userService.findById(requesterId));
+    }
+
 
     public List<PostResponse> getTrending(Date fromDate, String requesterId) {
         List<Post> responses = postRepository.findByCreateTimeGreaterThanEqual(fromDate);

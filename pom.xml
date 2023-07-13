@@ -90,6 +90,30 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+					<id>prepare</id>
+					<phase>package</phase>
+					<configuration>
+						<tasks>
+						<property name="buildName" value="${project.build.finalName}.jar"/>
+						<copy todir="${project.build.directory}/aws-build/" overwrite="false">
+							<fileset file="${project.build.directory}/${project.build.finalName}.jar"/>
+							<fileset dir="./aws" />
+						</copy>		
+						<zip compress="false" destfile="${project.build.directory}/aws-build/app-to-deploy.jar" basedir="${project.build.directory}/aws-build"/>
+						</tasks>
+					</configuration>
+					<goals>
+						<goal>run</goal>
+					</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
