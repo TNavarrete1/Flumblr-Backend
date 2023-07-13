@@ -34,9 +34,18 @@ public class ProfileController {
         User username = userService.findById(id);
         // and profile votes
         int votes = profileService.getTotal(prof.getId());
-        // include profile id, image url, bio, and themeName in response body for frontend
-        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(), prof.getBio(), prof.getTheme().getName(), votes);
+        // include profile id, image url, bio, and themeName in response body for
+        // frontend
+        ProfileResponse res = new ProfileResponse(username.getUsername(), prof.getId(), prof.getProfile_img(),
+                prof.getBio(), prof.getTheme().getName(), votes);
         return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @GetMapping("/user/{username}")
+    ResponseEntity<ProfileResponse> readProfileBioByName(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+
+        return readProfileBio(user.getId());
     }
 
     // upload profile image
@@ -85,7 +94,7 @@ public class ProfileController {
 
     @GetMapping("/tags/{profileId}")
     ResponseEntity<TagInterestResponse> getProfileInterests(@RequestHeader("Authorization") String token,
-                                                            @PathVariable String profileId) {
+            @PathVariable String profileId) {
 
         // handle invalid token
         tokenService.extractUserId(token);
