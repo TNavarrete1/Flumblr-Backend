@@ -121,7 +121,7 @@ public class ProfileController {
 
         //handle invalid token
         tokenService.extractUserId(token);
-        String defaultImgURL = "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg";
+        String defaultImgURL = "https://flumblr.s3.amazonaws.com/f3c5b50f-8683-4502-8954-494c0fca1487-profile.jpg";
         if(req.getUrl().equals(defaultImgURL)) {
             throw new BadRequestException("Cannot delete the default image from profile");
         }

@@ -33,7 +33,7 @@ public class ProfileService {
             throw new FileNotUploadedException("An error occurred uploading the profile image.");
         }
         String oldImageUrl = profileRepository.getOldProfileUrl(profileId);
-        String defaultImgURL = "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg";
+        String defaultImgURL = "https://flumblr.s3.amazonaws.com/f3c5b50f-8683-4502-8954-494c0fca1487-profile.jpg";
         profileRepository.setProfileImg(profileId, URL);
         if(oldImageUrl.equals(defaultImgURL)) {
             return;
