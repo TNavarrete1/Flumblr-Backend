@@ -369,17 +369,17 @@ public class PostService {
         sortedPost.setScore(score);
     }
 
-    private List<String> getMentions(Comment comment) {
-        List<String> mentionedUsers = new ArrayList<>();
+    private List<UserResponse> getMentions(Comment comment) {
+        List<UserResponse> mentionedUsers = new ArrayList<>();
         Set<CommentMention> mentions = comment.getCommentMentions();
-        mentions.forEach(user -> mentionedUsers.add(user.getUser().getUsername()));
+        mentions.forEach(user -> mentionedUsers.add(new UserResponse(user.getUser())));
         return mentionedUsers;
     }
 
-    private List<String> getMentions(Post post) {
-        List<String> mentionedUsers = new ArrayList<>();
+    private List<UserResponse> getMentions(Post post) {
+        List<UserResponse> mentionedUsers = new ArrayList<>();
         Set<PostMention> mentions = post.getPostMentions();
-        mentions.forEach(user -> mentionedUsers.add(user.getUser().getUsername()));
+        mentions.forEach(user -> mentionedUsers.add(new UserResponse(user.getUser())));
         return mentionedUsers;
     }
 

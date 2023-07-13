@@ -10,7 +10,6 @@ import java.util.Set;
 
 import com.revature.Flumblr.entities.Bookmark;
 import com.revature.Flumblr.entities.Post;
-import com.revature.Flumblr.entities.PostMention;
 import com.revature.Flumblr.entities.PostShare;
 import com.revature.Flumblr.entities.PostVote;
 import com.revature.Flumblr.entities.Tag;
@@ -53,7 +52,7 @@ public class PostResponse {
 
     private Set<Tag> tags;
 
-    private List<String> mentions;
+    private List<UserResponse> mentions;
 
     private int shareCount;
 
