@@ -181,7 +181,7 @@ public class UserController {
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("Instructions are sent to your Email successfully!");
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
