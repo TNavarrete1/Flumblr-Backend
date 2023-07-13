@@ -70,7 +70,7 @@ Flumblr's backend is primarily built using the Spring Boot framework. The applic
 - **Documentation**: The repository should include a README file with clear instructions on how to run the application. Code should be well-commented to allow for easy understanding and maintenance.
 - **Scalable**: The design of the application should be scalable, allowing for easy addition of new features or modifications in the future.
 
-## ERD
+## ERD 
 
 ![Flumbr ERD](https://github.com/052223-java-angular/Flumblr-Backend/assets/55551370/95038ea5-24f4-41df-976f-f49de8655c12)
 
