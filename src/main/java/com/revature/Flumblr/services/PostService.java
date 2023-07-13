@@ -380,14 +380,14 @@ public class PostService {
     private List<UserResponse> getMentions(Comment comment) {
         List<UserResponse> mentionedUsers = new ArrayList<>();
         Set<CommentMention> mentions = comment.getCommentMentions();
-        mentions.forEach(mention -> mentionedUsers.add(new UserResponse(user.getUser())));
+        mentions.forEach(mention -> mentionedUsers.add(new UserResponse(mention.getUser())));
         return mentionedUsers;
     }
 
     private List<UserResponse> getMentions(Post post) {
         List<UserResponse> mentionedUsers = new ArrayList<>();
         Set<PostMention> mentions = post.getPostMentions();
-        mentions.forEach(mention -> mentionedUsers.add(new UserResponse(user.getUser())));
+        mentions.forEach(mention -> mentionedUsers.add(new UserResponse(mention.getUser())));
         return mentionedUsers;
     }
 
