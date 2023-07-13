@@ -33,11 +33,21 @@ public interface ProfileRepository extends JpaRepository<Profile, String> {
     @Query("UPDATE Profile p SET p.theme = :theme WHERE p.id = :id")
     void setTheme(String id, Theme theme);
 
+
+    @Query(value = "SELECT p.id, p.bio, p.profile_img, u.username FROM profile p \n" + //
+            "JOIN users u ON p.user_id = u.id \n" + //
+            "JOIN profile_tag_list ptl ON ptl.profile_id = p.id \n" + //
+            "JOIN tags t ON t.id = ptl.tag_id \n" + //
+            "join posts p2 on u.id = p2.user_id \n" + //
+            "join post_tag_list ptl2 on ptl2.post_id  = p2.id  \n" + //
+            "JOIN tags t2 ON t2.id = ptl2.tag_id\n" + //
+            "where t2.name = :tag or t.name = :tag", nativeQuery = true)
+    List<Object[]> getPotentialListOfFollowers(@Param("tag") String tag);
+
     @Query(value = "SELECT p.profile_img FROM profile p WHERE p.id = :id", nativeQuery = true)
     String getOldProfileUrl(String id);
 
-    @Query(value = "SELECT p.id, p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id JOIN profile_tag_list ptl ON ptl.profile_id = p.id JOIN tags t ON t.id = ptl.tag_id WHERE t.name = :tag", nativeQuery = true)
-    List<Object[]> getPotentialListOfFollowers(@Param("tag") String tag);
+   
 
     @Query(value = "SELECT p.id, p.bio, p.profile_img, u.username FROM profile p JOIN users u ON p.user_id = u.id WHERE u.username LIKE %:username%", nativeQuery = true)
     List<Object[]> getPotentialListOfUsersByUsername(@Param("username") String username);
