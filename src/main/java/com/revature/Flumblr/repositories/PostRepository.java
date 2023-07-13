@@ -36,4 +36,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findAllBy(Pageable pageable);
 
     List<Post> findByBookmarksUser(User user);
+
+    List<Post> findByUser(User user);
 }
