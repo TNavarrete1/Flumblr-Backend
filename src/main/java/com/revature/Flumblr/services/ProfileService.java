@@ -21,10 +21,25 @@ public class ProfileService {
     private final ThemeRepository themeRepository;
     private final TagRepository tagRepository;
     private final ProfileVoteRepository profileVoteRepository;
+    private final S3StorageService s3StorageService;
 
     public Profile getProfileByUserId(String id) {
         User existingUser = userRepository.getReferenceById(id);
         return profileRepository.getProfileByUser(existingUser);
+    }
+
+    public void deleteAndSetNewProfileImg(String profileId, String URL) {
+        if(URL==null) {
+            throw new FileNotUploadedException("An error occurred uploading the profile image.");
+        }
+        String oldImageUrl = profileRepository.getOldProfileUrl(profileId);
+        String defaultImgURL = "https://flumblr.s3.amazonaws.com/879fbd85-d8c1-43c6-a31a-de78c04b3918-profile.jpg";
+        profileRepository.setProfileImg(profileId, URL);
+        if(oldImageUrl.equals(defaultImgURL)) {
+            return;
+        } else {
+            s3StorageService.deleteFileFromS3Bucket(oldImageUrl);
+        }
     }
 
     public void setProfileImg(String profileId, String URL) {

@@ -57,7 +57,7 @@ public class ProfileController {
             fileURL = s3StorageService.uploadFile(file);
         }
         // profileService.setProfileImg(profileId, fileURL);
-        profileService.setProfileImg(profileId.getProfileId(), fileURL);
+        profileService.deleteAndSetNewProfileImg(profileId.getProfileId(), fileURL);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
