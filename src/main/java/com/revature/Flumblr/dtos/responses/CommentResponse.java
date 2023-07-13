@@ -39,7 +39,7 @@ public class CommentResponse {
 
     private String profileImg;
 
-    private List<String> mentions;
+    private List<UserResponse> mentions;
 
     public CommentResponse(Comment comment) {
         this.username = comment.getUser().getUsername();
