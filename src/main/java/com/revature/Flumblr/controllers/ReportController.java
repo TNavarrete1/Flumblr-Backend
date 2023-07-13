@@ -89,7 +89,7 @@ public class ReportController {
         String roleName = (String) claimMap.get("role");
         String tokenId = (String) claimMap.get("id");
         Report report = reportService.findById(reportId);
-        if (!roleName.equals("ADMIN") && !tokenId.equals(report.getUser().getId())) {
+        if (!roleName.equals("ADMIN") || !tokenId.equals(report.getUser().getId())) {
             logger.debug("unauthorized delete report by user " + tokenId);
             throw new UnauthorizedException("Must be Admin to delete reports");
         }
