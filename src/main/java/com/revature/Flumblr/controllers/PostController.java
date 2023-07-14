@@ -125,6 +125,7 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPosts(userId, requesterId));
     }
+
     @GetMapping("/user/name/{username}")
     public ResponseEntity<List<PostResponse>> getUserPostsByUsername(@PathVariable String username,
             @RequestHeader("Authorization") String token) {
@@ -133,7 +134,6 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(postService.getUserPostsByUsername(username, requesterId));
     }
-
 
     @GetMapping("/id/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable String postId,
@@ -160,7 +160,7 @@ public class PostController {
 
         String commentOwnerId = commentService.getCommentOwner(commentId);
 
-        if (!commentOwnerId.equals(requesterId) && !role.equals("admin")) {
+        if (!commentOwnerId.equals(requesterId) && !role.equals("ADMIN")) {
             logger.warn("User " + requesterId + " attempted to delete comment " + commentId + " that they do not own");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this comment.");
         }
@@ -174,11 +174,12 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable String postId,
             @RequestHeader("Authorization") String token) {
         String requesterId = tokenService.extractUserId(token);
+        String role = tokenService.extractRole(token);
         logger.trace("Deleting post " + postId + " requested by " + requesterId);
 
         String postOwnerId = postService.getPostOwner(postId);
 
-        if (!postOwnerId.equals(requesterId)) {
+        if (!postOwnerId.equals(requesterId) && !role.equals("ADMIN")) {
             logger.warn("User " + requesterId + " attempted to delete post " + postId + " that they do not own");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authorized to delete this post.");
         }
